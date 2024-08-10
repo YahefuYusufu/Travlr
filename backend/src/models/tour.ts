@@ -8,6 +8,7 @@ const tourSchema = new mongoose.Schema({
 	description: String,
 	startDate: Date,
 	endDate: Date,
+	images: [String],
 	locations: [
 		{
 			name: {
@@ -26,18 +27,8 @@ const tourSchema = new mongoose.Schema({
 					required: true,
 				},
 			},
-			creator: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "User",
-				required: true,
-			},
 		},
 	],
-	creator: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
-		required: true,
-	},
 })
 
 const Tour = mongoose.model("Tour", tourSchema)

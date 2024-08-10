@@ -25,7 +25,7 @@ mongoose
 	.catch((err) => console.error("MongoDB connection error:", err))
 
 // Define routes
-app.use("/api/tours", tourRoutes)
+app.use("/api/v1/tours", tourRoutes)
 
 app.listen(port, () => {
 	console.log(`Server listening on port ${port}`)
