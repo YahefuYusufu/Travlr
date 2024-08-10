@@ -8,7 +8,7 @@ A mobile application for storing and managing travel memories. Users can add loc
 * Map integration
 * Calendar integration
 
-* **Technologies:**
+**Technologies:**
 * React Native
 * Expo
 * Node.js
