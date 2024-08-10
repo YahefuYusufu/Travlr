@@ -10,8 +10,27 @@ const tourSchema = new mongoose.Schema({
 	endDate: Date,
 	locations: [
 		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Location",
+			name: {
+				type: String,
+				required: true,
+			},
+			description: String,
+			location: {
+				type: {
+					type: String,
+					enum: ["Point"],
+					required: true,
+				},
+				coordinates: {
+					type: [Number],
+					required: true,
+				},
+			},
+			creator: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+				required: true,
+			},
 		},
 	],
 	creator: {

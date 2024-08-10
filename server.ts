@@ -3,8 +3,7 @@ import mongoose from "mongoose"
 import dotenv from "dotenv"
 import cors from "cors"
 
-import locationRoutes from "./routes/locationRoutes"
-import tourRoutes from "./routes/tourRoutes" // Add this line when you create tourRoutes
+import tourRoutes from "./src/routes/tourRoutes"
 
 dotenv.config()
 
@@ -16,17 +15,17 @@ app.use(cors())
 app.use(express.json())
 
 // Connect to MongoDB
+const mongoUri: String = process.env?.MONGODB_URI as string
+
 mongoose
-	.connect(process.env.MONGODB_URI, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
+	.connect(mongoUri, {
+		useBigInt64: true,
 	})
 	.then(() => console.log("MongoDB connected"))
 	.catch((err) => console.error("MongoDB connection error:", err))
 
 // Define routes
-app.use("/api/locations", locationRoutes) // Add this line
-app.use("/api/tours", tourRoutes) // Add this line when you create tourRoutes
+app.use("/api/tours", tourRoutes)
 
 app.listen(port, () => {
 	console.log(`Server listening on port ${port}`)
