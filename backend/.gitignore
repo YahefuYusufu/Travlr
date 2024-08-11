@@ -1,2 +1,3 @@
 //hide the .env
 .env
+.sendEmail.ts
