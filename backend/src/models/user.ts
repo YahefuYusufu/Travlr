@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
 		required: [true, "A user must have a password."],
 		select: false, // Exclude password from public responses
 	},
+	createdAt: {
+		type: Date,
+		default: Date.now,
+	},
 })
 
 userSchema.pre("save", async function (next) {
