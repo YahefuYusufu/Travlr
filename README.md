@@ -1,5 +1,5 @@
 # Travlr
-A mobile application for storing and managing travel memories. Users can add locations, save photos, and view their travel history.
+A full-stack mobile application for storing and managing travel memories. Users can add locations, save photos, and view their travel history.
 
 **Features:**
 * User authentication
