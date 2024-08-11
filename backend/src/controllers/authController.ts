@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import User from "../models/user"
 import Profile from "../models/profile"
+// import Tour from "../models/tour"
 import bcrypt from "bcryptjs"
 
 export const registerUser = async (req: Request, res: Response) => {
@@ -112,3 +113,58 @@ export const getUserProfileById = async (req: Request, res: Response) => {
 	}
 	return undefined
 }
+
+export const updateUserProfile = async (req: Request, res: Response) => {
+	try {
+		const userId = req.params.userId
+		const { firstName, lastName, picture } = req.body
+
+		const user = await User.findById(userId)
+		if (!user) {
+			return res.status(404).json({ error: "User not found" })
+		}
+
+		const profile = await Profile.findOne({ user: userId })
+		if (!profile) {
+			return res.status(404).json({ error: "Profile not found" })
+		}
+
+		profile.firstName = firstName || profile.firstName
+		profile.lastName = lastName || profile.lastName
+		profile.picture = picture || profile.picture
+
+		await profile.save()
+
+		res.status(200).json({ message: "Profile updated successfully" })
+	} catch (error) {
+		const err = error as Error
+		res.status(400).json({ error: err.message })
+	}
+	return undefined
+}
+
+// export const deleteUser = async (req: Request, res: Response) => {
+// 	try {
+// 		const userId = req.params.userId
+
+// 		// Find and delete the user
+// 		const user = await User.findByIdAndDelete(userId)
+// 		if (!user) {
+// 			return res.status(404).json({ error: "User not found" })
+// 		}
+
+// 		// Delete the associated profile
+// 		await Profile.deleteOne({ user: userId })
+
+// 		// Delete related tours (assuming a Tour model exists)
+// 		await Tour.deleteMany({ creator: userId })
+
+// 		res
+// 			.status(204)
+// 			.json({ message: "User and associated data deleted successfully" })
+// 	} catch (error) {
+// 		const err = error as Error
+// 		res.status(500).json({ error: err.message })
+// 	}
+// 	return undefined
+// }
