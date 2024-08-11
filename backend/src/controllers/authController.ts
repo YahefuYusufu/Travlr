@@ -1,12 +1,23 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import User from "../models/user"
 import Profile from "../models/profile"
 // import Tour from "../models/tour"
 import bcrypt from "bcryptjs"
+import { DuplicateEmailError } from "../utils/DuplicateEmailError"
 
-export const registerUser = async (req: Request, res: Response) => {
+export const registerUser = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const { email, password } = req.body
+
+		// Check for duplicate email
+		const existingUser = await User.findOne({ email })
+		if (existingUser) {
+			return next(new DuplicateEmailError("Email already exists"))
+		}
 
 		// Basic password hashing (replace with a stronger hashing algorithm)
 		const hashedPassword = await bcrypt.hash(password, 10)
@@ -24,6 +35,7 @@ export const registerUser = async (req: Request, res: Response) => {
 	} catch (error) {
 		const err = error as Error
 		res.status(400).json({ error: err.message })
+		next(error)
 	}
 }
 
