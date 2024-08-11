@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 import dotenv from "dotenv"
 import cors from "cors"
 
+import authRoutes from "./src/routes/authRoutes"
 import tourRoutes from "./src/routes/tourRoutes"
 
 dotenv.config()
@@ -17,15 +18,22 @@ app.use(express.json())
 // Connect to MongoDB
 const mongoUri: string = process.env?.MONGODB_URI as string
 
-mongoose
-	.connect(mongoUri, {
-		useBigInt64: true,
-	})
-	.then(() => console.log("MongoDB connected"))
-	.catch((err) => console.error("MongoDB connection error:", err))
+const connectDB = async () => {
+	try {
+		mongoose.connect(mongoUri, {
+			useBigInt64: true,
+		})
+		console.log("MongoDB connected")
+	} catch (error) {
+		console.error("MongoDB   connection error:", error)
+		process.exit(1)
+	}
+}
+connectDB()
 
 // Define routes
 app.use("/api/v1/tours", tourRoutes)
+app.use("/api/v1/users", authRoutes)
 
 app.listen(port, () => {
 	console.log(`Server listening on port ${port}`)
