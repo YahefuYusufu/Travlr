@@ -4,6 +4,8 @@ import Profile from "../models/profile"
 // import Tour from "../models/tour"
 import bcrypt from "bcryptjs"
 import { DuplicateEmailError } from "../utils/DuplicateEmailError"
+import jwt from "jsonwebtoken"
+require("dotenv").config()
 
 export const registerUser = async (
 	req: Request,
@@ -43,7 +45,7 @@ export const loginUser = async (req: Request, res: Response) => {
 	try {
 		const { email, password } = req.body
 
-		const user = await User.findOne({ email }).select("+password") // Include password for comparison
+		const user = await User.findOne({ email }).select("+password")
 
 		if (!user) {
 			return res.status(401).json({ error: "Invalid credentials" })
@@ -54,9 +56,11 @@ export const loginUser = async (req: Request, res: Response) => {
 			return res.status(401).json({ error: "Invalid credentials" })
 		}
 
-		res
-			.status(200)
-			.json({ message: "Login successful", user: { _id: user._id, email } })
+		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+			expiresIn: "1h",
+		})
+
+		res.status(200).json({ token, user: { _id: user._id, email } })
 	} catch (error) {
 		const err = error as Error
 		res.status(500).json({ error: err.message })
