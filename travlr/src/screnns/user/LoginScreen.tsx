@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import React, { useState, FC } from "react"
+import axios from "axios"
 import {
 	View,
 	Text,
@@ -7,48 +8,51 @@ import {
 	ActivityIndicator,
 	StyleSheet,
 } from "react-native"
-import { FormInput } from "../../types/types"
-
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "@react-navigation/native"
+import { FormInput } from "../../types/types"
+import { StackNavigationProp } from "@react-navigation/stack"
+import { RouteProp } from "@react-navigation/native"
 import { loginUser } from "../../api/auth"
-import axios from "axios"
 
-const LoginScreen = () => {
-	const [email, setEmail] = useState<FormInput>({ value: "", error: "" })
-	const [password, setPassword] = useState<FormInput>({ value: "", error: "" })
+// Define the types for your stack navigator
+type RootStackParamList = {
+	Home: undefined
+	Login: undefined
+	// Add more routes here as needed
+}
+
+// Define the props for the LoginScreen navigation
+type LoginScreenNavigationProp = StackNavigationProp<
+	RootStackParamList,
+	"Login"
+>
+
+type LoginScreenRouteProp = RouteProp<RootStackParamList, "Login">
+
+type Props = {
+	navigation: LoginScreenNavigationProp
+	route: LoginScreenRouteProp
+}
+
+const LoginScreen: FC<Props> = ({ navigation }) => {
+	const [email, setEmail] = useState<FormInput>({ value: "", error: null })
+	const [password, setPassword] = useState<FormInput>({
+		value: "",
+		error: null,
+	})
 	const [error, setError] = useState<string | null>(null)
 	const [loading, setLoading] = useState(false)
 
-	const navigation = useNavigation()
-
 	const handleLogin = async () => {
-		try {
-			const response = await axios.post(
-				"http://127.0.0.1:8000/api/v1/users/login",
-				{ email, password }
-			)
+		setLoading(true)
 
-			if (response.status === 200) {
-				const { token } = response.data
-				if (token) {
-					// Store token and navigate to home screen
-					await AsyncStorage.setItem("authToken", token)
-					navigation.navigate("HomeScreen")
-				} else {
-					console.error("Login failed: Missing token in response")
-					setError("Login failed. Please check your credentials.")
-				}
-			} else {
-				console.error("Login failed:", response.data)
-				setError("Login failed. Please check your credentials.")
-			}
-		} catch (error) {
-			console.error("Login error:", error)
-			setError("An unexpected error occurred")
-		} finally {
-			setLoading(false)
+		const result = await loginUser(email.value, password.value)
+		if (result.success) {
+			navigation.navigate("Home") // Navigate to the desired screen
+		} else {
+			setError(result.error || "An unexpected error occurred")
 		}
+		setLoading(false)
 	}
 
 	return (
@@ -56,19 +60,19 @@ const LoginScreen = () => {
 			<TextInput
 				placeholder="Email"
 				value={email.value}
-				onChangeText={(text) => setEmail({ value: text, error: "" })}
-				style={{ width: "80%", borderWidth: 1, padding: 10, marginBottom: 10 }}
+				onChangeText={(text) => setEmail({ value: text, error: null })}
+				style={s.input}
 			/>
-			{email.error && <Text style={{ color: "red" }}>{email.error}</Text>}
+			{email.error && <Text style={s.errorText}>{email.error}</Text>}
 			<TextInput
 				placeholder="Password"
 				secureTextEntry
 				value={password.value}
-				onChangeText={(text) => setPassword({ value: text, error: "" })}
-				style={{ width: "80%", borderWidth: 1, padding: 10, marginBottom: 10 }}
+				onChangeText={(text) => setPassword({ value: text, error: null })}
+				style={s.input}
 			/>
-			{password.error && <Text style={{ color: "red" }}>{password.error}</Text>}
-			{error && <Text style={{ color: "red" }}>{error}</Text>}
+			{password.error && <Text style={s.errorText}>{password.error}</Text>}
+			{error && <Text style={s.errorText}>{error}</Text>}
 			{loading && <ActivityIndicator size="large" color="#0000ff" />}
 
 			<Button title="Login" onPress={handleLogin} disabled={loading} />
@@ -83,5 +87,15 @@ const s = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+	},
+	input: {
+		width: "80%",
+		borderWidth: 1,
+		padding: 10,
+		marginBottom: 10,
+	},
+	errorText: {
+		color: "red",
+		marginBottom: 10,
 	},
 })

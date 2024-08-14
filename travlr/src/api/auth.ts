@@ -1,24 +1,33 @@
-import { useState } from "react"
 import axios from "axios"
-
-import { LoginCredentials } from "../types/types"
+import { API_URL } from "@env"
 
 interface MyCustomError {
 	message: string
 	// Other properties as needed
 }
-const baseUrl = "http://127.0.0.1:8000/api/v1/users"
 
-export const loginUser = async (credentials: LoginCredentials) => {
+export const loginUser = async (
+	email: string,
+	password: string
+): Promise<{ success: boolean; error?: string }> => {
 	try {
-		const response = await axios.post(`${baseUrl}/login`, credentials)
-		return response.data
-	} catch (error: unknown) {
-		if (error instanceof Error && "message" in error) {
-			const customError = error as MyCustomError
-			console.error("Error logging in user:", customError.message)
+		const response = await axios.post(`${API_URL}/users/login`, {
+			email,
+			password,
+		})
+
+		if (response.status === 200) {
+			console.log("Login successful!")
+			return { success: true }
 		} else {
-			console.error("Unexpected error:", error)
+			console.error("Login failed:", response.data)
+			return {
+				success: false,
+				error: "Login failed. Please check your credentials.",
+			}
 		}
+	} catch (error) {
+		console.error("Login error:", error)
+		return { success: false, error: "An unexpected error occurred" }
 	}
 }
