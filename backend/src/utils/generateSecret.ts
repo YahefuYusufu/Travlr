@@ -1,5 +1,5 @@
-const crypto = require("crypto")
-const fs = require("fs")
+import crypto from "crypto"
+import fs from "fs"
 
 export const generateRandomString = (length: number): string => {
 	return crypto.randomBytes(length).toString("base64")
