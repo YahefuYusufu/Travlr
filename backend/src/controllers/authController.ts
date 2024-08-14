@@ -40,41 +40,66 @@ export const registerUser = async (
 		next(error)
 	}
 }
+//token based
+// export const loginUser = async (req: Request, res: Response) => {
+// 	try {
+// 		const { email, password } = req.body
 
+// 		// Find user by email and include password field
+// 		const user = await User.findOne({ email }).select("+password")
+
+// 		if (!user) {
+// 			return res.status(401).json({ error: "Invalid credentials" })
+// 		}
+
+// 		// Validate password
+// 		const isPasswordCorrect = await bcrypt.compare(password, user.password)
+// 		if (!isPasswordCorrect) {
+// 			return res.status(401).json({ error: "Invalid   credentials" })
+// 		}
+
+// 		// Generate JWT token
+// 		const token = jwt.sign(
+// 			{ userId: user._id },
+// 			process.env.JWT_SECRE as string,
+// 			{
+// 				expiresIn: "1h",
+// 				// Set expiration time (e.g., 1 hour)
+// 			}
+// 		)
+// 		console.log("created token", token)
+// 		// Respond with token and limited user data
+// 		res.status(200).json({ token, user: { _id: user._id, email } })
+// 	} catch (error) {
+// 		const err = error as Error
+// 		console.error("Error logging in user:", err.message)
+// 		res.status(500).json({ error: "Internal server error" })
+// 	}
+// 	return undefined
+// }
 export const loginUser = async (req: Request, res: Response) => {
 	try {
 		const { email, password } = req.body
 
-		// Find user by email and include password field
 		const user = await User.findOne({ email }).select("+password")
 
 		if (!user) {
 			return res.status(401).json({ error: "Invalid credentials" })
 		}
 
-		// Validate password
 		const isPasswordCorrect = await bcrypt.compare(password, user.password)
 		if (!isPasswordCorrect) {
-			return res.status(401).json({ error: "Invalid   credentials" })
+			return res.status(401).json({ error: "Invalid credentials" })
 		}
 
-		// Generate JWT token
-		const token = jwt.sign(
-			{ userId: user._id },
-			process.env.JWT_SECRE as string,
-			{
-				expiresIn: "1h",
-				// Set expiration time (e.g., 1 hour)
-			}
-		)
-		// Respond with token and limited user data
-		res.status(200).json({ token, user: { _id: user._id, email } })
+		res
+			.status(200)
+			.json({ message: "Login successful", user: { _id: user._id, email } })
 	} catch (error) {
 		const err = error as Error
 		console.error("Error logging in user:", err.message)
-		res.status(500).json({ error: "Internal server error" }) // Avoid leaking details
+		res.status(500).json({ error: "Internal server error" })
 	}
-	return undefined
 }
 
 export const getAllUsers = async (_req: Request, res: Response) => {
