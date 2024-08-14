@@ -1,4 +1,4 @@
-import React, { useState, FC } from "react"
+import React, { useState } from "react"
 import axios from "axios"
 import {
 	View,
@@ -18,6 +18,7 @@ import { loginUser } from "../../api/auth"
 type RootStackParamList = {
 	Home: undefined
 	Login: undefined
+	Signup: undefined
 	// Add more routes here as needed
 }
 
@@ -34,7 +35,7 @@ type Props = {
 	route: LoginScreenRouteProp
 }
 
-const LoginScreen: FC<Props> = ({ navigation }) => {
+const LoginScreen: React.FC<Props> = ({ navigation }) => {
 	const [email, setEmail] = useState<FormInput>({ value: "", error: null })
 	const [password, setPassword] = useState<FormInput>({
 		value: "",
@@ -48,7 +49,7 @@ const LoginScreen: FC<Props> = ({ navigation }) => {
 
 		const result = await loginUser(email.value, password.value)
 		if (result.success) {
-			navigation.navigate("Home") // Navigate to the desired screen
+			navigation.navigate("Home")
 		} else {
 			setError(result.error || "An unexpected error occurred")
 		}
