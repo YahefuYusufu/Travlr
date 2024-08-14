@@ -1,46 +1,101 @@
-import React, { useState } from "react"
-import { View, Text, TextInput, Button } from "react-native"
+import React, { useState, FC } from "react"
+import axios from "axios"
+import {
+	View,
+	Text,
+	TextInput,
+	Button,
+	ActivityIndicator,
+	StyleSheet,
+} from "react-native"
+import { useNavigation } from "@react-navigation/native"
 import { FormInput } from "../../types/types"
+import { StackNavigationProp } from "@react-navigation/stack"
+import { RouteProp } from "@react-navigation/native"
+import { loginUser } from "../../api/auth"
 
-const LoginScreen = () => {
-	const [email, setEmail] = useState<FormInput>({ value: "", error: "" })
-	const [password, setPassword] = useState<FormInput>({ value: "", error: "" })
+// Define the types for your stack navigator
+type RootStackParamList = {
+	Home: undefined
+	Login: undefined
+	// Add more routes here as needed
+}
+
+// Define the props for the LoginScreen navigation
+type LoginScreenNavigationProp = StackNavigationProp<
+	RootStackParamList,
+	"Login"
+>
+
+type LoginScreenRouteProp = RouteProp<RootStackParamList, "Login">
+
+type Props = {
+	navigation: LoginScreenNavigationProp
+	route: LoginScreenRouteProp
+}
+
+const LoginScreen: FC<Props> = ({ navigation }) => {
+	const [email, setEmail] = useState<FormInput>({ value: "", error: null })
+	const [password, setPassword] = useState<FormInput>({
+		value: "",
+		error: null,
+	})
 	const [error, setError] = useState<string | null>(null)
+	const [loading, setLoading] = useState(false)
 
-	const handleLogin = () => {
-		// Basic input validation
-		if (!email.value || !password.value) {
-			setError("Please fill in all fields")
-			return
+	const handleLogin = async () => {
+		setLoading(true)
+
+		const result = await loginUser(email.value, password.value)
+		if (result.success) {
+			navigation.navigate("Home") // Navigate to the desired screen
+		} else {
+			setError(result.error || "An unexpected error occurred")
 		}
-
-		// Simulate login (replace with actual API call)
-		const user = { email: email.value, password: password.value }
-		console.log("Logging in with:", user)
-		setError(null) // Clear error message
+		setLoading(false)
 	}
 
 	return (
-		<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+		<View style={s.container}>
 			<TextInput
 				placeholder="Email"
 				value={email.value}
-				onChangeText={(text) => setEmail({ value: text, error: "" })}
-				style={{ width: "80%", borderWidth: 1, padding: 10, marginBottom: 10 }}
+				onChangeText={(text) => setEmail({ value: text, error: null })}
+				style={s.input}
 			/>
-			{email.error && <Text style={{ color: "red" }}>{email.error}</Text>}
+			{email.error && <Text style={s.errorText}>{email.error}</Text>}
 			<TextInput
 				placeholder="Password"
 				secureTextEntry
 				value={password.value}
-				onChangeText={(text) => setPassword({ value: text, error: "" })}
-				style={{ width: "80%", borderWidth: 1, padding: 10, marginBottom: 10 }}
+				onChangeText={(text) => setPassword({ value: text, error: null })}
+				style={s.input}
 			/>
-			{password.error && <Text style={{ color: "red" }}>{password.error}</Text>}
-			{error && <Text style={{ color: "red" }}>{error}</Text>}
-			<Button title="Login" onPress={handleLogin} />
+			{password.error && <Text style={s.errorText}>{password.error}</Text>}
+			{error && <Text style={s.errorText}>{error}</Text>}
+			{loading && <ActivityIndicator size="large" color="#0000ff" />}
+
+			<Button title="Login" onPress={handleLogin} disabled={loading} />
 		</View>
 	)
 }
 
 export default LoginScreen
+
+const s = StyleSheet.create({
+	container: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	input: {
+		width: "80%",
+		borderWidth: 1,
+		padding: 10,
+		marginBottom: 10,
+	},
+	errorText: {
+		color: "red",
+		marginBottom: 10,
+	},
+})
