@@ -8,32 +8,13 @@ import {
 	ActivityIndicator,
 	StyleSheet,
 } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+
 import { FormInput } from "../../types/types"
-import { StackNavigationProp } from "@react-navigation/stack"
-import { RouteProp } from "@react-navigation/native"
+import { StackScreenProps } from "@react-navigation/stack"
 import { loginUser } from "../../api/auth"
+import { RootStackParamList } from "../../types/types"
 
-// Define the types for your stack navigator
-type RootStackParamList = {
-	Home: undefined
-	Login: undefined
-	Signup: undefined
-	// Add more routes here as needed
-}
-
-// Define the props for the LoginScreen navigation
-type LoginScreenNavigationProp = StackNavigationProp<
-	RootStackParamList,
-	"Login"
->
-
-type LoginScreenRouteProp = RouteProp<RootStackParamList, "Login">
-
-type Props = {
-	navigation: LoginScreenNavigationProp
-	route: LoginScreenRouteProp
-}
+type Props = StackScreenProps<RootStackParamList, "Login">
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
 	const [email, setEmail] = useState<FormInput>({ value: "", error: null })
