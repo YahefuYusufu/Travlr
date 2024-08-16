@@ -2,6 +2,7 @@ import express from "express"
 import {
 	registerUser,
 	loginUser,
+	logout,
 	createUserProfile,
 	getUserProfileById,
 	getAllUsers,
@@ -21,6 +22,7 @@ router.get("/protected-route", (req, res) => {
 
 router.post("/register", registerUser)
 router.post("/login", loginUser)
+router.post("/logout", logout)
 router.get("/", getAllUsers)
 router.post("/:userId/profile", createUserProfile)
 router.get("/:userId/profile", getUserProfileById)
