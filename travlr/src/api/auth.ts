@@ -31,3 +31,14 @@ export const loginUser = async (
 		return { success: false, error: "An unexpected error occurred" }
 	}
 }
+
+export const logoutUser = async () => {
+	try {
+		const response = await axios.post(`${API_URL}/users/logout`)
+		// Handle successful logout, clear token, etc.
+		return response.data
+	} catch (error) {
+		console.error("Logout error:", error)
+		throw error // Re-throw the error for handling in the calling component
+	}
+}

@@ -1,4 +1,4 @@
-import React, { useState, FC } from "react"
+import React, { useEffect, useState } from "react"
 import axios from "axios"
 import {
 	View,
@@ -10,31 +10,13 @@ import {
 } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { FormInput } from "../../types/types"
-import { StackNavigationProp } from "@react-navigation/stack"
-import { RouteProp } from "@react-navigation/native"
+import { StackScreenProps } from "@react-navigation/stack"
 import { loginUser } from "../../api/auth"
+import { RootStackParamList } from "../../types/types"
 
-// Define the types for your stack navigator
-type RootStackParamList = {
-	Home: undefined
-	Login: undefined
-	// Add more routes here as needed
-}
+type Props = StackScreenProps<RootStackParamList, "Login">
 
-// Define the props for the LoginScreen navigation
-type LoginScreenNavigationProp = StackNavigationProp<
-	RootStackParamList,
-	"Login"
->
-
-type LoginScreenRouteProp = RouteProp<RootStackParamList, "Login">
-
-type Props = {
-	navigation: LoginScreenNavigationProp
-	route: LoginScreenRouteProp
-}
-
-const LoginScreen: FC<Props> = ({ navigation }) => {
+const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
 	const [email, setEmail] = useState<FormInput>({ value: "", error: null })
 	const [password, setPassword] = useState<FormInput>({
 		value: "",
@@ -48,12 +30,18 @@ const LoginScreen: FC<Props> = ({ navigation }) => {
 
 		const result = await loginUser(email.value, password.value)
 		if (result.success) {
-			navigation.navigate("Home") // Navigate to the desired screen
+			navigation.navigate("Home")
 		} else {
 			setError(result.error || "An unexpected error occurred")
 		}
 		setLoading(false)
 	}
+
+	// useEffect(()=>{
+	// 	if(route.params?.clearInputs) {
+
+	// 	}
+	// },[])
 
 	return (
 		<View style={s.container}>
@@ -75,7 +63,14 @@ const LoginScreen: FC<Props> = ({ navigation }) => {
 			{error && <Text style={s.errorText}>{error}</Text>}
 			{loading && <ActivityIndicator size="large" color="#0000ff" />}
 
-			<Button title="Login" onPress={handleLogin} disabled={loading} />
+			<View style={s.buttons}>
+				<Button title="Login" onPress={handleLogin} disabled={loading} />
+				<Button
+					title="Singup"
+					onPress={() => navigation.navigate("Signup")}
+					disabled={loading}
+				/>
+			</View>
 		</View>
 	)
 }
@@ -97,5 +92,8 @@ const s = StyleSheet.create({
 	errorText: {
 		color: "red",
 		marginBottom: 10,
+	},
+	buttons: {
+		flexDirection: "row",
 	},
 })

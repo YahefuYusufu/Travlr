@@ -6,3 +6,9 @@ export interface LoginCredentials {
 	email: string
 	password: string
 }
+
+export type RootStackParamList = {
+	Login: undefined
+	Home: undefined
+	Signup: undefined
+}
