@@ -1,7 +1,11 @@
-import React, { useState } from "react"
+import { StackScreenProps } from "@react-navigation/stack"
+import React, { FC, useState } from "react"
 import { View, Text, TextInput, Button } from "react-native"
+import { RootStackParamList } from "../../types/types"
 
-const SignupScreen = () => {
+type Props = StackScreenProps<RootStackParamList, "Signup">
+
+const SignupScreen: FC<Props> = ({ navigation }) => {
 	const [name, setName] = useState("")
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")

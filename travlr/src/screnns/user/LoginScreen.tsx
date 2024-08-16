@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import axios from "axios"
 import {
 	View,
@@ -8,7 +8,7 @@ import {
 	ActivityIndicator,
 	StyleSheet,
 } from "react-native"
-
+import { useNavigation } from "@react-navigation/native"
 import { FormInput } from "../../types/types"
 import { StackScreenProps } from "@react-navigation/stack"
 import { loginUser } from "../../api/auth"
@@ -16,7 +16,7 @@ import { RootStackParamList } from "../../types/types"
 
 type Props = StackScreenProps<RootStackParamList, "Login">
 
-const LoginScreen: React.FC<Props> = ({ navigation }) => {
+const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
 	const [email, setEmail] = useState<FormInput>({ value: "", error: null })
 	const [password, setPassword] = useState<FormInput>({
 		value: "",
@@ -36,6 +36,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 		}
 		setLoading(false)
 	}
+
+	// useEffect(()=>{
+	// 	if(route.params?.clearInputs) {
+
+	// 	}
+	// },[])
 
 	return (
 		<View style={s.container}>
@@ -57,7 +63,14 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 			{error && <Text style={s.errorText}>{error}</Text>}
 			{loading && <ActivityIndicator size="large" color="#0000ff" />}
 
-			<Button title="Login" onPress={handleLogin} disabled={loading} />
+			<View style={s.buttons}>
+				<Button title="Login" onPress={handleLogin} disabled={loading} />
+				<Button
+					title="Singup"
+					onPress={() => navigation.navigate("Signup")}
+					disabled={loading}
+				/>
+			</View>
 		</View>
 	)
 }
@@ -79,5 +92,8 @@ const s = StyleSheet.create({
 	errorText: {
 		color: "red",
 		marginBottom: 10,
+	},
+	buttons: {
+		flexDirection: "row",
 	},
 })
