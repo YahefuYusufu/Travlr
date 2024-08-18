@@ -5,6 +5,7 @@ import Profile from "../models/profile"
 import bcrypt from "bcryptjs"
 import { DuplicateEmailError } from "../utils/DuplicateEmailError"
 import jwt from "jsonwebtoken"
+import Tour from "../models/tour"
 require("dotenv").config()
 
 export const registerUser = async (
@@ -174,6 +175,33 @@ export const getUserProfileById = async (req: Request, res: Response) => {
 		res.status(500).json({ error: err.message })
 	}
 	return undefined
+}
+
+export const deleteUser = async (req: Request, res: Response) => {
+	try {
+		const userId = req.params.userId
+
+		const user = await User.findByIdAndDelete(userId).populate("profile")
+
+		if (!user) {
+			return res.status(404).json({ error: "User not found" })
+		}
+
+		// Check if a profile is associated with the user
+		if (user.profile) {
+			await Profile.findByIdAndDelete(user.profile._id) // Delete the profile
+		}
+
+		// Delete related tours (assuming a Tour model exists)
+		await Tour.deleteMany({ creator: userId })
+
+		res
+			.status(204)
+			.json({ message: "User and associated data deleted successfully" })
+	} catch (error) {
+		const err = error as Error
+		res.status(500).json({ error: err.message })
+	}
 }
 
 export const updateUserProfile = async (req: Request, res: Response) => {
