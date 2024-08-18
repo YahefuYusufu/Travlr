@@ -37,12 +37,6 @@ const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
 		setLoading(false)
 	}
 
-	// useEffect(()=>{
-	// 	if(route.params?.clearInputs) {
-
-	// 	}
-	// },[])
-
 	return (
 		<View style={s.container}>
 			<TextInput
