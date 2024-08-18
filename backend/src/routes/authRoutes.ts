@@ -7,6 +7,7 @@ import {
 	getUserProfileById,
 	getAllUsers,
 	updateUserProfile,
+	deleteUser,
 } from "../controllers/authController"
 import { authenticateToken } from "../middleware/authMiddleware"
 import { Request, Response } from "express"
@@ -27,5 +28,6 @@ router.get("/", getAllUsers)
 router.post("/:userId/profile", createUserProfile)
 router.get("/:userId/profile", getUserProfileById)
 router.put("/:userId/profile", updateUserProfile)
+router.delete("/:userId", deleteUser)
 
 export default router

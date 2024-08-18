@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
 		type: Date,
 		default: Date.now,
 	},
+	profile: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Profile", // Reference to the Profile model
+	},
 })
 
 userSchema.pre("save", async function (next) {
