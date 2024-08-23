@@ -32,13 +32,30 @@ export const loginUser = async (
 	}
 }
 
-export const logoutUser = async () => {
+export const logoutUser = async (): Promise<void> => {
 	try {
-		const response = await axios.post(`${API_URL}/users/logout`)
-		// Handle successful logout, clear token, etc.
-		return response.data
+		const response = await axios.post(
+			`${API_URL}/logout`,
+			{},
+			{
+				// withCredentials: true, // Only if you use cookies or sessions
+			}
+		)
+
+		if (response.status === 200) {
+			console.log("Logout successful!")
+		} else {
+			throw new Error(`Logout failed with status: ${response.status}`)
+		}
 	} catch (error) {
-		console.error("Logout error:", error)
-		throw error // Re-throw the error for handling in the calling component
+		if (axios.isAxiosError(error)) {
+			console.error(
+				"Axios error during logout:",
+				error.response?.data || error.message
+			)
+		} else {
+			console.error("Error during logout:", error)
+		}
+		throw error
 	}
 }

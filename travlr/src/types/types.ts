@@ -11,4 +11,7 @@ export type RootStackParamList = {
 	Login: undefined
 	Home: undefined
 	Signup: undefined
+	Favorites: undefined
+	Profile: undefined
+	HomeTabs: undefined
 }
