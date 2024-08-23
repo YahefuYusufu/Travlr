@@ -105,8 +105,6 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
 	try {
-		// Logout logic goes here (e.g., invalidate tokens, clear session data)
-
 		res.status(200).json({ message: "Logged out successfully" })
 	} catch (error) {
 		const err = error as Error
