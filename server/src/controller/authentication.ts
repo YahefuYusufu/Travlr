@@ -62,6 +62,8 @@ export const login = async (req: express.Request, res: express.Response) => {
 		res.cookie(process.env.COOKIE_PRG, user.authentication.sessionToken, {
 			domain: "localhost",
 			path: "/",
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
 		})
 		return res.status(200).json(user).end()
 	} catch (error) {
