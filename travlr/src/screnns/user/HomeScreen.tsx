@@ -12,7 +12,7 @@ import { RootStackParamList } from "../../types/types"
 
 type Props = StackScreenProps<RootStackParamList, "HomeTabs">
 
-const HomeScreen: FC<Props> = ({ navigation }) => {
+const HomeScreen: FC<Props> = ({ navigation, route }) => {
 	return (
 		<SafeAreaView style={s.container}>
 			<Text>HomeScreen</Text>
@@ -25,11 +25,7 @@ const s = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-	},
-	buttonContainer: {
-		position: "absolute",
-		top: 40,
-		right: 40,
+		backgroundColor: "white",
 	},
 })
 
