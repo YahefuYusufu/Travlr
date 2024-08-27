@@ -8,7 +8,18 @@ export interface LoginCredentials {
 	email: string
 	password: string
 }
+
+export interface ProfileDataProps {
+	firstName: string
+	lastName: string
+	picture: string
+}
+
 export interface CreateUserResponse {
+	user?: {
+		_id: string
+		email: string
+	}
 	success: boolean
 	error?: string
 }
@@ -24,8 +35,11 @@ export type RootStackParamList = {
 	Home: undefined
 	Signup: undefined
 	Favorites: undefined
-	Profile: undefined
+	Profile: { userId: string }
 	HomeTabs: undefined
+}
+export type ProfileScreenRouteParams = {
+	userId: string
 }
 
 export interface LogoutButtonProps {

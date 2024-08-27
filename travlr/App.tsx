@@ -9,6 +9,7 @@ import LoginScreen from "./src/screnns/user/LoginScreen"
 import SignupScreen from "./src/screnns/user/SignupScreen"
 import { RootStackParamList } from "./src/types/types"
 import HomeTabs from "./src/screnns/user/tabScreen/HomeTabs"
+import ProfileScreen from "./src/screnns/user/ProfileScreen"
 
 const Stack = createStackNavigator<RootStackParamList>()
 
@@ -50,6 +51,7 @@ export default function App() {
 							headerLeft: undefined,
 						}}
 					/>
+					<Stack.Screen name="Profile" component={ProfileScreen} />
 				</Stack.Navigator>
 			</NavigationContainer>
 		</View>

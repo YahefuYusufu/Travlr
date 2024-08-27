@@ -4,7 +4,6 @@ import Profile from "../models/profile"
 // import Tour from "../models/tour"
 import bcrypt from "bcryptjs"
 import { DuplicateEmailError } from "../utils/DuplicateEmailError"
-import jwt from "jsonwebtoken"
 import Tour from "../models/tour"
 require("dotenv").config()
 
@@ -32,15 +31,31 @@ export const registerUser = async (
 
 		const savedUser = await user.save()
 
-		res
-			.status(201)
-			.json({ message: "User registered successfully", user: savedUser })
+		// Initialize an empty profile directly
+		// const profile = new Profile({
+		// 	user: savedUser._id,
+		// 	firstName: "",
+		// 	lastName: "",
+		// 	picture: "",
+		// })
+
+		// await profile.save()
+
+		res.status(201).json({
+			message: "User registered successfully",
+			success: true,
+			user: {
+				_id: savedUser._id,
+				email: savedUser.email,
+			},
+		})
 	} catch (error) {
 		const err = error as Error
 		res.status(400).json({ error: err.message })
 		next(error)
 	}
 }
+
 //token based
 // export const loginUser = async (req: Request, res: Response) => {
 // 	try {
@@ -202,33 +217,45 @@ export const deleteUser = async (req: Request, res: Response) => {
 	}
 }
 
-export const updateUserProfile = async (req: Request, res: Response) => {
+export const updateUserProfile = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
-		const userId = req.params.userId
+		const { userId } = req.params
 		const { firstName, lastName, picture } = req.body
 
+		// Validate input
+		if (!firstName || !lastName) {
+			return res
+				.status(400)
+				.json({ error: "First Name and Last Name are required" })
+		}
+
+		// Find user and update profile
 		const user = await User.findById(userId)
 		if (!user) {
 			return res.status(404).json({ error: "User not found" })
 		}
 
-		const profile = await Profile.findOne({ user: userId })
+		let profile = await Profile.findOne({ user: userId })
 		if (!profile) {
-			return res.status(404).json({ error: "Profile not found" })
+			profile = new Profile({ user: userId, firstName, lastName, picture })
+		} else {
+			profile.firstName = firstName
+			profile.lastName = lastName
+			profile.picture = picture
 		}
-
-		profile.firstName = firstName || profile.firstName
-		profile.lastName = lastName || profile.lastName
-		profile.picture = picture || profile.picture
 
 		await profile.save()
 
-		res.status(200).json({ message: "Profile updated successfully" })
+		res.status(200).json({ message: "Profile updated successfully", profile })
 	} catch (error) {
 		const err = error as Error
 		res.status(400).json({ error: err.message })
+		next(error)
 	}
-	return undefined
 }
 
 // export const deleteUser = async (req: Request, res: Response) => {
