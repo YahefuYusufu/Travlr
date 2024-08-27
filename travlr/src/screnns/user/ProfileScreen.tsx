@@ -1,13 +1,67 @@
-import React, { FC, useCallback } from "react"
-import { Alert, StyleSheet, Text, View } from "react-native"
+import React, { FC, useCallback, useState } from "react"
+import {
+	ActivityIndicator,
+	Alert,
+	Button,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+} from "react-native"
 import { RootStackParamList } from "../../types/types"
-import { StackScreenProps } from "@react-navigation/stack"
-import { logoutUser } from "../../api/auth"
+
+import { logoutUser, updateUserProfile } from "../../api/auth"
 import LogoutButton from "../../components/buttons/LogoutButton"
+import { useRoute, RouteProp } from "@react-navigation/native"
 
-type Props = StackScreenProps<RootStackParamList, "Profile">
+import { StackNavigationProp } from "@react-navigation/stack"
 
-const ProfileScreen: FC<Props> = ({ navigation }) => {
+type ProfileScreenRouteProp = RouteProp<RootStackParamList, "Profile">
+type ProfileScreenNavigationProp = StackNavigationProp<
+	RootStackParamList,
+	"Profile"
+>
+
+interface ProfileScreenProps {
+	route: ProfileScreenRouteProp
+	navigation: ProfileScreenNavigationProp
+}
+
+const ProfileScreen: FC<ProfileScreenProps> = ({ navigation }) => {
+	const route = useRoute()
+	const { userId } = route.params as { userId: string }
+	const [firstName, setFirstName] = useState<string>("")
+	const [lastName, setLastName] = useState<string>("")
+	const [picture, setPicture] = useState<string>("")
+	const [loading, setLoading] = useState<boolean>(false)
+	const [error, setError] = useState<string | null>(null)
+
+	const handleUpdateProfile = useCallback(async () => {
+		setLoading(true)
+		setError(null)
+
+		try {
+			const result = await updateUserProfile(userId, {
+				firstName,
+				lastName,
+				picture,
+			})
+
+			if (result.success) {
+				Alert.alert("Success", "Profile updated successfully")
+				navigation.navigate("Home") // Navigate to Home screen or another appropriate screen
+			} else {
+				throw new Error(result.error || "An unexpected error occurred")
+			}
+		} catch (err) {
+			const errorMessage =
+				err instanceof Error ? err.message : "An unexpected error occurred"
+			setError(errorMessage)
+		} finally {
+			setLoading(false)
+		}
+	}, [firstName, lastName, picture, userId, navigation])
+
 	const handleLogout = useCallback(async () => {
 		try {
 			await logoutUser()
@@ -16,10 +70,34 @@ const ProfileScreen: FC<Props> = ({ navigation }) => {
 			console.error("Logout error:", error)
 			Alert.alert("Logout failed", "An error occurred while logging out.")
 		}
-	}, [])
+	}, [navigation])
 	return (
 		<View style={s.container}>
-			<Text>Profile screen</Text>
+			<Text style={s.title}>Complete Your Profile</Text>
+			<TextInput
+				placeholder="First Name"
+				value={firstName}
+				onChangeText={setFirstName}
+				style={s.input}
+			/>
+			<TextInput
+				placeholder="Last Name"
+				value={lastName}
+				onChangeText={setLastName}
+				style={s.input}
+			/>
+			<TextInput
+				placeholder="Profile Picture URL"
+				value={picture}
+				onChangeText={setPicture}
+				style={s.input}
+			/>
+			{error && <Text style={s.errorText}>{error}</Text>}
+			{loading ? (
+				<ActivityIndicator size="large" color="#0000ff" />
+			) : (
+				<Button title="Save Profile" onPress={handleUpdateProfile} />
+			)}
 			<View style={s.buttonContainer}>
 				<LogoutButton handleLogout={handleLogout} />
 			</View>
@@ -32,6 +110,25 @@ const s = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+		padding: 20,
+		backgroundColor: "#fff",
+	},
+	title: {
+		fontSize: 24,
+		marginBottom: 20,
+	},
+	input: {
+		width: "100%",
+		padding: 10,
+		borderWidth: 1,
+		borderColor: "#ccc",
+		borderRadius: 5,
+		marginBottom: 15,
+		backgroundColor: "#fff",
+	},
+	errorText: {
+		color: "red",
+		marginBottom: 15,
 	},
 	buttonContainer: {
 		position: "absolute",

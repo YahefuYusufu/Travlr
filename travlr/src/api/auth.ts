@@ -1,6 +1,10 @@
 import axios from "axios"
 import { API_URL } from "@env"
-import { CreateUserParams, CreateUserResponse } from "../types/types"
+import {
+	CreateUserParams,
+	CreateUserResponse,
+	ProfileDataProps,
+} from "../types/types"
 
 interface MyCustomError {
 	message: string
@@ -29,7 +33,10 @@ export const loginUser = async (
 		}
 	} catch (error) {
 		console.error("Login error:", error)
-		return { success: false, error: "An unexpected error occurred" }
+		return {
+			success: false,
+			error: "An unexpected error occurred at loginUser",
+		}
 	}
 }
 
@@ -70,11 +77,13 @@ export const createUser = async (
 	data: CreateUserParams
 ): Promise<CreateUserResponse> => {
 	try {
-		// Replace with your API endpoint
 		const response = await axios.post(`${API_URL}/users/register`, data)
 
-		if (response.data.success) {
-			return { success: true }
+		if (response.status === 201) {
+			return {
+				success: true,
+				user: response.data.user, // Ensure user field is included on success
+			}
 		} else {
 			return {
 				success: false,
@@ -97,7 +106,56 @@ export const createUser = async (
 			}
 		} else {
 			// Handle unknown errors
-			return { success: false, error: "An unexpected error occurred" }
+			return {
+				success: false,
+				error: "An unexpected error occurred",
+			}
+		}
+	}
+}
+
+export const updateUserProfile = async (
+	userId: string,
+	profileData: ProfileDataProps
+) => {
+	try {
+		const response = await axios.put(
+			`${API_URL}/users/profile/${userId}`,
+			profileData
+		)
+
+		if (response.status === 200) {
+			return { success: true, data: response.data }
+		} else {
+			return {
+				success: false,
+				error: `Unexpected response status: ${response.status}`,
+			}
+		}
+	} catch (error) {
+		// Log the error for debugging
+		console.error("Error during updateUserProfile:", error)
+		if (axios.isAxiosError(error)) {
+			// If it's an Axios error, handle accordingly
+			return {
+				success: false,
+				error:
+					error.response?.data?.error ||
+					"An unexpected error occurred in updateUserProfile",
+			}
+		} else if (error instanceof Error) {
+			// Handle generic JavaScript errors
+			return {
+				success: false,
+				error:
+					error.message || "An unexpected error occurred in updateUserProfile",
+			}
+		} else {
+			// Fallback for unknown error types
+			return {
+				success: false,
+				error: "An unexpected error occurred in updateUserProfile",
+			}
 		}
 	}
 }

@@ -25,19 +25,31 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
 		setLoading(true)
 		setError(null)
 
-		const result = await createUser({ name, email, password })
-		if (result.success) {
-			navigation.navigate("Login") // Navigate to Login on success
-		} else {
-			result.error || "An unexpected register error occurred in SignUpScreen"
+		try {
+			const result = await createUser({ name, email, password })
+
+			if (result.success) {
+				if (result.user) {
+					navigation.navigate("Profile", {
+						userId: result.user._id, // Navigate to Profile screen with userId
+					})
+				} else {
+					setError("User data is missing in the response.")
+				}
+			} else {
+				setError(result.error || "An unexpected error occurred during signup.")
+			}
+		} catch (err) {
+			setError("An error occurred. Please try again.")
+		} finally {
+			setLoading(false)
 		}
-		setLoading(false)
 	}
 
 	return (
 		<View style={styles.container}>
 			<View style={styles.innerContainer}>
-				<Text style={styles.title}>Login</Text>
+				<Text style={styles.title}>Sign Up </Text>
 
 				<TextInput
 					placeholder="Name"
