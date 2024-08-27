@@ -3,17 +3,15 @@ import {
 	registerUser,
 	loginUser,
 	logout,
-	createUserProfile,
 	getUserProfileById,
 	getAllUsers,
 	updateUserProfile,
 	deleteUser,
 } from "../controllers/authController"
 import { authenticateToken } from "../middleware/authMiddleware"
-import { Request, Response } from "express"
+
 const router = express.Router()
 
-//Protected route
 // Optional: Protected route (without token-based authentication)
 router.get("/protected-route", (req, res) => {
 	// Implement basic authentication logic here (e.g., check for session)
@@ -21,13 +19,25 @@ router.get("/protected-route", (req, res) => {
 	res.json({ message: "Protected route accessed" })
 })
 
+// Register a new user
 router.post("/register", registerUser)
+
+// Log in an existing user
 router.post("/login", loginUser)
+
+// Log out the current user
 router.post("/logout", logout)
+
+// Get all users
 router.get("/", getAllUsers)
-router.post("/profile/:userId", createUserProfile)
+
+// Retrieve user profile by ID
 router.get("/profile/:userId", getUserProfileById)
-router.put("/profile/:userId", updateUserProfile)
+
+// Update user profile by ID
+router.put("/profile/:userId", updateUserProfile) // Use PUT for updating profile
+
+// Delete a user by ID
 router.delete("/:userId", deleteUser)
 
 export default router

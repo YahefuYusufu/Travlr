@@ -31,8 +31,19 @@ export const registerUser = async (
 
 		const savedUser = await user.save()
 
+		// Initialize an empty profile directly
+		// const profile = new Profile({
+		// 	user: savedUser._id,
+		// 	firstName: "",
+		// 	lastName: "",
+		// 	picture: "",
+		// })
+
+		// await profile.save()
+
 		res.status(201).json({
 			message: "User registered successfully",
+			success: true,
 			user: {
 				_id: savedUser._id,
 				email: savedUser.email,
@@ -44,6 +55,7 @@ export const registerUser = async (
 		next(error)
 	}
 }
+
 //token based
 // export const loginUser = async (req: Request, res: Response) => {
 // 	try {
