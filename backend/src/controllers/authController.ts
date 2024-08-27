@@ -4,7 +4,6 @@ import Profile from "../models/profile"
 // import Tour from "../models/tour"
 import bcrypt from "bcryptjs"
 import { DuplicateEmailError } from "../utils/DuplicateEmailError"
-import jwt from "jsonwebtoken"
 import Tour from "../models/tour"
 require("dotenv").config()
 
@@ -32,18 +31,13 @@ export const registerUser = async (
 
 		const savedUser = await user.save()
 
-		const profile = new Profile({
-			user: savedUser._id,
-			firstName: "",
-			lastName: "",
-			picture: "",
+		res.status(201).json({
+			message: "User registered successfully",
+			user: {
+				_id: savedUser._id,
+				email: savedUser.email,
+			},
 		})
-
-		await profile.save()
-
-		res
-			.status(201)
-			.json({ message: "User registered successfully", user: savedUser })
 	} catch (error) {
 		const err = error as Error
 		res.status(400).json({ error: err.message })
