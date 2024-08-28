@@ -34,10 +34,10 @@ export interface ApiResponse {
 
 export type RootStackParamList = {
 	Login: undefined
-	Home: undefined
+	Home: { userId: string }
 	Signup: undefined
 	Favorites: undefined
-	Profile: undefined
+	Profile: { userId: string }
 	Tabs: { userId: string }
 }
 export type ProfileScreenRouteParams = {

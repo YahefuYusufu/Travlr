@@ -9,12 +9,14 @@ import {
 } from "react-native"
 import { StackScreenProps } from "@react-navigation/stack"
 import { RootStackParamList } from "../../types/types"
+import { RouteProp, useRoute } from "@react-navigation/native"
 
-type HomeScreenProps = StackScreenProps<RootStackParamList, "Home"> & {
-	userId?: string
-}
-const HomeScreen: FC<HomeScreenProps> = ({ route }) => {
-	const { userId } = route.params
+type HomeScreenRouteProp = RouteProp<RootStackParamList, "Home">
+
+const HomeScreen: FC = () => {
+	const route = useRoute<HomeScreenRouteProp>()
+
+	const { userId } = route.params || {}
 	return (
 		<SafeAreaView style={s.container}>
 			<Text>HomeScreen</Text>

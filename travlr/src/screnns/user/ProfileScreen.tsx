@@ -8,11 +8,11 @@ import {
 	TextInput,
 	View,
 } from "react-native"
+import { RouteProp, useRoute, useNavigation } from "@react-navigation/native"
+import { StackNavigationProp } from "@react-navigation/stack"
 import { RootStackParamList } from "../../types/types"
 import { logoutUser, updateUserProfile } from "../../api/auth"
 import LogoutButton from "../../components/buttons/LogoutButton"
-import { RouteProp, useRoute, useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from "@react-navigation/stack"
 
 // Define route and navigation props
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, "Profile">
@@ -38,7 +38,7 @@ const ProfileScreen: FC = () => {
 		console.log("ProfileScreen loaded, userId:", userId)
 
 		if (!userId) {
-			setError("User ID is Missing. Please log in again.")
+			setError("User ID is missing. Please log in again.")
 		}
 	}, [userId])
 
@@ -86,8 +86,8 @@ const ProfileScreen: FC = () => {
 	// Safeguard in case `userId` is undefined
 	if (!userId) {
 		return (
-			<View style={s.container}>
-				<Text style={s.errorText}>
+			<View style={styles.container}>
+				<Text style={styles.errorText}>
 					User ID is missing. Please log in again.
 				</Text>
 			</View>
@@ -95,40 +95,40 @@ const ProfileScreen: FC = () => {
 	}
 
 	return (
-		<View style={s.container}>
-			<Text style={s.title}>Complete Your Profile</Text>
+		<View style={styles.container}>
+			<Text style={styles.title}>Complete Your Profile</Text>
 			<TextInput
 				placeholder="First Name"
 				value={firstName}
 				onChangeText={setFirstName}
-				style={s.input}
+				style={styles.input}
 			/>
 			<TextInput
 				placeholder="Last Name"
 				value={lastName}
 				onChangeText={setLastName}
-				style={s.input}
+				style={styles.input}
 			/>
 			<TextInput
 				placeholder="Profile Picture URL"
 				value={picture}
 				onChangeText={setPicture}
-				style={s.input}
+				style={styles.input}
 			/>
-			{error && <Text style={s.errorText}>{error}</Text>}
+			{error && <Text style={styles.errorText}>{error}</Text>}
 			{loading ? (
 				<ActivityIndicator size="large" color="#0000ff" />
 			) : (
 				<Button title="Save Profile" onPress={handleUpdateProfile} />
 			)}
-			<View style={s.buttonContainer}>
+			<View style={styles.buttonContainer}>
 				<LogoutButton handleLogout={handleLogout} />
 			</View>
 		</View>
 	)
 }
 
-const s = StyleSheet.create({
+const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		justifyContent: "center",
