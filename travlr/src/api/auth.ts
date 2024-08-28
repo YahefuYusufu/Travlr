@@ -2,8 +2,9 @@ import axios from "axios"
 import { API_URL } from "@env"
 import {
 	CreateUserParams,
-	CreateUserResponse,
+	ApiResponse,
 	ProfileDataProps,
+	LoginCredentials,
 } from "../types/types"
 
 interface MyCustomError {
@@ -11,10 +12,18 @@ interface MyCustomError {
 	// Other properties as needed
 }
 
+type AxiosError = {
+	response?: {
+		data?: {
+			error?: string
+		}
+	}
+}
+
 export const loginUser = async (
 	email: string,
 	password: string
-): Promise<{ success: boolean; error?: string }> => {
+): Promise<ApiResponse> => {
 	try {
 		const response = await axios.post(`${API_URL}/users/login`, {
 			email,
@@ -23,19 +32,34 @@ export const loginUser = async (
 
 		if (response.status === 200) {
 			console.log("Login successful!")
-			return { success: true }
+			return { success: true, user: response.data.user }
 		} else {
 			console.error("Login failed:", response.data)
 			return {
 				success: false,
-				error: "Login failed. Please check your credentials.",
+				error:
+					response.data.error || "Login failed. Please check your credentials.",
 			}
 		}
 	} catch (error) {
 		console.error("Login error:", error)
-		return {
-			success: false,
-			error: "An unexpected error occurred at loginUser",
+		if (axios.isAxiosError(error)) {
+			return {
+				success: false,
+				error:
+					error.response?.data?.error ||
+					"An unexpected error occurred at loginUser",
+			}
+		} else if (error instanceof Error) {
+			return {
+				success: false,
+				error: error.message || "An unexpected error occurred",
+			}
+		} else {
+			return {
+				success: false,
+				error: "An unexpected error occurred",
+			}
 		}
 	}
 }
@@ -75,9 +99,10 @@ export const logoutUser = async (): Promise<void> => {
 // Function to create a user
 export const createUser = async (
 	data: CreateUserParams
-): Promise<CreateUserResponse> => {
+): Promise<ApiResponse> => {
 	try {
 		const response = await axios.post(`${API_URL}/users/register`, data)
+		console.log(response.data)
 
 		if (response.status === 201) {
 			return {

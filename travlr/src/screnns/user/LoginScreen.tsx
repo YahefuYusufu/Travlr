@@ -32,10 +32,15 @@ const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
 
 		const result = await loginUser(email.value, password.value)
 		if (result.success) {
-			navigation.navigate("Home")
+			if (result.user && result.user._id) {
+				navigation.navigate("Tabs", { userId: result.user._id })
+			} else {
+				setError("User ID is missing in the response.")
+			}
 		} else {
 			setError(result.error || "An unexpected error occurred")
 		}
+
 		setLoading(false)
 	}
 

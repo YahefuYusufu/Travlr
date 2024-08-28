@@ -8,8 +8,9 @@ import { Ionicons } from "@expo/vector-icons"
 import LoginScreen from "./src/screnns/user/LoginScreen"
 import SignupScreen from "./src/screnns/user/SignupScreen"
 import { RootStackParamList } from "./src/types/types"
-import HomeTabs from "./src/screnns/user/tabScreen/HomeTabs"
+import Tabs from "./src/screnns/user/tabScreen/Tabs"
 import ProfileScreen from "./src/screnns/user/ProfileScreen"
+import HomeScreen from "./src/screnns/user/HomeScreen"
 
 const Stack = createStackNavigator<RootStackParamList>()
 
@@ -44,14 +45,18 @@ export default function App() {
 						}}
 					/>
 					<Stack.Screen
-						name="Home"
-						component={HomeTabs}
+						name="Tabs"
+						component={Tabs}
 						options={{
 							headerShown: false,
 							headerLeft: undefined,
 						}}
 					/>
-					<Stack.Screen name="Profile" component={ProfileScreen} />
+					<Stack.Screen
+						name="Profile"
+						component={ProfileScreen}
+						options={{ headerShown: false }}
+					/>
 				</Stack.Navigator>
 			</NavigationContainer>
 		</View>
