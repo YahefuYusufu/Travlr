@@ -29,9 +29,9 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
 			const result = await createUser({ name, email, password })
 
 			if (result.success) {
-				if (result.user) {
+				if (result.user && result.user._id) {
 					navigation.navigate("Profile", {
-						userId: result.user._id, // Navigate to Profile screen with userId
+						userId: result.user._id,
 					})
 				} else {
 					setError("User data is missing in the response.")

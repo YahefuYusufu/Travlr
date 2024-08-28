@@ -10,12 +10,19 @@ import {
 import { StackScreenProps } from "@react-navigation/stack"
 import { RootStackParamList } from "../../types/types"
 
-type Props = StackScreenProps<RootStackParamList, "HomeTabs">
-
-const HomeScreen: FC<Props> = ({ navigation, route }) => {
+type HomeScreenProps = StackScreenProps<RootStackParamList, "Home"> & {
+	userId?: string
+}
+const HomeScreen: FC<HomeScreenProps> = ({ route }) => {
+	const { userId } = route.params
 	return (
 		<SafeAreaView style={s.container}>
 			<Text>HomeScreen</Text>
+			{userId ? (
+				<Text>Welcome, User ID: {userId}</Text>
+			) : (
+				<Text>No User ID provided</Text>
+			)}
 		</SafeAreaView>
 	)
 }

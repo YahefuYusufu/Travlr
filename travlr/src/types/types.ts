@@ -15,19 +15,21 @@ export interface ProfileDataProps {
 	picture: string
 }
 
-export interface CreateUserResponse {
-	user?: {
-		_id: string
-		email: string
-	}
-	success: boolean
-	error?: string
-}
-
 export interface CreateUserParams {
 	name: string
 	email: string
 	password: string
+}
+
+export interface User {
+	_id: string // or userId depending on your API
+	email: string
+	// Add other user fields as needed
+}
+export interface ApiResponse {
+	success: boolean
+	user?: User // Optional if user data is returned
+	error?: string // Optional if there is an error
 }
 
 export type RootStackParamList = {
@@ -35,8 +37,8 @@ export type RootStackParamList = {
 	Home: undefined
 	Signup: undefined
 	Favorites: undefined
-	Profile: { userId: string }
-	HomeTabs: undefined
+	Profile: undefined
+	Tabs: { userId: string }
 }
 export type ProfileScreenRouteParams = {
 	userId: string
