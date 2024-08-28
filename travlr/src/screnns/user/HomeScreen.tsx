@@ -13,10 +13,12 @@ import { RouteProp, useRoute } from "@react-navigation/native"
 
 type HomeScreenRouteProp = RouteProp<RootStackParamList, "Home">
 
-const HomeScreen: FC = () => {
+type HomeScreenProps = {
+	userId: string
+}
+const HomeScreen: FC<HomeScreenProps> = ({ userId }) => {
 	const route = useRoute<HomeScreenRouteProp>()
 
-	const { userId } = route.params || {}
 	return (
 		<SafeAreaView style={s.container}>
 			<Text>HomeScreen</Text>

@@ -21,11 +21,13 @@ type ProfileScreenNavigationProp = StackNavigationProp<
 	"Profile"
 >
 
-const ProfileScreen: FC = () => {
+type HomeScreenProps = {
+	userId: string
+}
+
+const ProfileScreen: FC<HomeScreenProps> = ({ userId }) => {
 	const route = useRoute<ProfileScreenRouteProp>()
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
-
-	const { userId } = route.params || {} // Safeguard for route.params
 
 	const [firstName, setFirstName] = useState<string>("")
 	const [lastName, setLastName] = useState<string>("")

@@ -29,7 +29,7 @@ const Tabs: React.FC = () => {
 			}}>
 			<Tab.Screen
 				name="Home"
-				component={HomeScreen}
+				children={() => <HomeScreen userId={userId} />}
 				options={{
 					tabBarIcon: ({ focused }) => {
 						const animatedStyle = useAnimatedStyle(() => {
@@ -79,7 +79,7 @@ const Tabs: React.FC = () => {
 			/>
 			<Tab.Screen
 				name="Profile"
-				component={ProfileScreen}
+				children={() => <ProfileScreen userId={userId} />}
 				options={{
 					tabBarIcon: ({ focused }) => {
 						const animatedStyle = useAnimatedStyle(() => {
