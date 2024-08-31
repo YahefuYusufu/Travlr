@@ -17,7 +17,7 @@ const profileSchema = new mongoose.Schema({
 		trim: true,
 	},
 	picture: {
-		type: String, // Consider using a cloud storage solution for image storage
+		type: String, // URL or path to picture
 	},
 })
 

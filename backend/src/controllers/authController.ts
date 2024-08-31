@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express"
 import User from "../models/user"
-import Profile from "../models/profile"
-// import Tour from "../models/tour"
+
 import bcrypt from "bcryptjs"
 import { DuplicateEmailError } from "../utils/DuplicateEmailError"
 import Tour from "../models/tour"
+import Profile from "../models/profile"
+import { ProfileProps } from "../types/Profile"
 require("dotenv").config()
 
 export const registerUser = async (
@@ -128,6 +129,37 @@ export const logout = async (req: Request, res: Response) => {
 	}
 }
 
+export const getUserProfile = async (req: Request, res: Response) => {
+	try {
+		// Find the user by ID and populate the profile field
+		const user = await User.findById(req.params.id).populate("profile")
+
+		// Check if the user exists
+		if (!user) {
+			return res.status(404).json({ error: "User not found" })
+		}
+
+		// Extract the profile details if they exist
+		const profile = user.profile as ProfileProps | undefined
+
+		// Construct the user profile response
+		const userProfile = {
+			_id: user._id,
+			email: user.email,
+			firstName: profile?.firstName,
+			lastName: profile?.lastName,
+			picture: profile?.picture,
+		}
+
+		// Return the combined user and profile data
+		res.json({ user: userProfile })
+	} catch (error) {
+		console.error("Error fetching user profile:", error) // Log error for debugging
+		res.status(500).json({
+			error: "An unexpected error occurred while fetching the user profile",
+		})
+	}
+}
 export const getAllUsers = async (_req: Request, res: Response) => {
 	try {
 		const users = await User.find()
@@ -233,12 +265,13 @@ export const updateUserProfile = async (
 				.json({ error: "First Name and Last Name are required" })
 		}
 
-		// Find user and update profile
+		// Find the user
 		const user = await User.findById(userId)
 		if (!user) {
 			return res.status(404).json({ error: "User not found" })
 		}
 
+		// Find or create profile
 		let profile = await Profile.findOne({ user: userId })
 		if (!profile) {
 			profile = new Profile({ user: userId, firstName, lastName, picture })
@@ -248,12 +281,19 @@ export const updateUserProfile = async (
 			profile.picture = picture
 		}
 
+		// Save the profile
 		await profile.save()
 
+		// Respond with success
 		res.status(200).json({ message: "Profile updated successfully", profile })
 	} catch (error) {
-		const err = error as Error
-		res.status(400).json({ error: err.message })
+		// Handle errors
+		console.error("Error updating user profile:", error)
+		res
+			.status(500)
+			.json({
+				error: "An unexpected error occurred while updating the profile",
+			})
 		next(error)
 	}
 }

@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
 	password: {
 		type: String,
 		required: [true, "A user must have a password."],
-		select: false, // Exclude password from public responses
+		select: false,
 	},
 	createdAt: {
 		type: Date,
@@ -21,11 +21,6 @@ const userSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Profile", // Reference to the Profile model
 	},
-})
-
-userSchema.pre("save", async function (next) {
-	// Password hashing logic here
-	next()
 })
 
 const User = mongoose.model("User", userSchema)

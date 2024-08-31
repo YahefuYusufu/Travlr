@@ -1,4 +1,3 @@
-import { StackScreenProps } from "@react-navigation/stack"
 import React, { FC, useState } from "react"
 import {
 	View,
@@ -9,32 +8,46 @@ import {
 	TouchableOpacity,
 	ActivityIndicator,
 } from "react-native"
+import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 import { RootStackParamList } from "../../types/types"
-import { createUser } from "../../api/auth"
+import { signupUser } from "../../api/auth"
+import { ApiResponse, UserProfile } from "../../types/types"
+import { useUser } from "../../context/UserProvider"
+import { useNavigation } from "@react-navigation/native"
 
 type Props = StackScreenProps<RootStackParamList, "Signup">
+type ProfileScreenNavigationProp = StackNavigationProp<
+	RootStackParamList,
+	"Signup"
+>
 
-const SignupScreen: FC<Props> = ({ navigation }) => {
-	const [name, setName] = useState("")
+const SignupScreen: FC<Props> = () => {
+	const [firstName, setFirstName] = useState("")
+	const [lastName, setLastName] = useState("")
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
+	const navigation = useNavigation<ProfileScreenNavigationProp>()
+	const { setUserId, setUserData } = useUser()
 
 	const handleSignup = async () => {
 		setLoading(true)
 		setError(null)
 
 		try {
-			const result = await createUser({ name, email, password })
+			const result = await signupUser({ firstName, lastName, email, password })
 
 			if (result.success) {
-				if (result.user && result.user._id) {
-					navigation.navigate("Profile", {
-						userId: result.user._id,
-					})
+				const userId = result.data?._id
+				const userData = result.data
+
+				if (userId) {
+					setUserId(userId) // Set userId in context
+					setUserData(userData) // Set userData in context
+					navigation.navigate("Tabs", { userId })
 				} else {
-					setError("User data is missing in the response.")
+					setError("User ID is missing from the response.")
 				}
 			} else {
 				setError(result.error || "An unexpected error occurred during signup.")
@@ -49,12 +62,18 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.innerContainer}>
-				<Text style={styles.title}>Sign Up </Text>
+				<Text style={styles.title}>Sign Up</Text>
 
 				<TextInput
-					placeholder="Name"
-					value={name}
-					onChangeText={setName}
+					placeholder="First Name"
+					value={firstName}
+					onChangeText={setFirstName}
+					style={styles.input}
+				/>
+				<TextInput
+					placeholder="Last Name"
+					value={lastName}
+					onChangeText={setLastName}
 					style={styles.input}
 				/>
 				<TextInput
@@ -88,7 +107,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#fff", // Background color of the screen
+		backgroundColor: "#fff",
 		paddingHorizontal: 20,
 		bottom: 60,
 	},
@@ -97,12 +116,10 @@ const styles = StyleSheet.create({
 		padding: 20,
 		backgroundColor: "#fff",
 		borderRadius: 10,
-		// Shadow for iOS
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 10 },
 		shadowOpacity: 0.2,
 		shadowRadius: 20,
-		// Elevation for Android
 		elevation: 5,
 	},
 	title: {
@@ -120,7 +137,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		marginBottom: 15,
 		borderRadius: 5,
-		backgroundColor: "#fff", // Input background color
+		backgroundColor: "#fff",
 	},
 	button: {
 		backgroundColor: "#333",
@@ -128,8 +145,8 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		width: "100%",
 		alignItems: "center",
-		elevation: 3, // Shadow for Android
-		shadowColor: "#000", // Shadow for iOS
+		elevation: 3,
+		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 3 },
 		shadowOpacity: 0.2,
 		shadowRadius: 4,

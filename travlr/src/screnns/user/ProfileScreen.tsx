@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from "react"
+import React, { useState, useCallback, useEffect } from "react"
 import {
 	ActivityIndicator,
 	Alert,
@@ -7,42 +7,47 @@ import {
 	Text,
 	TextInput,
 	View,
+	Image,
 } from "react-native"
-import { RouteProp, useRoute, useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from "@react-navigation/stack"
-import { RootStackParamList } from "../../types/types"
-import { logoutUser, updateUserProfile } from "../../api/auth"
-import LogoutButton from "../../components/buttons/LogoutButton"
+import { useUser } from "../../context/UserProvider"
+import { updateUserProfile, fetchUserProfile } from "../../api/auth"
+import { UserProfile } from "../../types/types" // Import UserProfile type
 
-// Define route and navigation props
-type ProfileScreenRouteProp = RouteProp<RootStackParamList, "Profile">
-type ProfileScreenNavigationProp = StackNavigationProp<
-	RootStackParamList,
-	"Profile"
->
-
-type HomeScreenProps = {
-	userId: string
-}
-
-const ProfileScreen: FC<HomeScreenProps> = ({ userId }) => {
-	const route = useRoute<ProfileScreenRouteProp>()
-	const navigation = useNavigation<ProfileScreenNavigationProp>()
-
-	const [firstName, setFirstName] = useState<string>("")
-	const [lastName, setLastName] = useState<string>("")
-	const [picture, setPicture] = useState<string>("")
+const ProfileScreen: React.FC = () => {
+	const { userId, userData, setUserData } = useUser()
+	const [firstName, setFirstName] = useState<string>(userData?.firstName || "")
+	const [lastName, setLastName] = useState<string>(userData?.lastName || "")
+	const [picture, setPicture] = useState<string>(userData?.picture || "")
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
-		// Log userId for debugging
-		console.log("ProfileScreen loaded, userId:", userId)
-
-		if (!userId) {
-			setError("User ID is missing. Please log in again.")
+		const loadProfile = async () => {
+			if (userId) {
+				setLoading(true)
+				try {
+					const result = await fetchUserProfile(userId)
+					if (result.success) {
+						const profile = result.data as UserProfile
+						setFirstName(profile.firstName)
+						setLastName(profile.lastName)
+						setPicture(profile.picture || "")
+						setUserData(profile) // Update context with fetched data
+					} else {
+						throw new Error(result.error || "Failed to fetch profile")
+					}
+				} catch (err) {
+					setError(
+						err instanceof Error ? err.message : "An unexpected error occurred"
+					)
+				} finally {
+					setLoading(false)
+				}
+			}
 		}
-	}, [userId])
+
+		loadProfile()
+	}, [userId, setUserData])
 
 	const handleUpdateProfile = useCallback(async () => {
 		if (!userId) {
@@ -62,30 +67,19 @@ const ProfileScreen: FC<HomeScreenProps> = ({ userId }) => {
 
 			if (result.success) {
 				Alert.alert("Success", "Profile updated successfully")
-				navigation.navigate("Tabs", { userId }) // Ensure `userId` is passed
+				setUserData(result.data as UserProfile) // Update context with the updated data
 			} else {
 				throw new Error(result.error || "An unexpected error occurred")
 			}
 		} catch (err) {
-			const errorMessage =
+			setError(
 				err instanceof Error ? err.message : "An unexpected error occurred"
-			setError(errorMessage)
+			)
 		} finally {
 			setLoading(false)
 		}
-	}, [firstName, lastName, picture, userId, navigation])
+	}, [userId, firstName, lastName, picture, setUserData])
 
-	const handleLogout = useCallback(async () => {
-		try {
-			await logoutUser()
-			navigation.navigate("Login")
-		} catch (error) {
-			console.error("Logout error:", error)
-			Alert.alert("Logout failed", "An error occurred while logging out.")
-		}
-	}, [navigation])
-
-	// Safeguard in case `userId` is undefined
 	if (!userId) {
 		return (
 			<View style={styles.container}>
@@ -98,34 +92,36 @@ const ProfileScreen: FC<HomeScreenProps> = ({ userId }) => {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Complete Your Profile</Text>
-			<TextInput
-				placeholder="First Name"
-				value={firstName}
-				onChangeText={setFirstName}
-				style={styles.input}
-			/>
-			<TextInput
-				placeholder="Last Name"
-				value={lastName}
-				onChangeText={setLastName}
-				style={styles.input}
-			/>
-			<TextInput
-				placeholder="Profile Picture URL"
-				value={picture}
-				onChangeText={setPicture}
-				style={styles.input}
-			/>
-			{error && <Text style={styles.errorText}>{error}</Text>}
+			<Text style={styles.title}>Profile</Text>
 			{loading ? (
 				<ActivityIndicator size="large" color="#0000ff" />
 			) : (
-				<Button title="Save Profile" onPress={handleUpdateProfile} />
+				<>
+					<TextInput
+						placeholder="First Name"
+						value={firstName}
+						onChangeText={setFirstName}
+						style={styles.input}
+					/>
+					<TextInput
+						placeholder="Last Name"
+						value={lastName}
+						onChangeText={setLastName}
+						style={styles.input}
+					/>
+					<TextInput
+						placeholder="Profile Picture URL"
+						value={picture}
+						onChangeText={setPicture}
+						style={styles.input}
+					/>
+					{picture ? (
+						<Image source={{ uri: picture }} style={styles.picture} />
+					) : null}
+					{error && <Text style={styles.errorText}>{error}</Text>}
+					<Button title="Save Profile" onPress={handleUpdateProfile} />
+				</>
 			)}
-			<View style={styles.buttonContainer}>
-				<LogoutButton handleLogout={handleLogout} />
-			</View>
 		</View>
 	)
 }
@@ -144,21 +140,22 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		width: "100%",
-		padding: 10,
 		borderWidth: 1,
-		borderColor: "#ccc",
-		borderRadius: 5,
+		borderColor: "#ddd",
+		padding: 10,
 		marginBottom: 15,
+		borderRadius: 5,
 		backgroundColor: "#fff",
+	},
+	picture: {
+		width: 100,
+		height: 100,
+		borderRadius: 50,
+		marginVertical: 10,
 	},
 	errorText: {
 		color: "red",
 		marginBottom: 15,
-	},
-	buttonContainer: {
-		position: "absolute",
-		top: 40,
-		right: 40,
 	},
 })
 

@@ -12,10 +12,6 @@ import { useRoute } from "@react-navigation/native"
 const Tab = createBottomTabNavigator<RootStackParamList>()
 const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons)
 
-type HomeTabsProps = {
-	userId: string
-}
-
 const Tabs: React.FC = () => {
 	const route = useRoute()
 	const { userId } = route.params as { userId: string }
@@ -79,7 +75,7 @@ const Tabs: React.FC = () => {
 			/>
 			<Tab.Screen
 				name="Profile"
-				children={() => <ProfileScreen userId={userId} />}
+				children={() => <ProfileScreen />}
 				options={{
 					tabBarIcon: ({ focused }) => {
 						const animatedStyle = useAnimatedStyle(() => {
@@ -111,28 +107,28 @@ export default Tabs
 const s = StyleSheet.create({
 	tabBar: {
 		position: "absolute",
-		bottom: 20, // Distance from the bottom
-		left: 20, // Distance from the left
-		right: 20, // Distance from the right
-		height: 70, // Height of the TabBar
-		borderRadius: 35, // Rounded corners
-		backgroundColor: "#333", // Background color
-		elevation: 5, // Elevation for Android
-		shadowColor: "#000", // Shadow color for iOS
-		shadowOffset: { width: 0, height: 10 }, // Shadow offset for iOS
-		shadowOpacity: 0.12, // Shadow opacity for iOS
-		shadowRadius: 10, // Shadow radius for iOS
-		justifyContent: "center", // Center items vertically
-		alignItems: "center", // Center items horizontally
-		paddingBottom: 10, // Adjust space for labels
+		bottom: 20,
+		left: 20,
+		right: 20,
+		height: 70,
+		borderRadius: 35,
+		backgroundColor: "#333",
+		elevation: 5,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 10 },
+		shadowOpacity: 0.12,
+		shadowRadius: 10,
+		justifyContent: "center",
+		alignItems: "center",
+		paddingBottom: 10,
 	},
 	iconContainer: {
-		justifyContent: "center", // Center icons vertically
-		alignItems: "center", // Center icons horizontally
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	tabLabel: {
-		fontSize: 12, // Set font size
-		color: "white", // Set default color
+		fontSize: 12,
+		color: "white",
 		fontWeight: "600",
 	},
 })
