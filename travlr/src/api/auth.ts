@@ -154,7 +154,7 @@ export const fetchUserProfile = async (
 
 export const updateUserProfile = async (
 	userId: string,
-	profileData: Partial<UserProfile>
+	profileData: { firstName: string; lastName: string; picture?: string }
 ): Promise<ApiResponse<UserProfile>> => {
 	try {
 		const response = await axios.put(`${API_URL}/users/${userId}`, profileData)

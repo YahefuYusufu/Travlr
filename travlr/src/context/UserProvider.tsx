@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, ReactNode } from "react"
-import { User } from "../types/types"
+import { UserProfile } from "../types/types"
 
 interface UserContextType {
 	userId: string | null
-	userData: User | null
+	userData: UserProfile | null
 	setUserId: (id: string) => void
-	setUserData: (user: User | null) => void
+	setUserData: (user: UserProfile | null) => void
 }
 
 const UserContext = createContext<UserContextType>({
@@ -18,7 +18,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
 	const [userId, setUserId] = useState<string | null>(null)
-	const [userData, setUserData] = useState<User | null>(null)
+	const [userData, setUserData] = useState<UserProfile | null>(null)
 
 	return (
 		<UserContext.Provider value={{ userId, userData, setUserId, setUserData }}>
