@@ -12,10 +12,12 @@ import { StackScreenProps } from "@react-navigation/stack"
 import { RootStackParamList } from "../../types/types"
 import { signupUser } from "../../api/auth"
 import { ApiResponse, User } from "../../types/types"
+import { useUser } from "../../context/UserProvider"
 
 type Props = StackScreenProps<RootStackParamList, "Signup">
 
 const SignupScreen: FC<Props> = ({ navigation }) => {
+	const { setUserId } = useUser()
 	const [name, setName] = useState("")
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
@@ -33,6 +35,7 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
 				const userId = result.user?._id // Extract userId from response
 
 				if (userId) {
+					setUserId(userId)
 					navigation.navigate("Profile", { userId }) // Pass userId to Profile screen
 					console.log("USER ID from SignUp screen: ", userId)
 				} else {

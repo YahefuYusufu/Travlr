@@ -13,6 +13,7 @@ import { StackNavigationProp } from "@react-navigation/stack"
 import { RootStackParamList } from "../../types/types"
 import { logoutUser, updateUserProfile } from "../../api/auth"
 import LogoutButton from "../../components/buttons/LogoutButton"
+import { useUser } from "../../context/UserProvider"
 
 // Define route and navigation props
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, "Profile">
@@ -26,7 +27,8 @@ const ProfileScreen: React.FC = () => {
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
 
 	// Extract userId from route params
-	const userId = route.params?.userId
+	// const userId = route.params?.userId || null
+	const { userId } = useUser()
 
 	const [firstName, setFirstName] = useState<string>("")
 	const [lastName, setLastName] = useState<string>("")
