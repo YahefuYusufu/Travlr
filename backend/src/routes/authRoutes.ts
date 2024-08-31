@@ -7,6 +7,7 @@ import {
 	getAllUsers,
 	updateUserProfile,
 	deleteUser,
+	getUserProfile,
 } from "../controllers/authController"
 import { authenticateToken } from "../middleware/authMiddleware"
 
@@ -32,7 +33,10 @@ router.post("/logout", logout)
 router.get("/", getAllUsers)
 
 // Retrieve user profile by ID
-router.get("/profile/:userId", getUserProfileById)
+// router.get("/profile/:userId", getUserProfileById)
+
+// Retrieve user profile by ID
+router.get("/profile/:userId", getUserProfile) // Use getUserProfile here
 
 // Update user profile by ID
 router.put("/profile/:userId", updateUserProfile) // Use PUT for updating profile
