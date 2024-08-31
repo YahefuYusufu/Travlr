@@ -97,7 +97,7 @@ export const logoutUser = async (): Promise<void> => {
 // Define the response type for the API call
 
 // Function to create a user
-export const createUser = async (
+export const signupUser = async (
 	data: CreateUserParams
 ): Promise<ApiResponse> => {
 	try {
@@ -138,6 +138,56 @@ export const createUser = async (
 		}
 	}
 }
+
+// Define the parameters for creating a user
+
+// export const signupUser = async (
+// 	data: CreateUserParams
+// ): Promise<ApiResponse> => {
+// 	try {
+// 		const response = await axios.post(`${API_URL}/users/register`, data)
+// 		console.log(response.data)
+
+// 		// Check if the response status is 201 (Created)
+// 		if (response.status === 201) {
+// 			// Ensure user field is included in the successful response
+// 			return {
+// 				success: true,
+// 				user: {
+// 					_id: response.data.user.id, // Extract user id
+// 					name: response.data.user.name,
+// 					email: response.data.user.email,
+// 				},
+// 			}
+// 		} else {
+// 			// Handle cases where the response status is not as expected
+// 			return {
+// 				success: false,
+// 				error: response.data.error || "An unexpected error occurred",
+// 			}
+// 		}
+// 	} catch (error) {
+// 		// Handle axios-specific errors
+// 		if (axios.isAxiosError(error)) {
+// 			return {
+// 				success: false,
+// 				error: error.response?.data?.error || "A network error occurred",
+// 			}
+// 		} else if (error instanceof Error) {
+// 			// Handle other generic errors
+// 			return {
+// 				success: false,
+// 				error: error.message || "An unexpected error occurred",
+// 			}
+// 		} else {
+// 			// Handle unknown errors
+// 			return {
+// 				success: false,
+// 				error: "An unexpected error occurred",
+// 			}
+// 		}
+// 	}
+// }
 
 export const updateUserProfile = async (
 	userId: string,

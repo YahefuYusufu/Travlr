@@ -22,14 +22,15 @@ export interface CreateUserParams {
 }
 
 export interface User {
-	_id: string // or userId depending on your API
+	_id: string
 	email: string
+	name: string
 	// Add other user fields as needed
 }
 export interface ApiResponse {
 	success: boolean
-	user?: User // Optional if user data is returned
-	error?: string // Optional if there is an error
+	user?: User
+	error?: string
 }
 
 export type RootStackParamList = {

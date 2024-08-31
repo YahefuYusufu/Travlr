@@ -1,4 +1,3 @@
-import { StackScreenProps } from "@react-navigation/stack"
 import React, { FC, useState } from "react"
 import {
 	View,
@@ -9,8 +8,10 @@ import {
 	TouchableOpacity,
 	ActivityIndicator,
 } from "react-native"
+import { StackScreenProps } from "@react-navigation/stack"
 import { RootStackParamList } from "../../types/types"
-import { createUser } from "../../api/auth"
+import { signupUser } from "../../api/auth"
+import { ApiResponse, User } from "../../types/types"
 
 type Props = StackScreenProps<RootStackParamList, "Signup">
 
@@ -26,15 +27,16 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
 		setError(null)
 
 		try {
-			const result = await createUser({ name, email, password })
+			const result = await signupUser({ name, email, password })
 
 			if (result.success) {
-				if (result.user && result.user._id) {
-					navigation.navigate("Profile", {
-						userId: result.user._id,
-					})
+				const userId = result.user?._id // Extract userId from response
+
+				if (userId) {
+					navigation.navigate("Profile", { userId }) // Pass userId to Profile screen
+					console.log("USER ID from SignUp screen: ", userId)
 				} else {
-					setError("User data is missing in the response.")
+					setError("User ID is missing from the response.")
 				}
 			} else {
 				setError(result.error || "An unexpected error occurred during signup.")
@@ -49,7 +51,7 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.innerContainer}>
-				<Text style={styles.title}>Sign Up </Text>
+				<Text style={styles.title}>Sign Up</Text>
 
 				<TextInput
 					placeholder="Name"
@@ -88,7 +90,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#fff", // Background color of the screen
+		backgroundColor: "#fff",
 		paddingHorizontal: 20,
 		bottom: 60,
 	},
@@ -97,12 +99,10 @@ const styles = StyleSheet.create({
 		padding: 20,
 		backgroundColor: "#fff",
 		borderRadius: 10,
-		// Shadow for iOS
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 10 },
 		shadowOpacity: 0.2,
 		shadowRadius: 20,
-		// Elevation for Android
 		elevation: 5,
 	},
 	title: {
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		marginBottom: 15,
 		borderRadius: 5,
-		backgroundColor: "#fff", // Input background color
+		backgroundColor: "#fff",
 	},
 	button: {
 		backgroundColor: "#333",
@@ -128,8 +128,8 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		width: "100%",
 		alignItems: "center",
-		elevation: 3, // Shadow for Android
-		shadowColor: "#000", // Shadow for iOS
+		elevation: 3,
+		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 3 },
 		shadowOpacity: 0.2,
 		shadowRadius: 4,

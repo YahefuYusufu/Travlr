@@ -21,13 +21,12 @@ type ProfileScreenNavigationProp = StackNavigationProp<
 	"Profile"
 >
 
-type HomeScreenProps = {
-	userId: string
-}
-
-const ProfileScreen: FC<HomeScreenProps> = ({ userId }) => {
+const ProfileScreen: React.FC = () => {
 	const route = useRoute<ProfileScreenRouteProp>()
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
+
+	// Extract userId from route params
+	const userId = route.params?.userId
 
 	const [firstName, setFirstName] = useState<string>("")
 	const [lastName, setLastName] = useState<string>("")
@@ -46,7 +45,7 @@ const ProfileScreen: FC<HomeScreenProps> = ({ userId }) => {
 
 	const handleUpdateProfile = useCallback(async () => {
 		if (!userId) {
-			Alert.alert("Error", "User ID is missing.")
+			Alert.alert("Error", "User ID is missing at ProfileScreen")
 			return
 		}
 
@@ -144,21 +143,19 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		width: "100%",
-		padding: 10,
 		borderWidth: 1,
-		borderColor: "#ccc",
-		borderRadius: 5,
+		borderColor: "#ddd",
+		padding: 10,
 		marginBottom: 15,
+		borderRadius: 5,
 		backgroundColor: "#fff",
+	},
+	buttonContainer: {
+		marginTop: 20,
 	},
 	errorText: {
 		color: "red",
 		marginBottom: 15,
-	},
-	buttonContainer: {
-		position: "absolute",
-		top: 40,
-		right: 40,
 	},
 })
 
