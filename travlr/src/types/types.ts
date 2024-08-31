@@ -9,28 +9,25 @@ export interface LoginCredentials {
 	password: string
 }
 
-export interface ProfileDataProps {
+export interface CreateUserParams {
 	firstName: string
 	lastName: string
-	picture: string
-}
-
-export interface CreateUserParams {
-	name: string
 	email: string
 	password: string
 }
 
-export interface User {
+export interface UserProfile {
 	_id: string
 	email: string
-	name: string
-	// Add other user fields as needed
+	firstName: string
+	lastName: string
+	picture?: string
 }
-export interface ApiResponse {
+// Response from API functions
+export interface ApiResponse<T> {
 	success: boolean
-	user?: User
-	error?: string
+	data?: T // Data can be of any type depending on the API call
+	error?: string // Error message
 }
 
 export type RootStackParamList = {

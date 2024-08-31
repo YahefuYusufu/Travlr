@@ -8,36 +8,44 @@ import {
 	TouchableOpacity,
 	ActivityIndicator,
 } from "react-native"
-import { StackScreenProps } from "@react-navigation/stack"
+import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 import { RootStackParamList } from "../../types/types"
 import { signupUser } from "../../api/auth"
-import { ApiResponse, User } from "../../types/types"
+import { ApiResponse, UserProfile } from "../../types/types"
 import { useUser } from "../../context/UserProvider"
+import { useNavigation } from "@react-navigation/native"
 
 type Props = StackScreenProps<RootStackParamList, "Signup">
+type ProfileScreenNavigationProp = StackNavigationProp<
+	RootStackParamList,
+	"Signup"
+>
 
-const SignupScreen: FC<Props> = ({ navigation }) => {
-	const { setUserId } = useUser()
-	const [name, setName] = useState("")
+const SignupScreen: FC<Props> = () => {
+	const [firstName, setFirstName] = useState("")
+	const [lastName, setLastName] = useState("")
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
+	const navigation = useNavigation<ProfileScreenNavigationProp>()
+	const { setUserId, setUserData } = useUser()
 
 	const handleSignup = async () => {
 		setLoading(true)
 		setError(null)
 
 		try {
-			const result = await signupUser({ name, email, password })
+			const result = await signupUser({ firstName, lastName, email, password })
 
 			if (result.success) {
-				const userId = result.user?._id // Extract userId from response
+				const userId = result.data?._id
+				const userData = result.data
 
 				if (userId) {
-					setUserId(userId)
-					navigation.navigate("Profile", { userId }) // Pass userId to Profile screen
-					console.log("USER ID from SignUp screen: ", userId)
+					setUserId(userId) // Set userId in context
+					setUserData(userData) // Set userData in context
+					navigation.navigate("Tabs", { userId })
 				} else {
 					setError("User ID is missing from the response.")
 				}
@@ -57,9 +65,15 @@ const SignupScreen: FC<Props> = ({ navigation }) => {
 				<Text style={styles.title}>Sign Up</Text>
 
 				<TextInput
-					placeholder="Name"
-					value={name}
-					onChangeText={setName}
+					placeholder="First Name"
+					value={firstName}
+					onChangeText={setFirstName}
+					style={styles.input}
+				/>
+				<TextInput
+					placeholder="Last Name"
+					value={lastName}
+					onChangeText={setLastName}
 					style={styles.input}
 				/>
 				<TextInput

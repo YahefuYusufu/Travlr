@@ -10,8 +10,8 @@ import {
 } from "react-native"
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
-import { RootStackParamList } from "../../types/types"
-import { logoutUser, updateUserProfile } from "../../api/auth"
+import { UserProfile, RootStackParamList } from "../../types/types"
+import { logoutUser, updateUserProfile, fetchUserProfile } from "../../api/auth"
 import LogoutButton from "../../components/buttons/LogoutButton"
 import { useUser } from "../../context/UserProvider"
 
@@ -25,21 +25,15 @@ type ProfileScreenNavigationProp = StackNavigationProp<
 const ProfileScreen: React.FC = () => {
 	const route = useRoute<ProfileScreenRouteProp>()
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
+	const { userId, userData, setUserData } = useUser()
 
-	// Extract userId from route params
-	// const userId = route.params?.userId || null
-	const { userId } = useUser()
-
-	const [firstName, setFirstName] = useState<string>("")
-	const [lastName, setLastName] = useState<string>("")
-	const [picture, setPicture] = useState<string>("")
+	const [firstName, setFirstName] = useState<string>(userData?.firstName || "")
+	const [lastName, setLastName] = useState<string>(userData?.lastName || "")
+	const [picture, setPicture] = useState<string>(userData?.picture || "")
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
-		// Log userId for debugging
-		console.log("ProfileScreen loaded, userId:", userId)
-
 		if (!userId) {
 			setError("User ID is missing. Please log in again.")
 		}
@@ -63,6 +57,7 @@ const ProfileScreen: React.FC = () => {
 
 			if (result.success) {
 				Alert.alert("Success", "Profile updated successfully")
+				setUserData({ ...userData, firstName, lastName, picture }) // Update context with new user data
 				navigation.navigate("Tabs", { userId }) // Ensure `userId` is passed
 			} else {
 				throw new Error(result.error || "An unexpected error occurred")
@@ -74,7 +69,7 @@ const ProfileScreen: React.FC = () => {
 		} finally {
 			setLoading(false)
 		}
-	}, [firstName, lastName, picture, userId, navigation])
+	}, [firstName, lastName, picture, userId, navigation, setUserData])
 
 	const handleLogout = useCallback(async () => {
 		try {
