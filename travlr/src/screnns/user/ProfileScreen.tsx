@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import {
 	ActivityIndicator,
 	Alert,
@@ -28,9 +28,9 @@ const ProfileScreen: React.FC = () => {
 				try {
 					const result = await fetchUserProfile(userId)
 					if (result.success) {
-						const profile = result.data as UserProfile
-						setFirstName(profile.firstName)
-						setLastName(profile.lastName)
+						const profile = result.user as UserProfile
+						setFirstName(profile.firstName || "")
+						setLastName(profile.lastName || "")
 						setPicture(profile.picture || "")
 						setUserData(profile) // Update context with fetched data
 					} else {
@@ -67,7 +67,7 @@ const ProfileScreen: React.FC = () => {
 
 			if (result.success) {
 				Alert.alert("Success", "Profile updated successfully")
-				setUserData(result.data as UserProfile) // Update context with the updated data
+				setUserData(result.user as UserProfile) // Update context with the updated data
 			} else {
 				throw new Error(result.error || "An unexpected error occurred")
 			}

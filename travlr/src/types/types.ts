@@ -26,7 +26,7 @@ export interface UserProfile {
 // Response from API functions
 export interface ApiResponse<T> {
 	success: boolean
-	data?: T // Data can be of any type depending on the API call
+	user?: T // Data can be of any type depending on the API call
 	error?: string // Error message
 }
 

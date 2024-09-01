@@ -40,7 +40,7 @@ const SignupScreen: FC<Props> = () => {
 
 			if (result.success) {
 				const userId = result.data?._id
-				const userData = result.data
+				const userData: UserProfile | null = result.data || null
 
 				if (userId) {
 					setUserId(userId) // Set userId in context
