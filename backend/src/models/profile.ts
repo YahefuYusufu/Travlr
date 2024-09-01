@@ -16,7 +16,7 @@ const profileSchema = new mongoose.Schema({
 		required: [true, "A user must have a lastName."],
 		trim: true,
 	},
-	picture: {
+	imageUri: {
 		type: String,
 	},
 })
