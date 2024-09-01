@@ -3,19 +3,6 @@ import axios from "axios"
 import { API_URL } from "@env"
 import { ApiResponse, CreateUserParams, UserProfile } from "../types/types"
 
-interface MyCustomError {
-	message: string
-	// Other properties as needed
-}
-
-type AxiosError = {
-	response?: {
-		data?: {
-			error?: string
-		}
-	}
-}
-
 export const loginUser = async (
 	email: string,
 	password: string

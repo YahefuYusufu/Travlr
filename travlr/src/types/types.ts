@@ -1,5 +1,15 @@
 import { GestureResponderEvent } from "react-native"
-
+export type RootStackParamList = {
+	Login: undefined
+	Home: { userId: string }
+	Signup: undefined
+	Favorites: undefined
+	Profile: { userId: string }
+	Tabs: { userId: string }
+}
+export type ProfileScreenRouteParams = {
+	userId: string
+}
 export interface FormInput {
 	value: string
 	error: string | null
@@ -21,7 +31,7 @@ export interface UserProfile {
 	email: string
 	firstName: string
 	lastName: string
-	picture?: string
+	imageUri?: string
 }
 export interface UserContextProps {
 	userId: string | null
@@ -35,16 +45,10 @@ export interface ApiResponse<T> {
 	error?: string
 }
 
-export type RootStackParamList = {
-	Login: undefined
-	Home: { userId: string }
-	Signup: undefined
-	Favorites: undefined
-	Profile: { userId: string }
-	Tabs: { userId: string }
-}
-export type ProfileScreenRouteParams = {
-	userId: string
+export interface UploadImageResponse {
+	success: boolean
+	imageUri?: string
+	error?: string
 }
 
 export interface LogoutButtonProps {

@@ -11,12 +11,7 @@ import {
 	TouchableOpacity,
 } from "react-native"
 import { useUser } from "../../context/UserProvider"
-import {
-	updateUserProfile,
-	fetchUserProfile,
-	logoutUser,
-	uploadImage,
-} from "../../api/auth"
+import { updateUserProfile, fetchUserProfile, logoutUser } from "../../api/auth"
 import { RootStackParamList, UserProfile } from "../../types/types" // Adjust the import path as
 import LogoutButton from "../../components/buttons/LogoutButton"
 import { useNavigation } from "@react-navigation/native"
@@ -24,7 +19,7 @@ import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 import Modal from "react-native-modal"
 import * as ImagePicker from "expo-image-picker"
 import Icon from "react-native-vector-icons/FontAwesome"
-import * as FileSystem from "expo-file-system"
+import { uploadImage } from "../../api/userApi"
 
 type Props = StackScreenProps<RootStackParamList, "Tabs">
 type ProfileScreenNavigationProp = StackNavigationProp<
@@ -37,7 +32,7 @@ const ProfileScreen: React.FC<Props> = () => {
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
 	const [firstName, setFirstName] = useState<string>(userData?.firstName || "")
 	const [lastName, setLastName] = useState<string>(userData?.lastName || "")
-	const [picture, setPicture] = useState<string>(userData?.picture || "")
+	const [picture, setPicture] = useState<string>(userData?.imageUri || "")
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
 	const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
@@ -53,7 +48,7 @@ const ProfileScreen: React.FC<Props> = () => {
 						const profile = result.user as UserProfile
 						setFirstName(profile.firstName)
 						setLastName(profile.lastName)
-						setPicture(profile.picture || "")
+						setPicture(profile.imageUri || "")
 						setUserData(profile) // Update context with fetched data
 					} else {
 						throw new Error(result.error || "Failed to fetch profile")
@@ -120,6 +115,58 @@ const ProfileScreen: React.FC<Props> = () => {
 		)
 	}
 
+	// const pickImage = async () => {
+	// 	const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+	// 	if (status !== "granted") {
+	// 		Alert.alert(
+	// 			"Permission required",
+	// 			"Sorry, we need camera roll permissions to make this work!"
+	// 		)
+	// 		return
+	// 	}
+
+	// 	const result = await ImagePicker.launchImageLibraryAsync({
+	// 		mediaTypes: ImagePicker.MediaTypeOptions.Images,
+	// 		allowsEditing: true,
+	// 		aspect: [1, 1],
+	// 		quality: 1,
+	// 	})
+
+	// 	if (!result.canceled && result.assets && result.assets.length > 0) {
+	// 		const selectedImageUri = result.assets[0].uri
+	// 		setPicture(selectedImageUri || "")
+
+	// 		// Handle image upload separately
+	// 		try {
+	// 			setLoading(true)
+	// 			const uploadResult = await uploadImage(userId, selectedImageUri)
+	// 			if (uploadResult.success) {
+	// 				Alert.alert("Success", "Image updated successfully")
+
+	// 				// Merge the new imageUri into the existing userData
+	// 				const updatedUserProfile: UserProfile = {
+	// 					_id: userData._id, // Ensure _id is a string
+	// 					email: userData.email, // Ensure email is a string
+	// 					firstName: userData.firstName || '', // Provide a default if needed
+	// 					lastName: userData.lastName || '', // Provide a default if needed
+	// 					imageUri: uploadResult.user.imageUri || userData.imageUri, // Ensure imageUri is a string
+	// 				  };
+
+	// 				  // Update the user data
+	// 				  setUserData(updatedUserProfile);
+	// 			} else {
+	// 				throw new Error(uploadResult.error || "Failed to upload image")
+	// 			}
+	// 		} catch (err) {
+	// 			setError(
+	// 				err instanceof Error ? err.message : "An unexpected error occurred"
+	// 			)
+	// 		} finally {
+	// 			setLoading(false)
+	// 		}
+	// 	}
+	// }
+
 	const pickImage = async () => {
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
 		if (status !== "granted") {
@@ -141,16 +188,18 @@ const ProfileScreen: React.FC<Props> = () => {
 			const selectedImageUri = result.assets[0].uri
 			setPicture(selectedImageUri || "")
 
-			// Handle image upload separately
+			// Ensure userData is not null before proceeding
+			if (!userData) {
+				setError("User data is not available.")
+				return
+			}
+
 			try {
 				setLoading(true)
 				const uploadResult = await uploadImage(userId, selectedImageUri)
-				if (uploadResult.success) {
+				if (uploadResult.success && uploadResult.imageUri) {
 					Alert.alert("Success", "Image updated successfully")
-					setUserData((prevData) => ({
-						...prevData,
-						picture: uploadResult.imageUrl,
-					}))
+					setPicture(uploadResult.imageUri)
 				} else {
 					throw new Error(uploadResult.error || "Failed to upload image")
 				}
