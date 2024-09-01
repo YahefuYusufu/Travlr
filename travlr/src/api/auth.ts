@@ -124,11 +124,14 @@ export const fetchUserProfile = async (
 	userId: string
 ): Promise<ApiResponse<UserProfile>> => {
 	try {
-		const response = await fetch(`/api/v1/users/profile/${userId}`)
-		const result = await response.json()
+		const response = await fetch(`${API_URL}/users/profile/${userId}`)
+		const textResponse = await response.text()
+		console.log("Raw response text:", textResponse)
+
+		const result = JSON.parse(textResponse)
 
 		if (response.ok) {
-			return { success: true, user: result.user } // Adjust based on API response structure
+			return { success: true, user: result.profile } // Adjust based on API response structure
 		} else {
 			return {
 				success: false,

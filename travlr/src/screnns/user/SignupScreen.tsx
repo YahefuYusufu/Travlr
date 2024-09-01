@@ -11,7 +11,7 @@ import {
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 import { RootStackParamList } from "../../types/types"
 import { signupUser } from "../../api/auth"
-import { ApiResponse, UserProfile } from "../../types/types"
+import { UserProfile } from "../../types/types"
 import { useUser } from "../../context/UserProvider"
 import { useNavigation } from "@react-navigation/native"
 

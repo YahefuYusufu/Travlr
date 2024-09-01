@@ -13,7 +13,7 @@ import { useUser } from "../../context/UserProvider"
 import { updateUserProfile, fetchUserProfile, logoutUser } from "../../api/auth"
 import { RootStackParamList, UserProfile } from "../../types/types" // Adjust the import path as
 import LogoutButton from "../../components/buttons/LogoutButton"
-import { RouteProp, useNavigation } from "@react-navigation/native"
+import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 
 type Props = StackScreenProps<RootStackParamList, "Tabs">
@@ -31,43 +31,34 @@ const ProfileScreen: React.FC<Props> = () => {
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
 
-	// useEffect(() => {
-	// 	const loadProfile = async () => {
-	// 		if (userId) {
-	// 			setLoading(true)
-	// 			console.log("Fetching profile for userId:", userId);
-	// 			try {
-	// 				const result = await fetchUserProfile(userId)
-	// 				if (result.success) {
-	// 					const profile = result.user as UserProfile // Adjust this based on your API response
-	// 					setFirstName(profile.firstName)
-	// 					setLastName(profile.lastName)
-	// 					setPicture(profile.picture || "")
-	// 					setUserData(profile) // Update context with fetched data
-	// 				} else {
-	// 					throw new Error(result.error || "Failed to fetch profile")
-	// 				}
-	// 			} catch (err) {
-	// 				setError(
-	// 					err instanceof Error ? err.message : "An unexpected error occurred"
-	// 				)
-	// 			} finally {
-	// 				setLoading(false)
-	// 			}
-	// 		}
-	// 	}
-
-	// 	loadProfile()
-	// }, [userId, setUserData])
-
 	useEffect(() => {
-		// Log userId for debugging
-		console.log("ProfileScreen loaded, userId:", userId)
-
-		if (!userId) {
-			setError("User ID is missing. Please log in again.")
+		const loadProfile = async () => {
+			if (userId) {
+				setLoading(true)
+				console.log("Fetching profile for userId:", userId)
+				try {
+					const result = await fetchUserProfile(userId)
+					if (result.success) {
+						const profile = result.user as UserProfile // Adjust this based on your API response
+						setFirstName(profile.firstName)
+						setLastName(profile.lastName)
+						setPicture(profile.picture || "")
+						setUserData(profile) // Update context with fetched data
+					} else {
+						throw new Error(result.error || "Failed to fetch profile")
+					}
+				} catch (err) {
+					setError(
+						err instanceof Error ? err.message : "An unexpected error occurred"
+					)
+				} finally {
+					setLoading(false)
+				}
+			}
 		}
-	}, [userId])
+
+		loadProfile()
+	}, [userId, setUserData])
 
 	const handleUpdateProfile = useCallback(async () => {
 		if (!userId) {
