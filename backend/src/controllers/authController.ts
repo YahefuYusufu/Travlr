@@ -182,7 +182,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
 			email: user.email,
 			firstName: profile.firstName || "",
 			lastName: profile.lastName || "",
-			picture: profile.picture || "",
+			picture: profile.imageUri || "",
 		}
 
 		// Return the combined user and profile data
@@ -202,7 +202,7 @@ export const updateUserProfile = async (
 ) => {
 	try {
 		const { userId } = req.params
-		const { firstName, lastName, picture } = req.body
+		const { firstName, lastName, imageUri } = req.body
 
 		// Validate input
 		if (!firstName || !lastName) {
@@ -219,11 +219,11 @@ export const updateUserProfile = async (
 
 		let profile = await Profile.findOne({ user: userId })
 		if (!profile) {
-			profile = new Profile({ user: userId, firstName, lastName, picture })
+			profile = new Profile({ user: userId, firstName, lastName, imageUri })
 		} else {
 			profile.firstName = firstName
 			profile.lastName = lastName
-			profile.picture = picture
+			profile.imageUri = imageUri
 		}
 
 		await profile.save()
