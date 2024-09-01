@@ -11,7 +11,12 @@ import {
 	TouchableOpacity,
 } from "react-native"
 import { useUser } from "../../context/UserProvider"
-import { updateUserProfile, fetchUserProfile, logoutUser } from "../../api/auth"
+import {
+	updateUserProfile,
+	fetchUserProfile,
+	logoutUser,
+	uploadImage,
+} from "../../api/auth"
 import { RootStackParamList, UserProfile } from "../../types/types" // Adjust the import path as
 import LogoutButton from "../../components/buttons/LogoutButton"
 import { useNavigation } from "@react-navigation/native"
@@ -19,6 +24,7 @@ import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 import Modal from "react-native-modal"
 import * as ImagePicker from "expo-image-picker"
 import Icon from "react-native-vector-icons/FontAwesome"
+import * as FileSystem from "expo-file-system"
 
 type Props = StackScreenProps<RootStackParamList, "Tabs">
 type ProfileScreenNavigationProp = StackNavigationProp<
@@ -78,13 +84,10 @@ const ProfileScreen: React.FC<Props> = () => {
 			const result = await updateUserProfile(userId, {
 				firstName,
 				lastName,
-				picture,
 			})
 			if (result.success) {
 				Alert.alert("Success", "Profile updated successfully")
 				setUserData(result.user as UserProfile)
-				navigation.navigate("Home", { userId })
-				setIsModalVisible(false)
 			} else {
 				throw new Error(result.error || "An unexpected error occurred")
 			}
@@ -95,7 +98,7 @@ const ProfileScreen: React.FC<Props> = () => {
 		} finally {
 			setLoading(false)
 		}
-	}, [userId, firstName, lastName, picture, setUserData, navigation])
+	}, [userId, firstName, lastName, setUserData])
 
 	const handleLogout = useCallback(async () => {
 		try {
@@ -118,7 +121,6 @@ const ProfileScreen: React.FC<Props> = () => {
 	}
 
 	const pickImage = async () => {
-		// Request permission to access media library
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
 		if (status !== "granted") {
 			Alert.alert(
@@ -128,7 +130,6 @@ const ProfileScreen: React.FC<Props> = () => {
 			return
 		}
 
-		// Launch image picker
 		const result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
@@ -137,7 +138,29 @@ const ProfileScreen: React.FC<Props> = () => {
 		})
 
 		if (!result.canceled && result.assets && result.assets.length > 0) {
-			setPicture(result.assets[0].uri || "")
+			const selectedImageUri = result.assets[0].uri
+			setPicture(selectedImageUri || "")
+
+			// Handle image upload separately
+			try {
+				setLoading(true)
+				const uploadResult = await uploadImage(userId, selectedImageUri)
+				if (uploadResult.success) {
+					Alert.alert("Success", "Image updated successfully")
+					setUserData((prevData) => ({
+						...prevData,
+						picture: uploadResult.imageUrl,
+					}))
+				} else {
+					throw new Error(uploadResult.error || "Failed to upload image")
+				}
+			} catch (err) {
+				setError(
+					err instanceof Error ? err.message : "An unexpected error occurred"
+				)
+			} finally {
+				setLoading(false)
+			}
 		}
 	}
 
