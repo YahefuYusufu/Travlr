@@ -36,10 +36,10 @@ router.get("/", getAllUsers)
 // router.get("/profile/:userId", getUserProfileById)
 
 // Retrieve user profile by ID
-router.get("/profile/:userId", getUserProfile) // Use getUserProfile here
+router.get("/profile/:userId", getUserProfileById) // Use getUserProfile here
 
 // Update user profile by ID
-router.put("/profile/:userId", updateUserProfile) // Use PUT for updating profile
+router.put("/profileUpdate/:userId", updateUserProfile) // Use PUT for updating profile
 
 // Delete a user by ID
 router.delete("/:userId", deleteUser)

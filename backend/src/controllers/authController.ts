@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs"
 import { DuplicateEmailError } from "../utils/DuplicateEmailError"
 import Tour from "../models/tour"
 import Profile from "../models/profile"
-import { ProfileProps } from "../types/Profile"
+import { ProfileProps, UserProps } from "../types/Profile"
 require("dotenv").config()
 
 export const registerUser = async (
@@ -98,44 +98,6 @@ export const logout = async (req: Request, res: Response) => {
 	}
 }
 
-export const getUserProfile = async (req: Request, res: Response) => {
-	try {
-		// Find the user by ID and populate the profile field
-
-		const { userId } = req.params
-
-		console.log("User ID from params:", userId)
-		const user = await User.findById(userId).populate("profile")
-		console.log("User before population:", user)
-		console.log("User after population:", user)
-
-		// Check if the user exists
-		if (!user) {
-			return res.status(404).json({ error: "User not found" })
-		}
-
-		// Extract the profile details if they exist
-		const profile = user.profile as ProfileProps | undefined
-
-		// Construct the user profile response
-		const userProfile = {
-			_id: user._id,
-			email: user.email,
-			firstName: profile?.firstName || "",
-			lastName: profile?.lastName || "",
-			picture: profile?.picture || "",
-		}
-
-		// Return the combined user and profile data
-		res.json({ user: userProfile })
-	} catch (error) {
-		console.error("Error fetching user profile:", error) // Log error for debugging
-		res.status(500).json({
-			error: "An unexpected error occurred while fetching the user profile",
-		})
-	}
-}
-
 export const getAllUsers = async (_req: Request, res: Response) => {
 	try {
 		const users = await User.find()
@@ -198,6 +160,82 @@ export const getUserProfileById = async (req: Request, res: Response) => {
 	return undefined
 }
 
+export const getUserProfile = async (req: Request, res: Response) => {
+	try {
+		const userId = req.params.id
+
+		// Find the user by ID
+		const user = await User.findById(userId)
+		if (!user) {
+			return res.status(404).json({ error: "User not found" })
+		}
+
+		// Find the associated profile
+		const profile = await Profile.findOne({ user: userId })
+		if (!profile) {
+			return res.status(404).json({ error: "Profile not found" })
+		}
+
+		// Construct the user profile response
+		const userProfile = {
+			_id: user._id,
+			email: user.email,
+			firstName: profile.firstName || "",
+			lastName: profile.lastName || "",
+			picture: profile.picture || "",
+		}
+
+		// Return the combined user and profile data
+		res.json({ user: userProfile })
+	} catch (error) {
+		console.error("Error fetching user profile:", error) // Log error for debugging
+		res.status(500).json({
+			error: "An unexpected error occurred while fetching the user profile",
+		})
+	}
+}
+
+export const updateUserProfile = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { userId } = req.params
+		const { firstName, lastName, picture } = req.body
+
+		// Validate input
+		if (!firstName || !lastName) {
+			return res
+				.status(400)
+				.json({ error: "First Name and Last Name are required" })
+		}
+
+		// Find user and update profile
+		const user = (await User.findById(userId)) as UserProps
+		if (!user) {
+			return res.status(404).json({ error: "User not found" })
+		}
+
+		let profile = await Profile.findOne({ user: userId })
+		if (!profile) {
+			profile = new Profile({ user: userId, firstName, lastName, picture })
+		} else {
+			profile.firstName = firstName
+			profile.lastName = lastName
+			profile.picture = picture
+		}
+
+		await profile.save()
+
+		res.status(200).json({ message: "Profile updated successfully", profile })
+	} catch (error) {
+		const err = error as Error
+		res.status(400).json({ error: err.message })
+		next(error)
+	}
+}
+
 export const deleteUser = async (req: Request, res: Response) => {
 	try {
 		const userId = req.params.userId
@@ -222,46 +260,5 @@ export const deleteUser = async (req: Request, res: Response) => {
 	} catch (error) {
 		const err = error as Error
 		res.status(500).json({ error: err.message })
-	}
-}
-
-export const updateUserProfile = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-) => {
-	try {
-		const { userId } = req.params
-		const { firstName, lastName, picture } = req.body
-
-		// Validate input
-		if (!firstName || !lastName) {
-			return res
-				.status(400)
-				.json({ error: "First Name and Last Name are required" })
-		}
-
-		// Find user and update profile
-		const user = await User.findById(userId)
-		if (!user) {
-			return res.status(404).json({ error: "User not found" })
-		}
-
-		let profile = await Profile.findOne({ user: userId })
-		if (!profile) {
-			profile = new Profile({ user: userId, firstName, lastName, picture })
-		} else {
-			profile.firstName = firstName
-			profile.lastName = lastName
-			profile.picture = picture
-		}
-
-		await profile.save()
-
-		res.status(200).json({ message: "Profile updated successfully", profile })
-	} catch (error) {
-		const err = error as Error
-		res.status(400).json({ error: err.message })
-		next(error)
 	}
 }
