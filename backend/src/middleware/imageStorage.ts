@@ -9,14 +9,14 @@ const storage: StorageEngine = multer.diskStorage({
 		file: Express.Multer.File,
 		cb: (error: Error | null, destination: string) => void
 	) => {
-		cb(null, "uploads/") // You can change the directory as needed
+		cb(null, "uploads/")
 	},
 	filename: (req, file, cb) => {
-		cb(null, Date.now() + path.extname(file.originalname)) // Append timestamp to avoid duplicate names
+		cb(null, Date.now() + path.extname(file.originalname))
 	},
 })
 
-// File filtering to accept only certain types of files
+// File filtering
 const fileFilter = (
 	req: Request,
 	file: Express.Multer.File,
@@ -36,7 +36,7 @@ const fileFilter = (
 const upload = multer({
 	storage,
 	fileFilter,
-	limits: { fileSize: 5 * 1024 * 1024 }, // Limit files to 5MB
+	limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 })
 
 export default upload
