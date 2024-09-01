@@ -248,7 +248,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 		// Check if a profile is associated with the user
 		if (user.profile) {
-			await Profile.findByIdAndDelete(user.profile._id) // Delete the profile
+			// await Profile.findByIdAndDelete(user.) // Delete the profile
 		}
 
 		// Delete related tours (assuming a Tour model exists)
