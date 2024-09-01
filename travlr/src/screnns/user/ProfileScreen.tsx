@@ -17,6 +17,8 @@ import LogoutButton from "../../components/buttons/LogoutButton"
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 import Modal from "react-native-modal"
+import * as ImagePicker from "expo-image-picker"
+import Icon from "react-native-vector-icons/FontAwesome"
 
 type Props = StackScreenProps<RootStackParamList, "Tabs">
 type ProfileScreenNavigationProp = StackNavigationProp<
@@ -115,13 +117,47 @@ const ProfileScreen: React.FC<Props> = () => {
 		)
 	}
 
+	const pickImage = async () => {
+		// Request permission to access media library
+		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+		if (status !== "granted") {
+			Alert.alert(
+				"Permission required",
+				"Sorry, we need camera roll permissions to make this work!"
+			)
+			return
+		}
+
+		// Launch image picker
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [1, 1],
+			quality: 1,
+		})
+
+		if (!result.canceled && result.assets && result.assets.length > 0) {
+			setPicture(result.assets[0].uri || "")
+		}
+	}
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.profileContainer}>
 				{picture ? (
-					<Image source={{ uri: picture }} style={styles.profileImage} />
+					<View style={styles.profileImageContainer}>
+						<Image source={{ uri: picture }} style={styles.profileImage} />
+						<TouchableOpacity style={styles.editIcon} onPress={pickImage}>
+							<Icon name="camera" size={20} color="#fff" />
+						</TouchableOpacity>
+					</View>
 				) : (
-					<View style={styles.profileImage} />
+					<View style={styles.profileImageContainer}>
+						<View style={styles.profileImage} />
+						<TouchableOpacity style={styles.editIcon} onPress={pickImage}>
+							<Icon name="pencil" size={20} color="#fff" />
+						</TouchableOpacity>
+					</View>
 				)}
 				<Text style={styles.name}>
 					{firstName} {lastName}
@@ -154,12 +190,7 @@ const ProfileScreen: React.FC<Props> = () => {
 						onChangeText={setLastName}
 						style={styles.input}
 					/>
-					<TextInput
-						placeholder="Profile Picture URL"
-						value={picture}
-						onChangeText={setPicture}
-						style={styles.input}
-					/>
+
 					{error && <Text style={styles.errorText}>{error}</Text>}
 					{loading ? (
 						<ActivityIndicator size="large" color="#0000ff" />
@@ -186,16 +217,32 @@ const styles = StyleSheet.create({
 	},
 	profileContainer: {
 		alignItems: "center",
-		marginBottom: 100,
+		marginBottom: 160,
 		width: "100%",
 	},
+	profileImageContainer: {
+		position: "relative",
+		marginBottom: 10,
+	},
 	profileImage: {
-		width: 150,
-		height: 150,
-		objectFit: "cover",
+		width: 100,
+		height: 100,
 		borderRadius: 50,
 		backgroundColor: "#ddd",
-		marginVertical: 10,
+	},
+	editIcon: {
+		position: "absolute",
+		bottom: 0,
+		right: 0,
+		backgroundColor: "#545454",
+		borderRadius: 50,
+		padding: 8,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	editIconText: {
+		color: "#fff",
+		fontSize: 18,
 	},
 	name: {
 		fontSize: 20,
@@ -209,7 +256,7 @@ const styles = StyleSheet.create({
 	editButton: {
 		marginTop: 15,
 		padding: 10,
-		backgroundColor: "#007bff",
+		backgroundColor: "#545454",
 		borderRadius: 5,
 	},
 	editButtonText: {

@@ -64,7 +64,7 @@ export default LogoutButton
 const styles = StyleSheet.create({
 	container: {},
 	button: {
-		backgroundColor: "#333",
+		backgroundColor: "#545454",
 		paddingVertical: 12,
 		paddingHorizontal: 12,
 		borderRadius: 8,
