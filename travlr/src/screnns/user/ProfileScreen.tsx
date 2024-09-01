@@ -8,6 +8,7 @@ import {
 	TextInput,
 	View,
 	Image,
+	TouchableOpacity,
 } from "react-native"
 import { useUser } from "../../context/UserProvider"
 import { updateUserProfile, fetchUserProfile, logoutUser } from "../../api/auth"
@@ -15,6 +16,7 @@ import { RootStackParamList, UserProfile } from "../../types/types" // Adjust th
 import LogoutButton from "../../components/buttons/LogoutButton"
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
+import Modal from "react-native-modal"
 
 type Props = StackScreenProps<RootStackParamList, "Tabs">
 type ProfileScreenNavigationProp = StackNavigationProp<
@@ -30,6 +32,7 @@ const ProfileScreen: React.FC<Props> = () => {
 	const [picture, setPicture] = useState<string>(userData?.picture || "")
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
+	const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
 
 	useEffect(() => {
 		const loadProfile = async () => {
@@ -39,7 +42,7 @@ const ProfileScreen: React.FC<Props> = () => {
 				try {
 					const result = await fetchUserProfile(userId)
 					if (result.success) {
-						const profile = result.user as UserProfile // Adjust this based on your API response
+						const profile = result.user as UserProfile
 						setFirstName(profile.firstName)
 						setLastName(profile.lastName)
 						setPicture(profile.picture || "")
@@ -79,6 +82,7 @@ const ProfileScreen: React.FC<Props> = () => {
 				Alert.alert("Success", "Profile updated successfully")
 				setUserData(result.user as UserProfile)
 				navigation.navigate("Home", { userId })
+				setIsModalVisible(false)
 			} else {
 				throw new Error(result.error || "An unexpected error occurred")
 			}
@@ -113,31 +117,58 @@ const ProfileScreen: React.FC<Props> = () => {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Complete Your Profile</Text>
-			<TextInput
-				placeholder="First Name"
-				value={firstName}
-				onChangeText={setFirstName}
-				style={styles.input}
-			/>
-			<TextInput
-				placeholder="Last Name"
-				value={lastName}
-				onChangeText={setLastName}
-				style={styles.input}
-			/>
-			<TextInput
-				placeholder="Profile Picture URL"
-				value={picture}
-				onChangeText={setPicture}
-				style={styles.input}
-			/>
-			{error && <Text style={styles.errorText}>{error}</Text>}
-			{loading ? (
-				<ActivityIndicator size="large" color="#0000ff" />
-			) : (
-				<Button title="Save Profile" onPress={handleUpdateProfile} />
-			)}
+			<View style={styles.profileContainer}>
+				{picture ? (
+					<Image source={{ uri: picture }} style={styles.profileImage} />
+				) : (
+					<View style={styles.profileImage} />
+				)}
+				<Text style={styles.name}>
+					{firstName} {lastName}
+				</Text>
+				{/* Display the date the profile was created, assuming it's available */}
+				{/* For demonstration, a static date is used */}
+				<Text style={styles.date}>Joined: {new Date().toDateString()}</Text>
+				<TouchableOpacity
+					style={styles.editButton}
+					onPress={() => setIsModalVisible(true)}>
+					<Text style={styles.editButtonText}>Edit Profile</Text>
+				</TouchableOpacity>
+			</View>
+
+			{/* Modal for Editing Profile */}
+			<Modal
+				isVisible={isModalVisible}
+				onBackdropPress={() => setIsModalVisible(false)}>
+				<View style={styles.modalContent}>
+					<Text style={styles.modalTitle}>Edit Profile</Text>
+					<TextInput
+						placeholder="First Name"
+						value={firstName}
+						onChangeText={setFirstName}
+						style={styles.input}
+					/>
+					<TextInput
+						placeholder="Last Name"
+						value={lastName}
+						onChangeText={setLastName}
+						style={styles.input}
+					/>
+					<TextInput
+						placeholder="Profile Picture URL"
+						value={picture}
+						onChangeText={setPicture}
+						style={styles.input}
+					/>
+					{error && <Text style={styles.errorText}>{error}</Text>}
+					{loading ? (
+						<ActivityIndicator size="large" color="#0000ff" />
+					) : (
+						<Button title="Save Profile" onPress={handleUpdateProfile} />
+					)}
+				</View>
+			</Modal>
+
 			<View style={styles.buttonContainer}>
 				<LogoutButton handleLogout={handleLogout} />
 			</View>
@@ -152,6 +183,48 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		padding: 20,
 		backgroundColor: "#fff",
+	},
+	profileContainer: {
+		alignItems: "center",
+		marginBottom: 100,
+		width: "100%",
+	},
+	profileImage: {
+		width: 150,
+		height: 150,
+		objectFit: "cover",
+		borderRadius: 50,
+		backgroundColor: "#ddd",
+		marginVertical: 10,
+	},
+	name: {
+		fontSize: 20,
+		fontWeight: "bold",
+	},
+	date: {
+		fontSize: 16,
+		color: "#666",
+		marginBottom: 10,
+	},
+	editButton: {
+		marginTop: 15,
+		padding: 10,
+		backgroundColor: "#007bff",
+		borderRadius: 5,
+	},
+	editButtonText: {
+		color: "#fff",
+		fontSize: 16,
+	},
+	modalContent: {
+		backgroundColor: "#fff",
+		padding: 20,
+		borderRadius: 10,
+	},
+	modalTitle: {
+		fontSize: 18,
+		fontWeight: "bold",
+		marginBottom: 15,
 	},
 	title: {
 		fontSize: 24,

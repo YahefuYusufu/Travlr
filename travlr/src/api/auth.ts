@@ -131,7 +131,7 @@ export const fetchUserProfile = async (
 		const result = JSON.parse(textResponse)
 
 		if (response.ok) {
-			return { success: true, user: result.profile } // Adjust based on API response structure
+			return { success: true, user: result.profile }
 		} else {
 			return {
 				success: false,
