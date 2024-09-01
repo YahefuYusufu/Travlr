@@ -1,19 +1,15 @@
 import React, { createContext, useContext, useState, ReactNode } from "react"
-import { UserProfile } from "../types/types"
+import { UserProfile, UserContextProps } from "../types/types"
 
-interface UserContextType {
-	userId: string | null
-	userData: UserProfile | null
-	setUserId: (id: string) => void
-	setUserData: (user: UserProfile | null) => void
-}
+// const UserContext = createContext<UserContextProps>({
+// 	userId: null,
+// 	userData: null,
+// 	setUserId: () => {},
+// 	setUserData: () => {},
+// })
 
-const UserContext = createContext<UserContextType>({
-	userId: null,
-	userData: null,
-	setUserId: () => {},
-	setUserData: () => {},
-})
+const UserContext = createContext<UserContextProps | undefined>(undefined)
+
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {

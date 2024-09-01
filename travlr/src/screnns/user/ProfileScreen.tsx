@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useCallback, useEffect } from "react"
 import {
 	ActivityIndicator,
 	Alert,
@@ -10,48 +10,68 @@ import {
 	Image,
 } from "react-native"
 import { useUser } from "../../context/UserProvider"
-import { updateUserProfile, fetchUserProfile } from "../../api/auth"
-import { UserProfile } from "../../types/types" // Import UserProfile type
+import { updateUserProfile, fetchUserProfile, logoutUser } from "../../api/auth"
+import { RootStackParamList, UserProfile } from "../../types/types" // Adjust the import path as
+import LogoutButton from "../../components/buttons/LogoutButton"
+import { RouteProp, useNavigation } from "@react-navigation/native"
+import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 
-const ProfileScreen: React.FC = () => {
+type Props = StackScreenProps<RootStackParamList, "Tabs">
+type ProfileScreenNavigationProp = StackNavigationProp<
+	RootStackParamList,
+	"Profile"
+>
+
+const ProfileScreen: React.FC<Props> = () => {
 	const { userId, userData, setUserData } = useUser()
+	const navigation = useNavigation<ProfileScreenNavigationProp>()
 	const [firstName, setFirstName] = useState<string>(userData?.firstName || "")
 	const [lastName, setLastName] = useState<string>(userData?.lastName || "")
 	const [picture, setPicture] = useState<string>(userData?.picture || "")
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
 
-	useEffect(() => {
-		const loadProfile = async () => {
-			if (userId) {
-				setLoading(true)
-				try {
-					const result = await fetchUserProfile(userId)
-					if (result.success) {
-						const profile = result.user as UserProfile
-						setFirstName(profile.firstName || "")
-						setLastName(profile.lastName || "")
-						setPicture(profile.picture || "")
-						setUserData(profile) // Update context with fetched data
-					} else {
-						throw new Error(result.error || "Failed to fetch profile")
-					}
-				} catch (err) {
-					setError(
-						err instanceof Error ? err.message : "An unexpected error occurred"
-					)
-				} finally {
-					setLoading(false)
-				}
-			}
-		}
+	// useEffect(() => {
+	// 	const loadProfile = async () => {
+	// 		if (userId) {
+	// 			setLoading(true)
+	// 			console.log("Fetching profile for userId:", userId);
+	// 			try {
+	// 				const result = await fetchUserProfile(userId)
+	// 				if (result.success) {
+	// 					const profile = result.user as UserProfile // Adjust this based on your API response
+	// 					setFirstName(profile.firstName)
+	// 					setLastName(profile.lastName)
+	// 					setPicture(profile.picture || "")
+	// 					setUserData(profile) // Update context with fetched data
+	// 				} else {
+	// 					throw new Error(result.error || "Failed to fetch profile")
+	// 				}
+	// 			} catch (err) {
+	// 				setError(
+	// 					err instanceof Error ? err.message : "An unexpected error occurred"
+	// 				)
+	// 			} finally {
+	// 				setLoading(false)
+	// 			}
+	// 		}
+	// 	}
 
-		loadProfile()
-	}, [userId, setUserData])
+	// 	loadProfile()
+	// }, [userId, setUserData])
+
+	useEffect(() => {
+		// Log userId for debugging
+		console.log("ProfileScreen loaded, userId:", userId)
+
+		if (!userId) {
+			setError("User ID is missing. Please log in again.")
+		}
+	}, [userId])
 
 	const handleUpdateProfile = useCallback(async () => {
 		if (!userId) {
-			Alert.alert("Error", "User ID is missing.")
+			Alert.alert("Error", "User ID is missing at update handler.")
 			return
 		}
 
@@ -64,10 +84,10 @@ const ProfileScreen: React.FC = () => {
 				lastName,
 				picture,
 			})
-
 			if (result.success) {
 				Alert.alert("Success", "Profile updated successfully")
-				setUserData(result.user as UserProfile) // Update context with the updated data
+				setUserData(result.user as UserProfile)
+				navigation.navigate("Home", { userId })
 			} else {
 				throw new Error(result.error || "An unexpected error occurred")
 			}
@@ -78,8 +98,18 @@ const ProfileScreen: React.FC = () => {
 		} finally {
 			setLoading(false)
 		}
-	}, [userId, firstName, lastName, picture, setUserData])
+	}, [userId, firstName, lastName, picture, setUserData, navigation])
 
+	const handleLogout = useCallback(async () => {
+		try {
+			await logoutUser()
+			setUserData(null) // Clear userData from context
+			navigation.navigate("Login")
+		} catch (error) {
+			console.error("Logout error:", error)
+			Alert.alert("Logout failed", "An error occurred while logging out.")
+		}
+	}, [navigation, setUserData])
 	if (!userId) {
 		return (
 			<View style={styles.container}>
@@ -92,36 +122,34 @@ const ProfileScreen: React.FC = () => {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Profile</Text>
+			<Text style={styles.title}>Complete Your Profile</Text>
+			<TextInput
+				placeholder="First Name"
+				value={firstName}
+				onChangeText={setFirstName}
+				style={styles.input}
+			/>
+			<TextInput
+				placeholder="Last Name"
+				value={lastName}
+				onChangeText={setLastName}
+				style={styles.input}
+			/>
+			<TextInput
+				placeholder="Profile Picture URL"
+				value={picture}
+				onChangeText={setPicture}
+				style={styles.input}
+			/>
+			{error && <Text style={styles.errorText}>{error}</Text>}
 			{loading ? (
 				<ActivityIndicator size="large" color="#0000ff" />
 			) : (
-				<>
-					<TextInput
-						placeholder="First Name"
-						value={firstName}
-						onChangeText={setFirstName}
-						style={styles.input}
-					/>
-					<TextInput
-						placeholder="Last Name"
-						value={lastName}
-						onChangeText={setLastName}
-						style={styles.input}
-					/>
-					<TextInput
-						placeholder="Profile Picture URL"
-						value={picture}
-						onChangeText={setPicture}
-						style={styles.input}
-					/>
-					{picture ? (
-						<Image source={{ uri: picture }} style={styles.picture} />
-					) : null}
-					{error && <Text style={styles.errorText}>{error}</Text>}
-					<Button title="Save Profile" onPress={handleUpdateProfile} />
-				</>
+				<Button title="Save Profile" onPress={handleUpdateProfile} />
 			)}
+			<View style={styles.buttonContainer}>
+				<LogoutButton handleLogout={handleLogout} />
+			</View>
 		</View>
 	)
 }
@@ -156,6 +184,11 @@ const styles = StyleSheet.create({
 	errorText: {
 		color: "red",
 		marginBottom: 15,
+	},
+	buttonContainer: {
+		position: "absolute",
+		top: 40,
+		right: 40,
 	},
 })
 

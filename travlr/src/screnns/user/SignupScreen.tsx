@@ -39,8 +39,8 @@ const SignupScreen: FC<Props> = () => {
 			const result = await signupUser({ firstName, lastName, email, password })
 
 			if (result.success) {
-				const userId = result.data?._id
-				const userData: UserProfile | null = result.data || null
+				const userId = result.user?._id
+				const userData: UserProfile | null = result.user || null
 
 				if (userId) {
 					setUserId(userId) // Set userId in context
