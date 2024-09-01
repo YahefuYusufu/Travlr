@@ -11,7 +11,7 @@ import {
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 import { RootStackParamList } from "../../types/types"
 import { signupUser } from "../../api/auth"
-import { ApiResponse, UserProfile } from "../../types/types"
+import { UserProfile } from "../../types/types"
 import { useUser } from "../../context/UserProvider"
 import { useNavigation } from "@react-navigation/native"
 
@@ -39,8 +39,8 @@ const SignupScreen: FC<Props> = () => {
 			const result = await signupUser({ firstName, lastName, email, password })
 
 			if (result.success) {
-				const userId = result.data?._id
-				const userData = result.data
+				const userId = result.user?._id
+				const userData: UserProfile | null = result.user || null
 
 				if (userId) {
 					setUserId(userId) // Set userId in context

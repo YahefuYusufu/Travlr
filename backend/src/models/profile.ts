@@ -17,7 +17,7 @@ const profileSchema = new mongoose.Schema({
 		trim: true,
 	},
 	picture: {
-		type: String, // URL or path to picture
+		type: String,
 	},
 })
 

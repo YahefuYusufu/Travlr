@@ -26,9 +26,9 @@ export const loginUser = async (
 			password,
 		})
 
-		if (response.status === 200) {
+		if (response.status === 200 && response.data.user) {
 			console.log("Login successful!")
-			return { success: true, data: response.data.user }
+			return { success: true, user: response.data.user }
 		} else {
 			console.error("Login failed:", response.data)
 			return {
@@ -92,7 +92,7 @@ export const signupUser = async (
 		if (response.status === 201) {
 			return {
 				success: true,
-				data: response.data.user,
+				user: response.data.user,
 			}
 		} else {
 			return {
@@ -124,43 +124,37 @@ export const fetchUserProfile = async (
 	userId: string
 ): Promise<ApiResponse<UserProfile>> => {
 	try {
-		const response = await axios.get(`${API_URL}/users/${userId}`)
-		return {
-			success: true,
-			data: response.data.user,
-		}
-	} catch (error) {
-		if (axios.isAxiosError(error)) {
-			return {
-				success: false,
-				error:
-					error.response?.data?.error ||
-					"An unexpected error occurred at fetchUserProfile",
-			}
-		} else if (error instanceof Error) {
-			return {
-				success: false,
-				error:
-					error.message || "An unexpected error occurred at fetchUserProfile",
-			}
+		const response = await fetch(`${API_URL}/users/profile/${userId}`)
+		const textResponse = await response.text()
+		console.log("Raw response text:", textResponse)
+
+		const result = JSON.parse(textResponse)
+
+		if (response.ok) {
+			return { success: true, user: result.profile }
 		} else {
 			return {
 				success: false,
-				error: "An unexpected error occurred at fetchUserProfile",
+				error: result.error || "Failed to fetch profile",
 			}
 		}
+	} catch (error) {
+		return { success: false, error: (error as Error).message }
 	}
 }
 
 export const updateUserProfile = async (
 	userId: string,
-	profileData: { firstName: string; lastName: string; picture?: string }
+	profileData: Partial<UserProfile>
 ): Promise<ApiResponse<UserProfile>> => {
 	try {
-		const response = await axios.put(`${API_URL}/users/${userId}`, profileData)
+		const response = await axios.put(
+			`${API_URL}/users/profileUpdate/${userId}`,
+			profileData
+		)
 		return {
 			success: true,
-			data: response.data,
+			user: response.data,
 		}
 	} catch (error) {
 		if (axios.isAxiosError(error)) {

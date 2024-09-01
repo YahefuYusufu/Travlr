@@ -9,7 +9,7 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+import { useUser } from "../../context/UserProvider"
 import { FormInput } from "../../types/types"
 import { StackScreenProps } from "@react-navigation/stack"
 import { loginUser } from "../../api/auth"
@@ -17,7 +17,7 @@ import { RootStackParamList } from "../../types/types"
 
 type Props = StackScreenProps<RootStackParamList, "Login">
 
-const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
+const LoginScreen: React.FC<Props> = ({ navigation }) => {
 	const [email, setEmail] = useState<FormInput>({ value: "", error: null })
 	const [password, setPassword] = useState<FormInput>({
 		value: "",
@@ -26,22 +26,38 @@ const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
 	const [error, setError] = useState<string | null>(null)
 	const [loading, setLoading] = useState(false)
 
+	const { setUserId, setUserData } = useUser()
+
 	const handleLogin = async () => {
 		setLoading(true)
 		setError(null)
 
-		const result = await loginUser(email.value, password.value)
-		if (result.success) {
-			if (result.user && result.user._id) {
-				navigation.navigate("Tabs", { userId: result.user._id })
-			} else {
-				setError("User ID is missing in the response.")
-			}
-		} else {
-			setError(result.error || "An unexpected error occurred")
-		}
+		try {
+			const result = await loginUser(email.value, password.value)
+			if (result.success) {
+				if (result.user) {
+					// Set the user data in context
+					setUserId(result.user._id)
+					setUserData(result.user)
 
-		setLoading(false)
+					// Log the userId to verify it's saved correctly
+					console.log("Logged in userId:", result.user._id)
+
+					// Navigate to the "Tabs" screen
+					navigation.navigate("Tabs", { userId: result.user._id })
+				} else {
+					setError("User ID is missing in the response.")
+				}
+			} else {
+				setError(result.error || "An unexpected error occurred")
+			}
+		} catch (err) {
+			setError(
+				err instanceof Error ? err.message : "An unexpected error occurred"
+			)
+		} finally {
+			setLoading(false)
+		}
 	}
 
 	useEffect(() => {

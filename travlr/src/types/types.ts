@@ -23,11 +23,16 @@ export interface UserProfile {
 	lastName: string
 	picture?: string
 }
-// Response from API functions
+export interface UserContextProps {
+	userId: string | null
+	userData: UserProfile | null
+	setUserId: (id: string | null) => void
+	setUserData: (data: UserProfile | null) => void
+}
 export interface ApiResponse<T> {
 	success: boolean
-	data?: T // Data can be of any type depending on the API call
-	error?: string // Error message
+	user?: T
+	error?: string
 }
 
 export type RootStackParamList = {
