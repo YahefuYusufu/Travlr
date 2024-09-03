@@ -22,7 +22,6 @@ import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 import Modal from "react-native-modal"
 import * as ImagePicker from "expo-image-picker"
-import Icon from "react-native-vector-icons/FontAwesome"
 import { uploadImage, getProfileWithImage } from "../../api/userApi"
 
 type Props = StackScreenProps<RootStackParamList, "Tabs">
@@ -45,7 +44,6 @@ const ProfileScreen: React.FC<Props> = () => {
 		const loadProfile = async () => {
 			if (userId) {
 				setLoading(true)
-				console.log("Fetching profile for userId:", userId)
 				try {
 					const result = await getProfileWithImage(userId)
 					if (result.success && result.profile) {
@@ -83,6 +81,7 @@ const ProfileScreen: React.FC<Props> = () => {
 			const result = await updateUserProfile(userId, {
 				firstName,
 				lastName,
+				imageUri: picture,
 			})
 			if (result.success) {
 				Alert.alert("Success", "Profile updated successfully")
@@ -96,8 +95,9 @@ const ProfileScreen: React.FC<Props> = () => {
 			)
 		} finally {
 			setLoading(false)
+			setIsModalVisible(false) // Close the modal after successful update
 		}
-	}, [userId, firstName, lastName, setUserData])
+	}, [userId, firstName, lastName, picture, setUserData])
 
 	const handleLogout = useCallback(async () => {
 		try {
@@ -143,10 +143,9 @@ const ProfileScreen: React.FC<Props> = () => {
 					selectedImageUri
 				)
 				if (uploadResult.success && uploadResult.imageUri) {
-					Alert.alert("Success", "Image updated successfully")
 					setPicture(uploadResult.imageUri)
 
-					// Optionally, update the user profile with the new image URI
+					// Update user data with the new image URI
 					const updatedProfile: UserProfile = {
 						...userData!,
 						imageUri: uploadResult.imageUri,
@@ -168,26 +167,16 @@ const ProfileScreen: React.FC<Props> = () => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.profileContainer}>
-				{picture ? (
-					<View style={styles.profileImageContainer}>
+				<TouchableOpacity onPress={() => setIsModalVisible(true)}>
+					{picture ? (
 						<Image source={{ uri: picture }} style={styles.profileImage} />
-						<TouchableOpacity style={styles.editIcon} onPress={pickImage}>
-							<Icon name="camera" size={20} color="#fff" />
-						</TouchableOpacity>
-					</View>
-				) : (
-					<View style={styles.profileImageContainer}>
-						<View style={styles.profileImage} />
-						<TouchableOpacity style={styles.editIcon} onPress={pickImage}>
-							<Icon name="pencil" size={20} color="#fff" />
-						</TouchableOpacity>
-					</View>
-				)}
+					) : (
+						<View style={styles.profileImagePlaceholder} />
+					)}
+				</TouchableOpacity>
 				<Text style={styles.name}>
 					{firstName} {lastName}
 				</Text>
-				{/* Display the date the profile was created, assuming it's available */}
-				{/* For demonstration, a static date is used */}
 				<Text style={styles.date}>Joined: {new Date().toDateString()}</Text>
 				<TouchableOpacity
 					style={styles.editButton}
@@ -202,12 +191,33 @@ const ProfileScreen: React.FC<Props> = () => {
 				onBackdropPress={() => setIsModalVisible(false)}>
 				<View style={styles.modalContent}>
 					<Text style={styles.modalTitle}>Edit Profile</Text>
+
+					{/* Image Picker */}
+					<TouchableOpacity onPress={pickImage}>
+						<View style={styles.imagePickerContainer}>
+							{picture ? (
+								<Image
+									source={{ uri: picture }}
+									style={styles.modalProfileImage}
+								/>
+							) : (
+								<View style={styles.modalProfileImagePlaceholder} />
+							)}
+							<Text style={styles.changePictureText}>
+								Change Profile Picture
+							</Text>
+						</View>
+					</TouchableOpacity>
+
+					{/* First Name Input */}
 					<TextInput
 						placeholder="First Name"
 						value={firstName}
 						onChangeText={setFirstName}
 						style={styles.input}
 					/>
+
+					{/* Last Name Input */}
 					<TextInput
 						placeholder="Last Name"
 						value={lastName}
@@ -244,29 +254,19 @@ const styles = StyleSheet.create({
 		marginBottom: 160,
 		width: "100%",
 	},
-	profileImageContainer: {
-		position: "relative",
-		marginBottom: 10,
-	},
 	profileImage: {
 		width: 100,
 		height: 100,
 		borderRadius: 50,
 		backgroundColor: "#ddd",
+		marginBottom: 10,
 	},
-	editIcon: {
-		position: "absolute",
-		bottom: 0,
-		right: 0,
-		backgroundColor: "#545454",
+	profileImagePlaceholder: {
+		width: 100,
+		height: 100,
 		borderRadius: 50,
-		padding: 8,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	editIconText: {
-		color: "#fff",
-		fontSize: 18,
+		backgroundColor: "#ddd",
+		marginBottom: 10,
 	},
 	name: {
 		fontSize: 20,
@@ -297,33 +297,43 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		marginBottom: 15,
 	},
-	title: {
-		fontSize: 24,
+	imagePickerContainer: {
+		alignItems: "center",
 		marginBottom: 20,
 	},
-	input: {
-		width: "100%",
-		borderWidth: 1,
-		borderColor: "#ddd",
-		padding: 10,
-		marginBottom: 15,
-		borderRadius: 5,
-		backgroundColor: "#fff",
-	},
-	picture: {
+	modalProfileImage: {
 		width: 100,
 		height: 100,
 		borderRadius: 50,
-		marginVertical: 10,
+		backgroundColor: "#ddd",
+		marginBottom: 10,
+	},
+	modalProfileImagePlaceholder: {
+		width: 100,
+		height: 100,
+		borderRadius: 50,
+		backgroundColor: "#ddd",
+		marginBottom: 10,
+	},
+	changePictureText: {
+		fontSize: 16,
+		color: "#007BFF",
+		marginTop: 10,
+	},
+	input: {
+		height: 40,
+		borderColor: "#ccc",
+		borderWidth: 1,
+		borderRadius: 5,
+		paddingHorizontal: 10,
+		marginBottom: 15,
 	},
 	errorText: {
 		color: "red",
 		marginBottom: 15,
 	},
 	buttonContainer: {
-		position: "absolute",
-		top: 40,
-		right: 40,
+		marginTop: 20,
 	},
 })
 

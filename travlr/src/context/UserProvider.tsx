@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useState, ReactNode } from "react"
 import { UserProfile, UserContextProps } from "../types/types"
 
-// const UserContext = createContext<UserContextProps>({
-// 	userId: null,
-// 	userData: null,
-// 	setUserId: () => {},
-// 	setUserData: () => {},
-// })
+const UserContext = createContext<UserContextProps>({
+	userId: null,
+	userData: null,
+	setUserId: () => {},
+	setUserData: () => {},
+})
 
-const UserContext = createContext<UserContextProps | undefined>(undefined)
+// const UserContext = createContext<UserContextProps | undefined>(undefined)
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
 	children,
