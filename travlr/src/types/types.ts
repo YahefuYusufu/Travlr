@@ -50,6 +50,11 @@ export interface UploadImageResponse {
 	imageUri?: string
 	error?: string
 }
+export interface ProfileWithImageResponse {
+	success: boolean
+	profile?: UserProfile // Use UserProfile here
+	error?: string
+}
 
 export interface LogoutButtonProps {
 	handleLogout: (event: GestureResponderEvent) => void

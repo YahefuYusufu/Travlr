@@ -1,5 +1,5 @@
 import { API_URL } from "@env"
-import { UploadImageResponse } from "../types/types"
+import { ProfileWithImageResponse, UploadImageResponse } from "../types/types"
 
 export const uploadImage = async (
 	userId: string,
@@ -13,24 +13,44 @@ export const uploadImage = async (
 		formData.append("file", {
 			uri: imageUri,
 			name: `photo.${fileType}`,
-			type: `image/${fileType}`, // Ensure this matches the actual file type
+			type: `image/${fileType}`,
 		})
 
-		const response = await fetch(`${API_URL}/users/profile/${userId}/upload`, {
+		const response = await fetch(`${API_URL}/users/profile/upload/${userId}`, {
 			method: "POST",
 			body: formData,
-			// Remove Content-Type header; fetch will set it correctly
 		})
 
 		const result = await response.json()
 		console.log("user APi result :", result)
 
 		if (response.ok) {
-			return { success: true, imageUri: result.profile.imageUri } // Access imageUri from profile
+			return { success: true, imageUri: result.profile.imageUri }
 		} else {
 			return {
 				success: false,
 				error: result.error || "Failed to upload image",
+			}
+		}
+	} catch (error) {
+		return { success: false, error: (error as Error).message }
+	}
+}
+
+export const getProfileWithImage = async (
+	userId: string
+): Promise<ProfileWithImageResponse> => {
+	try {
+		const res = await fetch(`${API_URL}/users/profile/upload/${userId}`)
+		const result = await res.json()
+		console.log("Pfofile image result :", result)
+
+		if (res.ok) {
+			return { success: true, profile: result.profile }
+		} else {
+			return {
+				success: false,
+				error: result.error || "Failed to retrieve profile",
 			}
 		}
 	} catch (error) {

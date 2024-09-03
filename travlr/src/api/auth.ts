@@ -107,28 +107,28 @@ export const signupUser = async (
 	}
 }
 
-export const fetchUserProfile = async (
-	userId: string
-): Promise<ApiResponse<UserProfile>> => {
-	try {
-		const response = await fetch(`${API_URL}/users/profile/${userId}`)
-		const textResponse = await response.text()
-		console.log("Raw response text:", textResponse)
+// export const fetchUserProfile = async (
+// 	userId: string
+// ): Promise<ApiResponse<UserProfile>> => {
+// 	try {
+// 		const response = await fetch(`${API_URL}/users/profile/${userId}`)
+// 		const textResponse = await response.text()
+// 		console.log("Raw response text:", textResponse)
 
-		const result = JSON.parse(textResponse)
+// 		const result = JSON.parse(textResponse)
 
-		if (response.ok) {
-			return { success: true, user: result.profile }
-		} else {
-			return {
-				success: false,
-				error: result.error || "Failed to fetch profile",
-			}
-		}
-	} catch (error) {
-		return { success: false, error: (error as Error).message }
-	}
-}
+// 		if (response.ok) {
+// 			return { success: true, user: result.profile }
+// 		} else {
+// 			return {
+// 				success: false,
+// 				error: result.error || "Failed to fetch profile",
+// 			}
+// 		}
+// 	} catch (error) {
+// 		return { success: false, error: (error as Error).message }
+// 	}
+// }
 
 export const updateUserProfile = async (
 	userId: string,

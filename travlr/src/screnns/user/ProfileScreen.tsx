@@ -11,15 +11,19 @@ import {
 	TouchableOpacity,
 } from "react-native"
 import { useUser } from "../../context/UserProvider"
-import { updateUserProfile, fetchUserProfile, logoutUser } from "../../api/auth"
-import { RootStackParamList, UserProfile } from "../../types/types" // Adjust the import path as
+import { updateUserProfile, logoutUser } from "../../api/auth"
+import {
+	RootStackParamList,
+	UserProfile,
+	UploadImageResponse,
+} from "../../types/types"
 import LogoutButton from "../../components/buttons/LogoutButton"
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 import Modal from "react-native-modal"
 import * as ImagePicker from "expo-image-picker"
 import Icon from "react-native-vector-icons/FontAwesome"
-import { uploadImage } from "../../api/userApi"
+import { uploadImage, getProfileWithImage } from "../../api/userApi"
 
 type Props = StackScreenProps<RootStackParamList, "Tabs">
 type ProfileScreenNavigationProp = StackNavigationProp<
@@ -43,13 +47,13 @@ const ProfileScreen: React.FC<Props> = () => {
 				setLoading(true)
 				console.log("Fetching profile for userId:", userId)
 				try {
-					const result = await fetchUserProfile(userId)
-					if (result.success) {
-						const profile = result.user as UserProfile
+					const result = await getProfileWithImage(userId)
+					if (result.success && result.profile) {
+						const profile = result.profile as UserProfile
 						setFirstName(profile.firstName)
 						setLastName(profile.lastName)
 						setPicture(profile.imageUri || "")
-						setUserData(profile) // Update context with fetched data
+						setUserData(profile)
 					} else {
 						throw new Error(result.error || "Failed to fetch profile")
 					}
@@ -105,67 +109,6 @@ const ProfileScreen: React.FC<Props> = () => {
 			Alert.alert("Logout failed", "An error occurred while logging out.")
 		}
 	}, [navigation, setUserData])
-	if (!userId) {
-		return (
-			<View style={styles.container}>
-				<Text style={styles.errorText}>
-					User ID is missing. Please log in again.
-				</Text>
-			</View>
-		)
-	}
-
-	// const pickImage = async () => {
-	// 	const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
-	// 	if (status !== "granted") {
-	// 		Alert.alert(
-	// 			"Permission required",
-	// 			"Sorry, we need camera roll permissions to make this work!"
-	// 		)
-	// 		return
-	// 	}
-
-	// 	const result = await ImagePicker.launchImageLibraryAsync({
-	// 		mediaTypes: ImagePicker.MediaTypeOptions.Images,
-	// 		allowsEditing: true,
-	// 		aspect: [1, 1],
-	// 		quality: 1,
-	// 	})
-
-	// 	if (!result.canceled && result.assets && result.assets.length > 0) {
-	// 		const selectedImageUri = result.assets[0].uri
-	// 		setPicture(selectedImageUri || "")
-
-	// 		// Handle image upload separately
-	// 		try {
-	// 			setLoading(true)
-	// 			const uploadResult = await uploadImage(userId, selectedImageUri)
-	// 			if (uploadResult.success) {
-	// 				Alert.alert("Success", "Image updated successfully")
-
-	// 				// Merge the new imageUri into the existing userData
-	// 				const updatedUserProfile: UserProfile = {
-	// 					_id: userData._id, // Ensure _id is a string
-	// 					email: userData.email, // Ensure email is a string
-	// 					firstName: userData.firstName || '', // Provide a default if needed
-	// 					lastName: userData.lastName || '', // Provide a default if needed
-	// 					imageUri: uploadResult.user.imageUri || userData.imageUri, // Ensure imageUri is a string
-	// 				  };
-
-	// 				  // Update the user data
-	// 				  setUserData(updatedUserProfile);
-	// 			} else {
-	// 				throw new Error(uploadResult.error || "Failed to upload image")
-	// 			}
-	// 		} catch (err) {
-	// 			setError(
-	// 				err instanceof Error ? err.message : "An unexpected error occurred"
-	// 			)
-	// 		} finally {
-	// 			setLoading(false)
-	// 		}
-	// 	}
-	// }
 
 	const pickImage = async () => {
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -188,18 +131,27 @@ const ProfileScreen: React.FC<Props> = () => {
 			const selectedImageUri = result.assets[0].uri
 			setPicture(selectedImageUri || "")
 
-			// Ensure userData is not null before proceeding
-			if (!userData) {
-				setError("User data is not available.")
+			if (!userId) {
+				setError("User ID is not available.")
 				return
 			}
 
 			try {
 				setLoading(true)
-				const uploadResult = await uploadImage(userId, selectedImageUri)
+				const uploadResult: UploadImageResponse = await uploadImage(
+					userId,
+					selectedImageUri
+				)
 				if (uploadResult.success && uploadResult.imageUri) {
 					Alert.alert("Success", "Image updated successfully")
 					setPicture(uploadResult.imageUri)
+
+					// Optionally, update the user profile with the new image URI
+					const updatedProfile: UserProfile = {
+						...userData!,
+						imageUri: uploadResult.imageUri,
+					}
+					setUserData(updatedProfile)
 				} else {
 					throw new Error(uploadResult.error || "Failed to upload image")
 				}
