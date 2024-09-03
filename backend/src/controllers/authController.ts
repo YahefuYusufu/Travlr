@@ -6,6 +6,8 @@ import { DuplicateEmailError } from "../utils/DuplicateEmailError"
 import Tour from "../models/tour"
 import Profile from "../models/profile"
 import { ProfileProps, UserProps } from "../types/Profile"
+import mongoose from "mongoose"
+
 require("dotenv").config()
 
 export const registerUser = async (

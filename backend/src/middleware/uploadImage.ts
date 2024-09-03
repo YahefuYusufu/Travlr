@@ -4,17 +4,16 @@ import { GridFsStorage } from "multer-gridfs-storage"
 import dotenv from "dotenv"
 import path from "path"
 import crypto from "crypto"
-import mongoose from "mongoose"
 
 dotenv.config()
-const mongoURI = process.env.MONGODB_URI as string
+const mongoURI = process.env.MONGODB_URI
 
 if (!mongoURI) {
-	throw new Error("MongoDB URI is not defined")
+	throw new Error("MongoDB URI is not defined in environment variables")
 }
+
 const storage = new GridFsStorage({
 	url: mongoURI,
-
 	file: (req: Request, file: Express.Multer.File) => {
 		return new Promise((resolve, reject) => {
 			crypto.randomBytes(16, (err, buf) => {
@@ -29,23 +28,29 @@ const storage = new GridFsStorage({
 			})
 		})
 	},
-	// options: { useUnifiedTopology: true },
 })
+
+const fileFilter = (
+	req: Request,
+	file: Express.Multer.File,
+	cb: FileFilterCallback
+) => {
+	const allowedTypes = /jpeg|jpg|png/
+	const extname = allowedTypes.test(
+		path.extname(file.originalname).toLowerCase()
+	)
+	const mimetype = allowedTypes.test(file.mimetype)
+
+	if (mimetype && extname) {
+		cb(null, true)
+	} else {
+		cb(new Error("Only JPEG, JPG, and PNG image files are allowed!"))
+	}
+}
+
 const upload = multer({
 	storage,
-	fileFilter: (req, file, cb) => {
-		const allowedTypes = /jpeg|jpg|png/
-		const extname = allowedTypes.test(
-			path.extname(file.originalname).toLowerCase()
-		)
-		const mimetype = allowedTypes.test(file.mimetype)
-
-		if (mimetype && extname) {
-			return cb(null, true)
-		} else {
-			cb(new Error("Only image files are allowed!"))
-		}
-	},
+	fileFilter,
 	limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 })
 

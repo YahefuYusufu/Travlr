@@ -10,8 +10,7 @@ import {
 	getUserProfile,
 } from "../controllers/authController"
 import { authenticateToken } from "../middleware/authMiddleware"
-import upload from "../middleware/imageStorage"
-import { uploadImage } from "../controllers/profileController"
+import upload from "../middleware/uploadImage"
 
 const router = express.Router()
 
@@ -46,13 +45,13 @@ router.put("/profileUpdate/:userId", updateUserProfile) // Use PUT for updating 
 // Delete a user by ID
 router.delete("/:userId", deleteUser)
 
-router.post(
-	"/profile/upload/:userId",
-	upload.single("file"),
-	uploadImage,
-	(req, res) => {
-		res.send("File uploaded successfully")
-	}
-)
+// router.post(
+// 	"/profile/upload/:userId",
+// 	upload.single("file"),
+// 	uploadImage,
+// 	(req, res) => {
+// 		res.send("File uploaded successfully")
+// 	}
+// )
 
 export default router

@@ -15,8 +15,6 @@ export const uploadImage = async (req: Request, res: Response) => {
 			return res.status(400).json({ success: false, error: "No file uploaded" })
 		}
 
-		let imageUri = ""
-
 		console.log("File received:", file)
 
 		if (!file.id) {
@@ -25,14 +23,14 @@ export const uploadImage = async (req: Request, res: Response) => {
 				.json({ success: false, error: "File ID not generated" })
 		}
 
-		imageUri = file.id.toString()
+		const imageUri = file.id.toString()
 		console.log("File ID:", imageUri)
 
 		// Update the user's profile with the GridFS file ID
 		const profile = await Profile.findOneAndUpdate(
 			{ user: userId },
 			{ imageUri },
-			{ new: true }
+			{ new: true, runValidators: true }
 		)
 
 		if (!profile) {
@@ -45,11 +43,16 @@ export const uploadImage = async (req: Request, res: Response) => {
 			success: true,
 			profile: {
 				...profile.toObject(),
-				imageUri: file.id.toString(),
+				imageUri: imageUri,
 			},
 		})
 	} catch (error) {
 		console.error("Error during uploadImage:", error)
-		res.status(500).json({ success: false, error: "Server Error" })
+		res.status(500).json({
+			success: false,
+			error: "Server Error",
+			message:
+				error instanceof Error ? error.message : "An unexpected error occurred",
+		})
 	}
 }
