@@ -12,13 +12,16 @@ export const uploadImage = async (
 		const formData = new FormData()
 		formData.append("file", {
 			uri: imageUri,
-			name: `photo.${fileType}`,
-			type: `image/${fileType}`,
+			type: "image/jpeg", // or the appropriate MIME type
+			name: "photo.jpg",
 		})
 
-		const response = await fetch(`${API_URL}/users/profile/upload/${userId}`, {
+		const response = await fetch(`${API_URL}/upload/${userId}`, {
 			method: "POST",
 			body: formData,
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
 		})
 
 		const result = await response.json()
