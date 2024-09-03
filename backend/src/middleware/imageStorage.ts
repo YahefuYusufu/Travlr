@@ -1,18 +1,32 @@
 import { Request } from "express"
-import multer, { StorageEngine, FileFilterCallback } from "multer"
+import multer, { FileFilterCallback } from "multer"
+import { GridFsStorage } from "multer-gridfs-storage"
+import dotenv from "dotenv"
 import path from "path"
+import crypto from "crypto"
+import mongoose from "mongoose"
 
-// Set up multer storage
-const storage: StorageEngine = multer.diskStorage({
-	destination: (
-		req: Request,
-		file: Express.Multer.File,
-		cb: (error: Error | null, destination: string) => void
-	) => {
-		cb(null, "uploads/")
-	},
-	filename: (req, file, cb) => {
-		cb(null, Date.now() + path.extname(file.originalname))
+const mongoURI = process.env.MONGODB_URI as string
+
+dotenv.config()
+const storage = new GridFsStorage({
+	url: mongoURI,
+	options: { useNewUrlParser: true, useUnifiedTopology: true },
+	file: (req: Request, file: Express.Multer.File) => {
+		return new Promise((resolve, reject) => {
+			// Generate a unique filename using crypto
+			crypto.randomBytes(16, (err, buf) => {
+				if (err) {
+					return reject(err)
+				}
+				const filename = buf.toString("hex") + path.extname(file.originalname)
+				const fileInfo = {
+					filename: filename,
+					bucketName: "uploads", // Name of the GridFS bucket
+				}
+				resolve(fileInfo)
+			})
+		})
 	},
 })
 
@@ -33,6 +47,7 @@ const fileFilter = (
 	}
 }
 
+// Initialize Multer with GridFS storage and file filtering
 const upload = multer({
 	storage,
 	fileFilter,

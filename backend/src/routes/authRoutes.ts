@@ -46,6 +46,6 @@ router.put("/profileUpdate/:userId", updateUserProfile) // Use PUT for updating 
 // Delete a user by ID
 router.delete("/:userId", deleteUser)
 
-router.post("/uploadImage/:userId", upload.single("photo"), uploadImage)
+router.post("/profile/:userId/upload", upload.single("photo"), uploadImage)
 
 export default router
