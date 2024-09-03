@@ -3,19 +3,6 @@ import axios from "axios"
 import { API_URL } from "@env"
 import { ApiResponse, CreateUserParams, UserProfile } from "../types/types"
 
-interface MyCustomError {
-	message: string
-	// Other properties as needed
-}
-
-type AxiosError = {
-	response?: {
-		data?: {
-			error?: string
-		}
-	}
-}
-
 export const loginUser = async (
 	email: string,
 	password: string
@@ -120,28 +107,28 @@ export const signupUser = async (
 	}
 }
 
-export const fetchUserProfile = async (
-	userId: string
-): Promise<ApiResponse<UserProfile>> => {
-	try {
-		const response = await fetch(`${API_URL}/users/profile/${userId}`)
-		const textResponse = await response.text()
-		console.log("Raw response text:", textResponse)
+// export const fetchUserProfile = async (
+// 	userId: string
+// ): Promise<ApiResponse<UserProfile>> => {
+// 	try {
+// 		const response = await fetch(`${API_URL}/users/profile/${userId}`)
+// 		const textResponse = await response.text()
+// 		console.log("Raw response text:", textResponse)
 
-		const result = JSON.parse(textResponse)
+// 		const result = JSON.parse(textResponse)
 
-		if (response.ok) {
-			return { success: true, user: result.profile }
-		} else {
-			return {
-				success: false,
-				error: result.error || "Failed to fetch profile",
-			}
-		}
-	} catch (error) {
-		return { success: false, error: (error as Error).message }
-	}
-}
+// 		if (response.ok) {
+// 			return { success: true, user: result.profile }
+// 		} else {
+// 			return {
+// 				success: false,
+// 				error: result.error || "Failed to fetch profile",
+// 			}
+// 		}
+// 	} catch (error) {
+// 		return { success: false, error: (error as Error).message }
+// 	}
+// }
 
 export const updateUserProfile = async (
 	userId: string,

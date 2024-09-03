@@ -11,20 +11,19 @@ import {
 	TouchableOpacity,
 } from "react-native"
 import { useUser } from "../../context/UserProvider"
+import { updateUserProfile, logoutUser } from "../../api/auth"
 import {
-	updateUserProfile,
-	fetchUserProfile,
-	logoutUser,
-	uploadImage,
-} from "../../api/auth"
-import { RootStackParamList, UserProfile } from "../../types/types" // Adjust the import path as
+	RootStackParamList,
+	UserProfile,
+	UploadImageResponse,
+} from "../../types/types"
 import LogoutButton from "../../components/buttons/LogoutButton"
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack"
 import Modal from "react-native-modal"
 import * as ImagePicker from "expo-image-picker"
 import Icon from "react-native-vector-icons/FontAwesome"
-import * as FileSystem from "expo-file-system"
+import { uploadImage, getProfileWithImage } from "../../api/userApi"
 
 type Props = StackScreenProps<RootStackParamList, "Tabs">
 type ProfileScreenNavigationProp = StackNavigationProp<
@@ -37,7 +36,7 @@ const ProfileScreen: React.FC<Props> = () => {
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
 	const [firstName, setFirstName] = useState<string>(userData?.firstName || "")
 	const [lastName, setLastName] = useState<string>(userData?.lastName || "")
-	const [picture, setPicture] = useState<string>(userData?.picture || "")
+	const [picture, setPicture] = useState<string>(userData?.imageUri || "")
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | null>(null)
 	const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
@@ -48,13 +47,13 @@ const ProfileScreen: React.FC<Props> = () => {
 				setLoading(true)
 				console.log("Fetching profile for userId:", userId)
 				try {
-					const result = await fetchUserProfile(userId)
-					if (result.success) {
-						const profile = result.user as UserProfile
+					const result = await getProfileWithImage(userId)
+					if (result.success && result.profile) {
+						const profile = result.profile as UserProfile
 						setFirstName(profile.firstName)
 						setLastName(profile.lastName)
-						setPicture(profile.picture || "")
-						setUserData(profile) // Update context with fetched data
+						setPicture(profile.imageUri || "")
+						setUserData(profile)
 					} else {
 						throw new Error(result.error || "Failed to fetch profile")
 					}
@@ -110,15 +109,6 @@ const ProfileScreen: React.FC<Props> = () => {
 			Alert.alert("Logout failed", "An error occurred while logging out.")
 		}
 	}, [navigation, setUserData])
-	if (!userId) {
-		return (
-			<View style={styles.container}>
-				<Text style={styles.errorText}>
-					User ID is missing. Please log in again.
-				</Text>
-			</View>
-		)
-	}
 
 	const pickImage = async () => {
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -141,16 +131,27 @@ const ProfileScreen: React.FC<Props> = () => {
 			const selectedImageUri = result.assets[0].uri
 			setPicture(selectedImageUri || "")
 
-			// Handle image upload separately
+			if (!userId) {
+				setError("User ID is not available.")
+				return
+			}
+
 			try {
 				setLoading(true)
-				const uploadResult = await uploadImage(userId, selectedImageUri)
-				if (uploadResult.success) {
+				const uploadResult: UploadImageResponse = await uploadImage(
+					userId,
+					selectedImageUri
+				)
+				if (uploadResult.success && uploadResult.imageUri) {
 					Alert.alert("Success", "Image updated successfully")
-					setUserData((prevData) => ({
-						...prevData,
-						picture: uploadResult.imageUrl,
-					}))
+					setPicture(uploadResult.imageUri)
+
+					// Optionally, update the user profile with the new image URI
+					const updatedProfile: UserProfile = {
+						...userData!,
+						imageUri: uploadResult.imageUri,
+					}
+					setUserData(updatedProfile)
 				} else {
 					throw new Error(uploadResult.error || "Failed to upload image")
 				}

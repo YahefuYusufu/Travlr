@@ -6,6 +6,8 @@ import { DuplicateEmailError } from "../utils/DuplicateEmailError"
 import Tour from "../models/tour"
 import Profile from "../models/profile"
 import { ProfileProps, UserProps } from "../types/Profile"
+import mongoose from "mongoose"
+
 require("dotenv").config()
 
 export const registerUser = async (
@@ -112,7 +114,7 @@ export const getAllUsers = async (_req: Request, res: Response) => {
 
 export const createUserProfile = async (req: Request, res: Response) => {
 	try {
-		const { userId, firstName, lastName, picture } = req.body
+		const { userId, firstName, lastName, imageUri } = req.body
 
 		const user = await User.findById(userId)
 		if (!user) {
@@ -123,7 +125,7 @@ export const createUserProfile = async (req: Request, res: Response) => {
 			user: userId,
 			firstName,
 			lastName,
-			picture,
+			imageUri,
 		})
 
 		await profile.save()
@@ -182,7 +184,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
 			email: user.email,
 			firstName: profile.firstName || "",
 			lastName: profile.lastName || "",
-			picture: profile.picture || "",
+			imageUri: profile.imageUri || "",
 		}
 
 		// Return the combined user and profile data
@@ -202,7 +204,7 @@ export const updateUserProfile = async (
 ) => {
 	try {
 		const { userId } = req.params
-		const { firstName, lastName, picture } = req.body
+		const { firstName, lastName, imageUri } = req.body
 
 		// Validate input
 		if (!firstName || !lastName) {
@@ -219,11 +221,11 @@ export const updateUserProfile = async (
 
 		let profile = await Profile.findOne({ user: userId })
 		if (!profile) {
-			profile = new Profile({ user: userId, firstName, lastName, picture })
+			profile = new Profile({ user: userId, firstName, lastName, imageUri })
 		} else {
 			profile.firstName = firstName
 			profile.lastName = lastName
-			profile.picture = picture
+			profile.imageUri = imageUri
 		}
 
 		await profile.save()
@@ -248,7 +250,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 		// Check if a profile is associated with the user
 		if (user.profile) {
-			await Profile.findByIdAndDelete(user.profile._id) // Delete the profile
+			// await Profile.findByIdAndDelete(user.) // Delete the profile
 		}
 
 		// Delete related tours (assuming a Tour model exists)
