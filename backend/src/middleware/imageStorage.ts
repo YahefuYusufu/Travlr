@@ -11,7 +11,6 @@ const mongoURI = process.env.MONGODB_URI as string
 dotenv.config()
 const storage = new GridFsStorage({
 	url: mongoURI,
-	options: { useNewUrlParser: true, useUnifiedTopology: true },
 	file: (req: Request, file: Express.Multer.File) => {
 		return new Promise((resolve, reject) => {
 			// Generate a unique filename using crypto

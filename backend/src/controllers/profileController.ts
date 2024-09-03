@@ -11,6 +11,9 @@ export const uploadImage = async (req: Request, res: Response) => {
 		const userId = req.params.userId
 		const file = req.file as GridFile // The uploaded file
 
+		console.log("File received:", file)
+		console.log("File ID:", file.id)
+
 		if (!file) {
 			return res.status(400).json({ success: false, error: "No file uploaded" })
 		}
