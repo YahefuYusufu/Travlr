@@ -112,7 +112,7 @@ export const getAllUsers = async (_req: Request, res: Response) => {
 
 export const createUserProfile = async (req: Request, res: Response) => {
 	try {
-		const { userId, firstName, lastName, picture } = req.body
+		const { userId, firstName, lastName, imageUri } = req.body
 
 		const user = await User.findById(userId)
 		if (!user) {
@@ -123,7 +123,7 @@ export const createUserProfile = async (req: Request, res: Response) => {
 			user: userId,
 			firstName,
 			lastName,
-			picture,
+			imageUri,
 		})
 
 		await profile.save()
@@ -182,7 +182,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
 			email: user.email,
 			firstName: profile.firstName || "",
 			lastName: profile.lastName || "",
-			picture: profile.imageUri || "",
+			imageUri: profile.imageUri || "",
 		}
 
 		// Return the combined user and profile data

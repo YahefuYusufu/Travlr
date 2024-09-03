@@ -15,6 +15,8 @@ export const uploadImage = async (req: Request, res: Response) => {
 			return res.status(400).json({ success: false, error: "No file uploaded" })
 		}
 
+		let imageUri = ""
+
 		console.log("File received:", file)
 
 		if (!file.id) {
@@ -22,12 +24,14 @@ export const uploadImage = async (req: Request, res: Response) => {
 				.status(500)
 				.json({ success: false, error: "File ID not generated" })
 		}
-		console.log("File ID:", file.id)
+
+		imageUri = file.id.toString()
+		console.log("File ID:", imageUri)
 
 		// Update the user's profile with the GridFS file ID
 		const profile = await Profile.findOneAndUpdate(
 			{ user: userId },
-			{ imageUri: file.id.toString() },
+			{ imageUri },
 			{ new: true }
 		)
 
