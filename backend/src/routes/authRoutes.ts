@@ -46,6 +46,13 @@ router.put("/profileUpdate/:userId", updateUserProfile) // Use PUT for updating 
 // Delete a user by ID
 router.delete("/:userId", deleteUser)
 
-router.post("/profile/:userId/upload", upload.single("photo"), uploadImage)
+router.post(
+	"/profile/upload/:userId",
+	upload.single("file"),
+	uploadImage,
+	(req, res) => {
+		res.send("File uploaded successfully")
+	}
+)
 
 export default router

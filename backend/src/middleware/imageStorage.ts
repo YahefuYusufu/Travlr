@@ -6,51 +6,47 @@ import path from "path"
 import crypto from "crypto"
 import mongoose from "mongoose"
 
+dotenv.config()
 const mongoURI = process.env.MONGODB_URI as string
 
-dotenv.config()
+if (!mongoURI) {
+	throw new Error("MongoDB URI is not defined")
+}
 const storage = new GridFsStorage({
 	url: mongoURI,
+
 	file: (req: Request, file: Express.Multer.File) => {
 		return new Promise((resolve, reject) => {
-			// Generate a unique filename using crypto
 			crypto.randomBytes(16, (err, buf) => {
 				if (err) {
 					return reject(err)
 				}
-				const filename = buf.toString("hex") + path.extname(file.originalname)
 				const fileInfo = {
-					filename: filename,
-					bucketName: "uploads", // Name of the GridFS bucket
+					filename: `${Date.now()}-${file.originalname}`,
+					bucketName: "uploads",
 				}
 				resolve(fileInfo)
 			})
 		})
 	},
+	// options: { useUnifiedTopology: true },
 })
-
-// File filtering
-const fileFilter = (
-	req: Request,
-	file: Express.Multer.File,
-	cb: FileFilterCallback
-) => {
-	const fileTypes = /jpeg|jpg|png/
-	const extname = fileTypes.test(path.extname(file.originalname).toLowerCase())
-	const mimetype = fileTypes.test(file.mimetype)
-
-	if (mimetype && extname) {
-		cb(null, true)
-	} else {
-		cb(new Error("Error: Images Only!"))
-	}
-}
-
-// Initialize Multer with GridFS storage and file filtering
 const upload = multer({
 	storage,
-	fileFilter,
-	limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+	fileFilter: (req, file, cb) => {
+		const allowedTypes = /jpeg|jpg|png/
+		const extname = allowedTypes.test(
+			path.extname(file.originalname).toLowerCase()
+		)
+		const mimetype = allowedTypes.test(file.mimetype)
+
+		if (mimetype && extname) {
+			return cb(null, true)
+		} else {
+			cb(new Error("Only image files are allowed!"))
+		}
+	},
+	limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 })
 
 export default upload
