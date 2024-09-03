@@ -10,13 +10,13 @@ export const uploadImage = async (
 		const fileType = uriParts[uriParts.length - 1]
 
 		const formData = new FormData()
-		formData.append("photo", {
+		formData.append("file", {
 			uri: imageUri,
 			name: `photo.${fileType}`,
 			type: `image/${fileType}`, // Ensure this matches the actual file type
 		})
 
-		const response = await fetch(`${API_URL}/users/uploadImage/${userId}`, {
+		const response = await fetch(`${API_URL}/users/profile/${userId}/upload`, {
 			method: "POST",
 			body: formData,
 			// Remove Content-Type header; fetch will set it correctly
