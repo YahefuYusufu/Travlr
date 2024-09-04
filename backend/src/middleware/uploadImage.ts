@@ -1,4 +1,4 @@
-import { Request } from "express"
+import { Request, Response, NextFunction } from "express"
 import multer, { FileFilterCallback } from "multer"
 import { GridFsStorage } from "multer-gridfs-storage"
 import dotenv from "dotenv"
@@ -18,12 +18,14 @@ const storage = new GridFsStorage({
 		return new Promise((resolve, reject) => {
 			crypto.randomBytes(16, (err, buf) => {
 				if (err) {
-					return reject(err)
+					return reject(err) // Handle error
 				}
 				const fileInfo = {
 					filename: `${Date.now()}-${file.originalname}`,
 					bucketName: "uploads",
 				}
+				console.log("Generated file info:", fileInfo) // Debugging line
+
 				resolve(fileInfo)
 			})
 		})
@@ -39,19 +41,32 @@ const fileFilter = (
 	const extname = allowedTypes.test(
 		path.extname(file.originalname).toLowerCase()
 	)
-	const mimetype = allowedTypes.test(file.mimetype)
+	const mimeType = allowedTypes.test(file.mimetype)
 
-	if (mimetype && extname) {
+	if (mimeType && extname) {
 		cb(null, true)
 	} else {
 		cb(new Error("Only JPEG, JPG, and PNG image files are allowed!"))
 	}
 }
 
-const upload = multer({
+const uploadImage = multer({
 	storage,
 	fileFilter,
-	limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+	limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
 })
 
-export default upload
+const uploadSingleImage = (req: Request, res: Response) => {
+	return new Promise<Express.Multer.File | undefined>((resolve, reject) => {
+		uploadImage.single("profileImage")(req, res, (err) => {
+			if (err) {
+				return reject(err)
+			}
+			console.log("Multer File:", req.file)
+			console.log("Multer Body:", req.body)
+			resolve(req.file)
+		})
+	})
+}
+
+export default uploadSingleImage

@@ -1,16 +1,5 @@
 import express from "express"
-import {
-	registerUser,
-	loginUser,
-	logout,
-	getUserProfileById,
-	getAllUsers,
-	updateUserProfile,
-	deleteUser,
-	getUserProfile,
-} from "../controllers/authController"
-import { authenticateToken } from "../middleware/authMiddleware"
-import upload from "../middleware/uploadImage"
+import { registerUser, loginUser, logout } from "../controllers/authController"
 
 const router = express.Router()
 
@@ -28,30 +17,6 @@ router.post("/register", registerUser)
 router.post("/login", loginUser)
 
 // Log out the current user
-router.post("/logout", logout)
-
-// Get all users
-router.get("/", getAllUsers)
-
-// Retrieve user profile by ID
-// router.get("/profile/:userId", getUserProfileById)
-
-// Retrieve user profile by ID
-router.get("/profile/:userId", getUserProfileById) // Use getUserProfile here
-
-// Update user profile by ID
-router.put("/profileUpdate/:userId", updateUserProfile) // Use PUT for updating profile
-
-// Delete a user by ID
-router.delete("/:userId", deleteUser)
-
-// router.post(
-// 	"/profile/upload/:userId",
-// 	upload.single("file"),
-// 	uploadImage,
-// 	(req, res) => {
-// 		res.send("File uploaded successfully")
-// 	}
-// )
+router.get("/logout", logout)
 
 export default router
