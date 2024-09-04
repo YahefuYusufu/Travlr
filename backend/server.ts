@@ -4,9 +4,8 @@ import dotenv from "dotenv"
 import cors from "cors"
 
 import authRoutes from "./src/routes/authRoutes"
+import profileRoutes from "./src/routes/profileRoutes"
 import tourRoutes from "./src/routes/tourRoutes"
-import upload from "./src/middleware/uploadImage"
-import { uploadImage } from "./src/controllers/profileController"
 
 dotenv.config()
 
@@ -34,9 +33,9 @@ const connectDB = async () => {
 connectDB()
 
 // Define routes
-app.use("/api/v1/tours", tourRoutes)
 app.use("/api/v1/users", authRoutes)
-app.use("/api/v1/upload/:userId", upload.single("file"), uploadImage)
+app.use("/api/v1/profiles", profileRoutes)
+app.use("/api/v1/tours", tourRoutes)
 
 app.listen(port, () => {
 	console.log(`Server listening on port ${port}`)

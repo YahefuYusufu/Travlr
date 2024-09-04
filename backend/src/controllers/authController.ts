@@ -3,6 +3,7 @@ import User from "../models/user"
 
 import bcrypt from "bcryptjs"
 import { DuplicateEmailError } from "../utils/DuplicateEmailError"
+import Profile from "../models/profile"
 
 require("dotenv").config()
 

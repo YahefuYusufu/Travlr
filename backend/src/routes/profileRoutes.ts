@@ -9,7 +9,7 @@ import router from "./authRoutes"
 
 router.get("/users", getAllUsers)
 router.get("/users/:userId", getUserProfile)
-router.put("/users/:userId", updateUserProfile)
+router.put("/update/:userId", updateUserProfile)
 router.delete("/users/:userId", deleteUser)
 
 export default router
