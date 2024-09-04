@@ -14,12 +14,5 @@ export interface UserProps {
 	email: string
 	password: string
 	createdAt: Date
-	profile: ProfileProps | null // Reference to Profile schema
+	profile: ProfileProps | null
 }
-
-// // Define the User interface
-// interface UserProps {
-// 	_id: string
-// 	email: string
-// 	profile?: ProfileProps // Ensure profile is optional and properly typed
-// }
