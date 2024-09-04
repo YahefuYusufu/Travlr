@@ -60,6 +60,8 @@ const uploadSingleImage = (req: Request, res: Response) => {
 			if (err) {
 				return reject(err)
 			}
+			console.log("Multer File:", req.file)
+			console.log("Multer Body:", req.body)
 			resolve(req.file)
 		})
 	})

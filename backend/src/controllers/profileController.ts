@@ -54,6 +54,7 @@ export const updateUserProfile = async (
 ) => {
 	try {
 		const { userId } = req.params
+		console.log("Request Body:", req.body) // Add this line for debugging
 		const { firstName, lastName } = req.body
 
 		// Validate input
