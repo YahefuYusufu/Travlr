@@ -24,6 +24,8 @@ const storage = new GridFsStorage({
 					filename: `${Date.now()}-${file.originalname}`,
 					bucketName: "uploads",
 				}
+				console.log("Generated file info:", fileInfo) // Debugging line
+
 				resolve(fileInfo)
 			})
 		})

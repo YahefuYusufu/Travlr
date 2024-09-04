@@ -35,6 +35,7 @@ connectDB()
 // Define routes
 app.use("/api/v1/users", authRoutes)
 app.use("/api/v1/profiles", profileRoutes)
+
 app.use("/api/v1/tours", tourRoutes)
 
 app.listen(port, () => {
