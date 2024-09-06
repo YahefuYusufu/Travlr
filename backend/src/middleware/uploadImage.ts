@@ -58,7 +58,7 @@ const uploadImage = multer({
 
 const uploadSingleImage = (req: Request, res: Response) => {
 	return new Promise<Express.Multer.File | undefined>((resolve, reject) => {
-		uploadImage.single("profileImage")(req, res, (err) => {
+		uploadImage.single("file")(req, res, (err) => {
 			if (err) {
 				return reject(err)
 			}
