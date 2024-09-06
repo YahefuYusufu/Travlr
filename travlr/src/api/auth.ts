@@ -130,38 +130,38 @@ export const signupUser = async (
 // 	}
 // }
 
-export const updateUserProfile = async (
-	userId: string,
-	profileData: Partial<UserProfile>
-): Promise<ApiResponse<UserProfile>> => {
-	try {
-		const response = await axios.put(
-			`${API_URL}/users/profileUpdate/${userId}`,
-			profileData
-		)
-		return {
-			success: true,
-			user: response.data,
-		}
-	} catch (error) {
-		if (axios.isAxiosError(error)) {
-			return {
-				success: false,
-				error:
-					error.response?.data?.error ||
-					"An unexpected error occurred at updateUserProfile",
-			}
-		} else if (error instanceof Error) {
-			return {
-				success: false,
-				error:
-					error.message || "An unexpected error occurred at updateUserProfile",
-			}
-		} else {
-			return {
-				success: false,
-				error: "An unexpected error occurred at updateUserProfile",
-			}
-		}
-	}
-}
+// export const updateUserProfile = async (
+// 	userId: string,
+// 	profileData: Partial<UserProfile>
+// ): Promise<ApiResponse<UserProfile>> => {
+// 	try {
+// 		const response = await axios.put(
+// 			`${API_URL}/users/profileUpdate/${userId}`,
+// 			profileData
+// 		)
+// 		return {
+// 			success: true,
+// 			user: response.data,
+// 		}
+// 	} catch (error) {
+// 		if (axios.isAxiosError(error)) {
+// 			return {
+// 				success: false,
+// 				error:
+// 					error.response?.data?.error ||
+// 					"An unexpected error occurred at updateUserProfile",
+// 			}
+// 		} else if (error instanceof Error) {
+// 			return {
+// 				success: false,
+// 				error:
+// 					error.message || "An unexpected error occurred at updateUserProfile",
+// 			}
+// 		} else {
+// 			return {
+// 				success: false,
+// 				error: "An unexpected error occurred at updateUserProfile",
+// 			}
+// 		}
+// 	}
+// }
