@@ -12,9 +12,9 @@ import {
 	ActivityIndicator,
 } from "react-native"
 import * as ImagePicker from "expo-image-picker"
-import axios from "axios"
-import { API_URL } from "@env"
-import { updateUserProfile } from "../../api/userApi"
+
+import { updateUserProfile, uploadImage } from "../../api/userApi"
+import { convertUriToFile } from "../../utils/helpers"
 
 interface EditProfileModalProps {
 	visible: boolean
@@ -64,45 +64,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 		}
 	}
 
-	const convertUriToFile = async (uri: string) => {
-		const response = await fetch(uri)
-		const blob = await response.blob()
-		const fileName = uri.split("/").pop() || "photo.jpg"
-		const lastModified = new Date().getTime() // Or another way to get the last modified time
-
-		return new File([blob], fileName, { type: blob.type, lastModified })
-	}
-
-	// const updateUserProfile = async (
-	// 	userId: string,
-	// 	firstName: string,
-	// 	lastName: string,
-	// 	imageFile?: File
-	// ) => {
-	// 	try {
-	// 		const formData = new FormData()
-	// 		formData.append("firstName", firstName)
-	// 		formData.append("lastName", lastName)
-	// 		if (imageFile) {
-	// 			formData.append("file", imageFile)
-	// 		}
-
-	// 		const response = await axios.post(
-	// 			`${API_URL}/users/${userId}`,
-	// 			formData,
-	// 			{
-	// 				headers: {
-	// 					"Content-Type": "multipart/form-data",
-	// 				},
-	// 			}
-	// 		)
-
-	// 		return { success: true, imageUri: response.data.profile.imageUri }
-	// 	} catch (error) {
-	// 		return { success: false, error: (error as Error).message }
-	// 	}
-	// }
-
 	const handleSave = async () => {
 		setLoading(true)
 
@@ -111,30 +72,25 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
 			// Upload the image if a new one is selected
 			if (imageUri && imageUri !== currentImageUri) {
-				const imageFile = await convertUriToFile(imageUri)
-				const uploadResult = await updateUserProfile(
-					userId,
-					firstName,
-					lastName,
-					imageFile
-				)
+				const uploadResult = await uploadImage(userId, imageUri)
 
 				if (uploadResult.success && uploadResult.imageUri) {
 					uploadedImageUri = uploadResult.imageUri // Get the new uploaded image URI
 				} else {
 					throw new Error(uploadResult.error || "Failed to upload image")
 				}
-			} else {
-				// Update the user profile without changing the image
-				const updateResult = await updateUserProfile(
-					userId,
-					firstName,
-					lastName
-				)
+			}
 
-				if (!updateResult.success) {
-					throw new Error(updateResult.error || "Failed to update profile")
-				}
+			// Update the user profile with the current or new image URI
+			const updateResult = await updateUserProfile(
+				userId,
+				firstName,
+				lastName,
+				uploadedImageUri
+			)
+
+			if (!updateResult.success) {
+				throw new Error(updateResult.error || "Failed to update profile")
 			}
 
 			// Call the parent onSave with updated profile data

@@ -1,6 +1,7 @@
 import { API_URL } from "@env"
 import { ProfileWithImageResponse, UploadImageResponse } from "../types/types"
 import axios from "axios"
+import { convertUriToBlob, convertUriToFile } from "../utils/helpers"
 
 export const getUserProfile = async (
 	userId: string
@@ -58,49 +59,25 @@ export const deleteUser = async (
 export const uploadImage = async (
 	userId: string,
 	imageUri: string
-): Promise<UploadImageResponse> => {
+): Promise<{ success: boolean; imageUri?: string; error?: string }> => {
 	try {
-		const uriParts = imageUri.split(".")
-		const fileType = uriParts[uriParts.length - 1]
+		const blob = await convertUriToFile(imageUri)
 
-		// Determine MIME type dynamically based on the file extension
-		let mimeType = "image/jpeg" // Default type
-		if (fileType === "png") {
-			mimeType = "image/png"
-		} else if (fileType === "jpg" || fileType === "jpeg") {
-			mimeType = "image/jpeg"
-		}
-
-		// Create FormData and append the file
 		const formData = new FormData()
-		formData.append("file", {
-			uri: imageUri,
-			type: mimeType, // Dynamically assigned MIME type
-			name: `photo.${fileType}`, // Append file extension dynamically
-		} as any) // Cast to `any` to avoid type issues
+		formData.append("file", blob, "photo.jpg") // The third parameter is the filename
 
-		// Send the POST request
-		const response = await fetch(`${API_URL}/upload/${userId}`, {
-			method: "POST",
-			body: formData,
-			// No need to set Content-Type for FormData, it is set automatically by fetch
+		const response = await axios.post(`${API_URL}/upload/${userId}`, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
 		})
 
-		const result = await response.json()
-		console.log("user API result:", result)
-
-		if (response.ok) {
-			return { success: true, imageUri: result.profile.imageUri }
-		} else {
-			return {
-				success: false,
-				error: result.error || "Failed to upload image",
-			}
-		}
+		return { success: true, imageUri: response.data.imageUri }
 	} catch (error) {
 		return { success: false, error: (error as Error).message }
 	}
 }
+
 // export const getProfileWithImage = async (
 // 	userId: string
 // ): Promise<ProfileWithImageResponse> => {
