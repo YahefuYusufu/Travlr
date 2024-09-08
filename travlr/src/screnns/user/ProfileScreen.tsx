@@ -111,7 +111,7 @@ const ProfileScreen: React.FC<Props> = () => {
 					currentFirstName={firstName}
 					currentLastName={lastName}
 					currentImageUri={picture}
-					userId={userId} // Ensure userId is non-null
+					userId={userId}
 				/>
 			)}
 		</View>

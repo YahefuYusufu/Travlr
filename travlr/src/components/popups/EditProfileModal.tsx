@@ -15,6 +15,8 @@ import * as ImagePicker from "expo-image-picker"
 
 import { updateUserProfile, uploadImage } from "../../api/userApi"
 import { convertUriToFile } from "../../utils/helpers"
+import axios from "axios"
+import { API_URL } from "@env"
 
 interface EditProfileModalProps {
 	visible: boolean
@@ -68,43 +70,35 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 		setLoading(true)
 
 		try {
-			let uploadedImageFile: File | undefined
+			// Prepare form data to send all in one request
+			const formData = new FormData()
+			formData.append("firstName", firstName)
+			formData.append("lastName", lastName)
 
-			// Upload the image if a new one is selected
 			if (imageUri && imageUri !== currentImageUri) {
-				const uploadResult = await uploadImage(userId, imageUri)
-
-				if (uploadResult.success && uploadResult.imageUri) {
-					const blob = await fetch(uploadResult.imageUri).then((res) =>
-						res.blob()
-					)
-
-					// Fix: Ensure 'lastModified' is passed in BlobOptions
-					const lastModified = new Date().getTime()
-					uploadedImageFile = new File([blob], "image.jpg", {
-						type: blob.type,
-						lastModified,
-					})
-				} else {
-					throw new Error(uploadResult.error || "Failed to upload image")
-				}
+				const imageFile = await convertUriToFile(imageUri) // Convert the URI to a File object
+				formData.append("file", imageFile) // Append the image file to the form data
 			}
 
-			// Fix: Ensure imageUri is explicitly passed as a string or null
-			const updateResult = await updateUserProfile(
-				userId,
-				firstName,
-				lastName,
-				uploadedImageFile || undefined // Ensure the type matches File | undefined
+			// Send the form data in a single request
+			const response = await axios.post(
+				`${API_URL}/profiles/users/${userId}`,
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				}
 			)
 
-			if (!updateResult.success) {
-				throw new Error(updateResult.error || "Failed to update profile")
+			if (response.status === 200) {
+				// If the update was successful, update the local state with new data
+				const { profile } = response.data
+				onSave(profile.firstName, profile.lastName, profile.imageUri)
+				onClose()
+			} else {
+				throw new Error("Failed to update profile")
 			}
-
-			// Call the parent onSave with updated profile data
-			onSave(firstName, lastName, updateResult.imageUri ?? null) // Handle undefined by using null
-			onClose() // Close modal after saving
 		} catch (err) {
 			setError(
 				err instanceof Error ? err.message : "An unexpected error occurred"
