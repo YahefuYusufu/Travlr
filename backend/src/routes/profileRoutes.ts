@@ -52,15 +52,6 @@ router.post("/users/:userId", async (req, res) => {
 	}
 })
 
-// Upload an image
-router.post("/users/:userId/upload", uploadSingleImage, (req, res) => {
-	if (req.file) {
-		res.json({ filename: req.file.filename })
-	} else {
-		res.status(400).json({ error: "No file uploaded" })
-	}
-})
-
 router.delete("/users/:userId", deleteUser)
 
 export default router
