@@ -54,7 +54,6 @@ export const updateUserProfile = async (
 ) => {
 	try {
 		const { userId } = req.params
-		console.log("Request Body:", req.body) // Add this line for debugging
 		const { firstName, lastName } = req.body
 
 		// Validate input
@@ -65,7 +64,7 @@ export const updateUserProfile = async (
 		}
 
 		// Find user
-		const user = (await User.findById(userId)) as UserProps
+		const user = await User.findById(userId)
 		if (!user) {
 			return res.status(404).json({ error: "User not found" })
 		}
@@ -80,29 +79,24 @@ export const updateUserProfile = async (
 		profile.firstName = firstName
 		profile.lastName = lastName
 
-		// Handle image upload (if image data is provided)
+		// If an image is uploaded, update the profile imageUri
 		if (req.file) {
-			try {
-				const uploadFile = await uploadSingleImage(req, res)
-				if (uploadFile) {
-					profile.imageUri = uploadFile.filename
-				}
-			} catch (error) {
-				console.error("Error uploading image:", error)
-				return res.status(400).json({ error: "Failed to upload image" })
-			}
+			profile.imageUri = req.file.filename
+			console.log("Uploaded image filename:", req.file.filename)
 		}
 
+		// Save the updated profile
 		await profile.save()
 
+		// Return success response
 		res.status(200).json({ message: "Profile updated successfully", profile })
 	} catch (error) {
-		const err = error as Error
-		console.error("Error updating user profile:", err.message)
+		console.error("Error updating profile:", error)
 		res.status(500).json({ error: "An unexpected error occurred" })
 		next(error)
 	}
 }
+
 export const deleteUser = async (req: Request, res: Response) => {
 	try {
 		const userId = req.params.userId
