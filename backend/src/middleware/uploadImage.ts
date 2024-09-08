@@ -4,6 +4,7 @@ import { GridFsStorage } from "multer-gridfs-storage"
 import dotenv from "dotenv"
 import path from "path"
 import crypto from "crypto"
+import mongoose from "mongoose"
 
 dotenv.config()
 const mongoURI = process.env.MONGODB_URI
@@ -21,8 +22,9 @@ const storage = new GridFsStorage({
 					return reject(err) // Handle error
 				}
 				const fileInfo = {
+					_id: new mongoose.Types.ObjectId(),
 					filename: `${Date.now()}-${file.originalname}`,
-					bucketName: "uploads",
+					bucketName: "uploads", // Ensure this bucket exists in MongoDB GridFS
 				}
 				console.log("Generated file info:", fileInfo) // Debugging line
 
@@ -32,6 +34,7 @@ const storage = new GridFsStorage({
 	},
 })
 
+// Filter for allowed file types (JPEG, PNG)
 const fileFilter = (
 	req: Request,
 	file: Express.Multer.File,
@@ -56,16 +59,36 @@ const uploadImage = multer({
 	limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
 })
 
-const uploadSingleImage = (req: Request, res: Response) => {
-	return new Promise<Express.Multer.File | undefined>((resolve, reject) => {
-		uploadImage.single("profileImage")(req, res, (err) => {
-			if (err) {
-				return reject(err)
-			}
-			console.log("Multer File:", req.file)
-			console.log("Multer Body:", req.body)
-			resolve(req.file)
-		})
+// Updated uploadSingleImage function
+const uploadSingleImage = (req: Request, res: Response, next: NextFunction) => {
+	uploadImage.single("file")(req, res, (err: any) => {
+		if (err instanceof multer.MulterError) {
+			// A Multer error occurred when uploading.
+			console.error("Multer error:", err)
+			return res
+				.status(400)
+				.json({ error: "File upload failed.", details: err.message })
+		} else if (err) {
+			// An unknown error occurred when uploading.
+			console.error("Unknown error during file upload:", err)
+			return res
+				.status(500)
+				.json({ error: "An unexpected error occurred.", details: err.message })
+		}
+
+		// Success: Proceed to next middleware or the main controller function
+		if (!req.file) {
+			console.error("No file uploaded")
+			return res.status(400).json({ error: "No file uploaded." })
+		}
+
+		// Log the file details for debugging
+		console.log("Uploaded file:", req.file)
+		console.log("Request body:", req.body)
+
+		// Add the file to the request object, if needed in the next handler
+		req.file = req.file
+		next()
 	})
 }
 
