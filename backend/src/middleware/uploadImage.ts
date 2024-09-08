@@ -4,6 +4,7 @@ import { GridFsStorage } from "multer-gridfs-storage"
 import dotenv from "dotenv"
 import path from "path"
 import crypto from "crypto"
+import mongoose from "mongoose"
 
 dotenv.config()
 const mongoURI = process.env.MONGODB_URI
@@ -21,6 +22,7 @@ const storage = new GridFsStorage({
 					return reject(err) // Handle error
 				}
 				const fileInfo = {
+					_id: new mongoose.Types.ObjectId(),
 					filename: `${Date.now()}-${file.originalname}`,
 					bucketName: "uploads", // Ensure this bucket exists in MongoDB GridFS
 				}

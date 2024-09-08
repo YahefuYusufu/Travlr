@@ -54,19 +54,12 @@ export const updateUserProfile = async (
 ) => {
 	try {
 		const { userId } = req.params
-		const { firstName, lastName } = req.body
+		const { firstName, lastName, imageUri } = req.body
 
-		// Validate input
 		if (!firstName || !lastName) {
 			return res
 				.status(400)
 				.json({ error: "First Name and Last Name are required" })
-		}
-
-		// Find user
-		const user = await User.findById(userId)
-		if (!user) {
-			return res.status(404).json({ error: "User not found" })
 		}
 
 		// Find or create profile
@@ -75,23 +68,15 @@ export const updateUserProfile = async (
 			profile = new Profile({ user: userId })
 		}
 
-		// Update profile fields
 		profile.firstName = firstName
 		profile.lastName = lastName
+		profile.imageUri = imageUri || profile.imageUri
 
-		// If an image is uploaded, update the profile imageUri
-		if (req.file) {
-			profile.imageUri = req.file.filename
-			console.log("Uploaded image filename:", req.file.filename)
-		}
-
-		// Save the updated profile
 		await profile.save()
 
-		// Return success response
 		res.status(200).json({ message: "Profile updated successfully", profile })
 	} catch (error) {
-		console.error("Error updating profile:", error)
+		console.error("Error updating user profile:", error)
 		res.status(500).json({ error: "An unexpected error occurred" })
 		next(error)
 	}
