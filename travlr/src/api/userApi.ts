@@ -64,7 +64,7 @@ export const uploadImage = async (
 		const blob = await convertUriToFile(imageUri)
 
 		const formData = new FormData()
-		formData.append("file", blob, "photo.jpg") // The third parameter is the filename
+		formData.append("file", blob) // The third parameter is the filename
 
 		const response = await axios.post(`${API_URL}/upload/${userId}`, formData, {
 			headers: {

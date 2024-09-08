@@ -68,25 +68,34 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 		setLoading(true)
 
 		try {
-			let uploadedImageUri = imageUri
+			let uploadedImageFile: File | undefined
 
 			// Upload the image if a new one is selected
 			if (imageUri && imageUri !== currentImageUri) {
 				const uploadResult = await uploadImage(userId, imageUri)
 
 				if (uploadResult.success && uploadResult.imageUri) {
-					uploadedImageUri = uploadResult.imageUri // Get the new uploaded image URI
+					const blob = await fetch(uploadResult.imageUri).then((res) =>
+						res.blob()
+					)
+
+					// Fix: Ensure 'lastModified' is passed in BlobOptions
+					const lastModified = new Date().getTime()
+					uploadedImageFile = new File([blob], "image.jpg", {
+						type: blob.type,
+						lastModified,
+					})
 				} else {
 					throw new Error(uploadResult.error || "Failed to upload image")
 				}
 			}
 
-			// Update the user profile with the current or new image URI
+			// Fix: Ensure imageUri is explicitly passed as a string or null
 			const updateResult = await updateUserProfile(
 				userId,
 				firstName,
 				lastName,
-				uploadedImageUri
+				uploadedImageFile || undefined // Ensure the type matches File | undefined
 			)
 
 			if (!updateResult.success) {
@@ -94,7 +103,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 			}
 
 			// Call the parent onSave with updated profile data
-			onSave(firstName, lastName, uploadedImageUri)
+			onSave(firstName, lastName, updateResult.imageUri ?? null) // Handle undefined by using null
 			onClose() // Close modal after saving
 		} catch (err) {
 			setError(
