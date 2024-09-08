@@ -13,7 +13,7 @@ import {
 } from "react-native"
 import * as ImagePicker from "expo-image-picker"
 
-import { updateUserProfile, uploadImage } from "../../api/userApi"
+import { updateProfile, uploadImage } from "../../api/userApi"
 import { convertUriToFile } from "../../utils/helpers"
 import axios from "axios"
 import { API_URL } from "@env"
@@ -68,37 +68,33 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
 	const handleSave = async () => {
 		setLoading(true)
+		setError(null)
 
 		try {
-			// Prepare form data to send all in one request
-			const formData = new FormData()
-			formData.append("firstName", firstName)
-			formData.append("lastName", lastName)
+			let uploadedImageUri: string | null = imageUri
 
 			if (imageUri && imageUri !== currentImageUri) {
-				const imageFile = await convertUriToFile(imageUri) // Convert the URI to a File object
-				formData.append("file", imageFile) // Append the image file to the form data
-			}
-
-			// Send the form data in a single request
-			const response = await axios.post(
-				`${API_URL}/profiles/users/${userId}`,
-				formData,
-				{
-					headers: {
-						"Content-Type": "multipart/form-data",
-					},
+				const uploadResult = await uploadImage(userId, imageUri)
+				if (uploadResult.success && uploadResult.filename) {
+					uploadedImageUri = `/path/to/images/${uploadResult.filename}`
+				} else {
+					throw new Error(uploadResult.error || "Failed to upload image")
 				}
-			)
-
-			if (response.status === 200) {
-				// If the update was successful, update the local state with new data
-				const { profile } = response.data
-				onSave(profile.firstName, profile.lastName, profile.imageUri)
-				onClose()
-			} else {
-				throw new Error("Failed to update profile")
 			}
+
+			const updateResult = await updateProfile({
+				userId,
+				firstName,
+				lastName,
+				imageUri: uploadedImageUri || undefined,
+			})
+
+			if (!updateResult.success) {
+				throw new Error(updateResult.error || "Failed to update profile")
+			}
+
+			onSave(firstName, lastName, uploadedImageUri)
+			onClose()
 		} catch (err) {
 			setError(
 				err instanceof Error ? err.message : "An unexpected error occurred"
@@ -107,6 +103,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 			setLoading(false)
 		}
 	}
+
+	if (!visible) return null
 
 	return (
 		<Modal visible={visible} animationType="slide" transparent={true}>
