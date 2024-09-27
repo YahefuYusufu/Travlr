@@ -1336,6 +1336,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@expo/config-plugins@npm:8.0.9":
+  version: 8.0.9
+  resolution: "@expo/config-plugins@npm:8.0.9"
+  dependencies:
+    "@expo/config-types": ^51.0.0-unreleased
+    "@expo/json-file": ~8.3.0
+    "@expo/plist": ^0.1.0
+    "@expo/sdk-runtime-versions": ^1.0.0
+    chalk: ^4.1.2
+    debug: ^4.3.1
+    find-up: ~5.0.0
+    getenv: ^1.0.0
+    glob: 7.1.6
+    resolve-from: ^5.0.0
+    semver: ^7.5.4
+    slash: ^3.0.0
+    slugify: ^1.6.6
+    xcode: ^3.0.1
+    xml2js: 0.6.0
+  checksum: 69592d70daa9b4cf653152fa85e071dabd3fba9e6eb386f2329267c1ce9b77409b7d220d075cbc862ae50ae66479484136100c3bd632b8422259be6e1b7bec4c
+  languageName: node
+  linkType: hard
+
 "@expo/config-types@npm:^51.0.0-unreleased":
   version: 51.0.2
   resolution: "@expo/config-types@npm:51.0.2"
@@ -1549,6 +1572,15 @@ __metadata:
   dependencies:
     prop-types: ^15.8.1
   checksum: 49e27ff52eb138745313fa2c39863fb762230b0089b910d668d7f2c06b7e71a0249dc3a26bfc8725d07bdfaadab1dbcbce087b34dfc244b00a15fc02fe4866e2
+  languageName: node
+  linkType: hard
+
+"@expo/vector-icons@npm:^14.0.3":
+  version: 14.0.3
+  resolution: "@expo/vector-icons@npm:14.0.3"
+  dependencies:
+    prop-types: ^15.8.1
+  checksum: df0496fb416b422ceb7c22ebc4eae39733e03040205b7efcff262482aeb653892d0fa0fb258ee5bec34f2e58facddf976312018f0cdd91c1980e423ec10bd0d1
   languageName: node
   linkType: hard
 
@@ -4887,6 +4919,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-font@npm:~12.0.10":
+  version: 12.0.10
+  resolution: "expo-font@npm:12.0.10"
+  dependencies:
+    fontfaceobserver: ^2.1.0
+  peerDependencies:
+    expo: "*"
+  checksum: c8fdc046158d4c2d71d81fcd9ba115bc0e142bc0d637ae9b5fea04cd816c62c051f63e44685530109106565d29feca2035ef6123c56cf9c951d0a2775a8cd9a7
+  languageName: node
+  linkType: hard
+
 "expo-font@npm:~12.0.9":
   version: 12.0.9
   resolution: "expo-font@npm:12.0.9"
@@ -4953,6 +4996,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-modules-core@npm:1.12.24":
+  version: 1.12.24
+  resolution: "expo-modules-core@npm:1.12.24"
+  dependencies:
+    invariant: ^2.2.4
+  checksum: 0bd35e9967b5aebb7ccdbd95d3a806fe009af4ec22f53d6856c121ff0390545b1bc15f65a943fc4707bd300c29f0eb7d66d0ddc2ecc177f22d3dbe8ae305d207
+  languageName: node
+  linkType: hard
+
 "expo-status-bar@npm:~1.12.1":
   version: 1.12.1
   resolution: "expo-status-bar@npm:1.12.1"
@@ -4960,7 +5012,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo@npm:*, expo@npm:~51.0.28":
+"expo@npm:*":
   version: 51.0.31
   resolution: "expo@npm:51.0.31"
   dependencies:
@@ -4982,6 +5034,31 @@ __metadata:
   bin:
     expo: bin/cli
   checksum: 5fbdeca01309bbb56e030ddf3b2fdef7052e44be3dff68b2e286b7f4004420705c73e573bd1581e4e68c6fdb3d46b4792d7f4cc3e59bb51341e28a89f153bccd
+  languageName: node
+  linkType: hard
+
+"expo@npm:~51.0.34":
+  version: 51.0.34
+  resolution: "expo@npm:51.0.34"
+  dependencies:
+    "@babel/runtime": ^7.20.0
+    "@expo/cli": 0.18.29
+    "@expo/config": 9.0.3
+    "@expo/config-plugins": 8.0.9
+    "@expo/metro-config": 0.18.11
+    "@expo/vector-icons": ^14.0.3
+    babel-preset-expo: ~11.0.14
+    expo-asset: ~10.0.10
+    expo-file-system: ~17.0.1
+    expo-font: ~12.0.10
+    expo-keep-awake: ~13.0.2
+    expo-modules-autolinking: 1.11.2
+    expo-modules-core: 1.12.24
+    fbemitter: ^3.0.0
+    whatwg-url-without-unicode: 8.0.0-3
+  bin:
+    expo: bin/cli
+  checksum: 9ddbe56961732f2f5afe209bf61f7627f61b145fd5096fc6351c7b5770fec8c14355f624755859a8c154c05b90ec1b0708419d0919c7e0b4f5e43974d926d1e6
   languageName: node
   linkType: hard
 
@@ -9815,7 +9892,7 @@ __metadata:
     "@types/react-native": ^0.73.0
     "@types/react-native-vector-icons": ^6.4.18
     axios: ^1.7.3
-    expo: ~51.0.28
+    expo: ~51.0.34
     expo-blur: ~13.0.2
     expo-file-system: ~17.0.1
     expo-image-picker: ~15.0.7

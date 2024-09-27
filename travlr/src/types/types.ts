@@ -1,7 +1,7 @@
 import { GestureResponderEvent } from "react-native"
 export type RootStackParamList = {
 	Login: undefined
-	Home: { userId: string }
+	Home: undefined
 	Signup: undefined
 	Favorites: undefined
 	Profile: { userId: string }
