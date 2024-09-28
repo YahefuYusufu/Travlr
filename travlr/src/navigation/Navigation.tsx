@@ -1,11 +1,10 @@
 import React from "react"
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { View, Text } from "react-native"
-import HomeScreen from "../screens/HomeScreen"
-import WelcomeScreen from "../screens/WelcomeScreen"
+import { HomeScreen, WelcomeScreen } from "../screens"
+import { RootStackParamList } from "../types"
 
-const Stack = createNativeStackNavigator()
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 const Navigation = () => {
 	return (
