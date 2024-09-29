@@ -8,28 +8,26 @@ import React, {
 import { useColorScheme } from "react-native"
 import { LightColors, DarkColors } from "./colors"
 
-// Define a type for the props that the ThemeProvider will receive
 interface ThemeProviderProps {
-	children: ReactNode // 'children' is required for React components
+	children: ReactNode
 }
 
-// Define a type for the theme context
 interface ThemeContextType {
 	isDarkTheme: boolean
 	toggleTheme: () => void
 	colors: typeof LightColors | typeof DarkColors
 }
 
-// Create the context with a default value
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-// ThemeProvider component
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-	const systemTheme = useColorScheme() // Detect system theme
-	const [isDarkTheme, setIsDarkTheme] = useState(systemTheme === "dark")
+	const systemTheme = useColorScheme()
+	const [isDarkTheme, setIsDarkTheme] = useState(false)
 
 	useEffect(() => {
-		setIsDarkTheme(systemTheme === "dark")
+		const newTheme = systemTheme === "light"
+
+		setIsDarkTheme(newTheme)
 	}, [systemTheme])
 
 	const toggleTheme = () => {
@@ -45,13 +43,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 	)
 }
 
-// Hook for accessing the theme
 export const useTheme = () => {
 	const context = useContext(ThemeContext)
-
 	if (!context) {
 		throw new Error("useTheme must be used within a ThemeProvider")
 	}
-
 	return context
 }

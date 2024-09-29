@@ -80,3 +80,11 @@ declare module "react-native" {
 
 	// Add any other components you plan to use
 }
+
+declare module "react-native-vector-icons/Ionicons" {
+	import { IconProps } from "react-native-vector-icons/Icon"
+	import { FC } from "react"
+
+	export const Ionicons: FC<IconProps>
+	export default Ionicons
+}

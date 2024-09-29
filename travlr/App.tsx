@@ -1,13 +1,13 @@
+import React from "react"
+import AppNavigation from "./src/navigation/Navigation"
 import { StatusBar } from "expo-status-bar"
-
-import Navigation from "./src/navigation/Navigation"
-import { ThemeProvider } from "./src/theme/ThemeProvider"
 
 export default function App() {
 	return (
-		<ThemeProvider>
-			<Navigation />
+		<>
+			{/* Set transparent background */}
+			<AppNavigation />
 			<StatusBar animated style="auto" />
-		</ThemeProvider>
+		</>
 	)
 }
