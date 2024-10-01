@@ -8,14 +8,9 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 
 	return (
 		<View
-			className="flex-1 justify-center items-center" // Full height and center content
-			style={{ backgroundColor: colors.background }} // Optional: Set the background color
-		>
-			<Text
-				style={{ color: colors.text, fontSize: 24 }} // Optional: Set font size
-			>
-				HomeScreen
-			</Text>
+			className="flex-1 justify-center items-center"
+			style={{ backgroundColor: colors.background }}>
+			<Text style={{ color: colors.text, fontSize: 24 }}>HomeScreen</Text>
 		</View>
 	)
 }
