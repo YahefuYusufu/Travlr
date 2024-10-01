@@ -34,7 +34,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 		setIsDarkTheme((prevTheme) => !prevTheme)
 	}
 
-	const colors = isDarkTheme ? DarkColors : LightColors
+	const colors = isDarkTheme ? LightColors : DarkColors
 
 	return (
 		<ThemeContext.Provider value={{ isDarkTheme, toggleTheme, colors }}>

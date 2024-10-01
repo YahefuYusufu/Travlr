@@ -17,6 +17,8 @@ import {
 } from "react-native-responsive-screen"
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline"
 import Categories from "../components/Categories"
+import SortCategories from "../components/SortCategories"
+import Destination from "../components/Destination"
 
 const topMargin = Platform.OS === "ios" ? hp(1) : hp(6)
 const HomeScreen: React.FC<HomeScreenProps> = () => {
@@ -65,6 +67,16 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 				{/* categories */}
 				<View className="mb-4">
 					<Categories />
+				</View>
+
+				{/* sort categories */}
+				<View className="mb-4">
+					<SortCategories />
+				</View>
+
+				{/* destination */}
+				<View className="mb-4">
+					<Destination />
 				</View>
 			</ScrollView>
 		</SafeAreaView>

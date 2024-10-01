@@ -3,6 +3,7 @@ export const LightColors = {
 	mainGreen: "#15A196",
 	accent: "#D4731D",
 	background: "#ffffff",
+	bgNatural: "#404040",
 	gray700: "#221c30",
 
 	// Text colors
@@ -38,12 +39,13 @@ export const DarkColors = {
 	mainGreen: "#073763",
 	accent: "#3b82f6",
 	background: "#121212",
+	bgNatural: "#f5f5f5",
 	gray700: "#d1d1d1",
 
 	// Text colors
 	text: "#ffffff",
 	textSecondary: "#9ca3af",
-	textHeader: "#ffffff",
+	textHeader: "#404040",
 
 	// Icon colors
 	iconHeader: "#ffffff",
