@@ -88,3 +88,11 @@ declare module "react-native-vector-icons/Ionicons" {
 	export const Ionicons: FC<IconProps>
 	export default Ionicons
 }
+
+declare module "react-native-heroicons/*" {
+	import React from "react"
+	import { SvgProps } from "react-native-svg"
+
+	const Icon: React.FC<SvgProps>
+	export default Icon
+}

@@ -3,6 +3,7 @@ export const LightColors = {
 	mainGreen: "#15A196",
 	accent: "#D4731D",
 	background: "#ffffff",
+	bgNatural: "#404040",
 	gray700: "#221c30",
 
 	// Text colors
@@ -16,7 +17,7 @@ export const LightColors = {
 	iconSecondary: "#6b7280",
 
 	// Button colors
-	buttonBackground: "#22c55e",
+	buttonBackground: "#16a34a",
 	buttonText: "#ffffff",
 
 	// Border colors
@@ -28,7 +29,7 @@ export const LightColors = {
 
 	// Additional future colors
 	error: "#ef4444",
-	success: "#10b981",
+	success: "#34d399",
 	warning: "#f59e0b",
 	info: "#3b82f6",
 }
@@ -38,12 +39,13 @@ export const DarkColors = {
 	mainGreen: "#073763",
 	accent: "#3b82f6",
 	background: "#121212",
+	bgNatural: "#f5f5f5",
 	gray700: "#d1d1d1",
 
 	// Text colors
 	text: "#ffffff",
 	textSecondary: "#9ca3af",
-	textHeader: "#ffffff",
+	textHeader: "#404040",
 
 	// Icon colors
 	iconHeader: "#ffffff",
@@ -51,7 +53,7 @@ export const DarkColors = {
 	iconSecondary: "#9ca3af",
 
 	// Button colors
-	buttonBackground: "#16a34a",
+	buttonBackground: "#22c55e",
 	buttonText: "#ffffff",
 
 	// Border colors
@@ -63,7 +65,7 @@ export const DarkColors = {
 
 	// Additional future colors
 	error: "#f87171",
-	success: "#34d399",
+	success: "#10b981",
 	warning: "#fbbf24",
 	info: "#60a5fa",
 }

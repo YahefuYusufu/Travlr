@@ -1,11 +1,16 @@
-import React from "react"
-import { View, Text, Image, TouchableOpacity } from "react-native"
+import React, { useState, useEffect } from "react"
+import {
+	View,
+	Text,
+	Image,
+	TouchableOpacity,
+	ImageBackground,
+} from "react-native"
 import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-
 import { LinearGradient } from "expo-linear-gradient"
 import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
@@ -20,70 +25,88 @@ type WelcomeScreenNavigationProp = NativeStackNavigationProp<
 const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
 	const navigation = useNavigation<WelcomeScreenNavigationProp>()
 	const { colors, toggleTheme, isDarkTheme } = useTheme()
+	const [imageLoaded, setImageLoaded] = useState(false)
+
+	useEffect(() => {
+		const imageUri = Image.resolveAssetSource(
+			require("../../assets/images/welcomeBG02.jpg")
+		).uri
+		Image.prefetch(imageUri).then(() => setImageLoaded(true))
+	}, [])
+
+	if (!imageLoaded) {
+		return null // Return nothing while the image is loading
+	}
 
 	return (
-		<View className="flex-1 justify-end">
-			{/* Background image */}
-			<Image
-				source={require("../../assets/images/welcomeBG02.jpg")}
-				className="absolute inset-0 w-full h-full object-cover"
-				style={{ opacity: 0.9 }}
-			/>
-			{/* Content on top of the image */}
-			<View className="p-4 pb-10 space-y-8">
-				<LinearGradient
-					colors={["transparent", colors.warning]}
-					style={{ width: wp(100), height: hp(60) }}
-					start={{ x: 0.5, y: 0 }}
-					end={{ x: 0.5, y: 1 }}
-					className="absolute bottom-0"
-				/>
-				<View className="space-y-3">
-					<Text
-						className="text-5xl font-bold"
+		<ImageBackground
+			source={require("../../assets/images/welcomeBG02.jpg")}
+			style={{ flex: 1 }}
+			imageStyle={{ opacity: 0.9 }}>
+			<View style={{ flex: 1, justifyContent: "flex-end" }}>
+				{/* Content on top of the image */}
+				<View style={{ padding: 16, paddingBottom: 40, gap: 32 }}>
+					<LinearGradient
+						colors={["transparent", colors.warning]}
 						style={{
-							fontSize: wp(10),
-							color: colors.text,
-						}}>
-						Traveling Made Easy!
-					</Text>
-					<Text
-						className="font-medium"
+							position: "absolute",
+							bottom: 0,
+							width: wp(100),
+							height: hp(35),
+						}}
+						start={{ x: 0.5, y: 0 }}
+						end={{ x: 0.5, y: 1 }}
+					/>
+					<View style={{ gap: 12 }}>
+						<Text
+							style={{
+								fontSize: wp(10),
+								color: colors.text,
+								fontWeight: "bold",
+							}}>
+							Traveling Made Easy!
+						</Text>
+						<Text
+							style={{
+								fontSize: wp(4),
+								color: colors.text,
+								fontWeight: "500",
+							}}>
+							Experience the world's best adventure with us
+						</Text>
+					</View>
+					<TouchableOpacity
 						style={{
-							fontSize: wp(4),
-							color: colors.borderDark,
+							backgroundColor: colors.buttonBackground,
+							alignSelf: "center",
+							paddingVertical: 12,
+							paddingHorizontal: 48,
+							borderRadius: 8,
+						}}
+						onPress={() => {
+							console.log("Navigating to Home...")
+							navigation.navigate("Home")
 						}}>
-						Experience the world's best adventure with us
-					</Text>
+						<Text style={{ fontWeight: "bold", color: colors.text }}>
+							Let's Go!
+						</Text>
+					</TouchableOpacity>
 				</View>
+				{/* Theme toggle icon */}
 				<TouchableOpacity
-					className="mx-auto p-3 px-12 rounded-md"
-					style={{
-						backgroundColor: colors.buttonBackground,
-					}}
+					style={{ position: "absolute", top: hp(8), right: wp(5) }}
 					onPress={() => {
-						console.log("Navigating to Home...")
-						navigation.navigate("Home")
+						console.log("Toggling theme...")
+						toggleTheme()
 					}}>
-					<Text className="font-bold" style={{ color: colors.textHeader }}>
-						Let's Go!
-					</Text>
+					<Icon
+						name={isDarkTheme ? "moon" : "sunny"}
+						size={hp(3)}
+						color={isDarkTheme ? colors.success : colors.warning}
+					/>
 				</TouchableOpacity>
 			</View>
-			{/* Theme toggle icon */}
-			<TouchableOpacity
-				style={{ position: "absolute", top: hp(8), right: wp(5) }}
-				onPress={() => {
-					console.log("Toggling theme...")
-					toggleTheme()
-				}}>
-				<Icon
-					name={isDarkTheme ? "sunny" : "moon"}
-					size={hp(3)}
-					color={isDarkTheme ? colors.success : colors.warning}
-				/>
-			</TouchableOpacity>
-		</View>
+		</ImageBackground>
 	)
 }
 
