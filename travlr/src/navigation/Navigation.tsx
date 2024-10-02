@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { HomeScreen, WelcomeScreen } from "../screens"
 import { RootStackParamList } from "../types"
 import { ThemeProvider, useTheme } from "../theme/ThemeProvider"
+import DestinationScreen from "../screens/DestinationScreen"
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -29,6 +30,7 @@ const Navigation = () => {
 				screenOptions={{ headerShown: false }}>
 				<Stack.Screen name="Home" component={HomeScreen} />
 				<Stack.Screen name="Welcome" component={WelcomeScreen} />
+				<Stack.Screen name="Destination" component={DestinationScreen} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	)
