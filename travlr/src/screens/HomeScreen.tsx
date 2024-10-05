@@ -17,9 +17,9 @@ import {
 } from "react-native-responsive-screen"
 import { MagnifyingGlassIcon, PlusIcon } from "react-native-heroicons/outline"
 import { PlusCircleIcon } from "react-native-heroicons/solid"
-import Gallery from "../components/Gallery"
-import SortCategories from "../components/SortCategories"
-import Destination from "../components/Destination"
+import Gallery from "../components/gallary/Gallery"
+import SortCategories from "../components/category/SortCategories"
+import Destination from "../components/destination/Destination"
 
 const topMargin = Platform.OS === "ios" ? hp(1) : hp(6)
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {

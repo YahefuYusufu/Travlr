@@ -1,13 +1,13 @@
 import React from "react"
 import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
-import { categoriesData } from "../constants"
+import { useTheme } from "../../theme/ThemeProvider"
+import { categoriesData } from "../../constants"
 import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
-import { GalleryProps } from "../types"
-import { TEXTS } from "../constants/strings"
+import { GalleryProps } from "../../types"
+import { TEXTS } from "../../constants/strings"
 
 export default function Gallery() {
 	const { colors } = useTheme()

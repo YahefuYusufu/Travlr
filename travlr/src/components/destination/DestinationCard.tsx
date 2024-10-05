@@ -5,9 +5,9 @@ import {
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
 import { LinearGradient } from "expo-linear-gradient"
-import { useTheme } from "../theme/ThemeProvider"
+import { useTheme } from "../../theme/ThemeProvider"
 import { HeartIcon } from "react-native-heroicons/solid"
-import { DestinationItemType } from "../types"
+import { DestinationItemType } from "../../types"
 
 interface DestinationCardProps {
 	item: DestinationItemType
