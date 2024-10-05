@@ -21,7 +21,7 @@ import SortCategories from "../components/SortCategories"
 import Destination from "../components/Destination"
 
 const topMargin = Platform.OS === "ios" ? hp(1) : hp(6)
-const HomeScreen: React.FC<HomeScreenProps> = () => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 	const { colors } = useTheme()
 
 	return (
@@ -76,7 +76,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 
 				{/* destination */}
 				<View className="mb-4">
-					<Destination />
+					<Destination navigation={navigation} />
 				</View>
 			</ScrollView>
 		</SafeAreaView>

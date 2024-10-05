@@ -31,7 +31,7 @@ export const categoriesData = [
 
 export const sortCategories = ["All", "Popular", "Recommended", "More"]
 
-export const destinationData = [
+export const destinationItem = [
 	{
 		title: "Osaka Castle",
 		duration: "12 Days",

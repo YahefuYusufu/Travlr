@@ -6,6 +6,8 @@ import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
+import { CategoryProps } from "../types"
+
 export default function Categories() {
 	const { colors } = useTheme()
 
@@ -23,7 +25,7 @@ export default function Categories() {
 				contentContainerStyle={{ paddingHorizontal: 15 }}
 				className="space-x-4"
 				showsHorizontalScrollIndicator={false}>
-				{categoriesData.map((cat, index) => {
+				{categoriesData.map((cat: CategoryProps, index: number) => {
 					return (
 						<TouchableOpacity
 							key={index}

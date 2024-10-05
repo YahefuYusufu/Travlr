@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { FC, useState } from "react"
 import {
 	View,
 	Text,
@@ -21,10 +21,11 @@ import {
 import { ChevronLeftIcon } from "react-native-heroicons/outline"
 import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
+import { DestinationScreenProps } from "../types"
 
-export default function DestinationScreen(props) {
+const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 	const { colors } = useTheme()
-	const item = props.route.params
+	const item = route.params
 	const navigation = useNavigation()
 	const [isFavourite, toggleFavourite] = useState(false)
 	return (
@@ -116,3 +117,5 @@ export default function DestinationScreen(props) {
 		</View>
 	)
 }
+
+export default DestinationScreen
