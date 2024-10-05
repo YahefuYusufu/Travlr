@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native"
 import React, { useState } from "react"
-import { sortCategories } from "../constants"
-import { useTheme } from "../theme/ThemeProvider"
+import { sortCategories } from "../../constants"
+import { useTheme } from "../../theme/ThemeProvider"
 import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,

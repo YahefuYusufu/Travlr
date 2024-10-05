@@ -1,38 +1,59 @@
-import React from "react"
-import { View, Text, SafeAreaView, TouchableOpacity } from "react-native"
-import { NewTripScreenProps } from "../types"
-import { useTheme } from "../theme/ThemeProvider"
-import { ArrowLeftIcon } from "react-native-heroicons/outline"
+import React, { useState, useEffect } from "react"
+import { View, SafeAreaView, Text } from "react-native"
 import { useNavigation } from "@react-navigation/native"
-import {
-	widthPercentageToDP as wp,
-	heightPercentageToDP as hp,
-} from "react-native-responsive-screen"
+import Header from "../components/common/Header"
+import SelectableField from "../components/trip/SelectableField"
+import { useLocationData } from "../hooks"
 
-const NewTripScreen: React.FC<NewTripScreenProps> = () => {
-	const { colors } = useTheme()
+const NewTripScreen: React.FC = () => {
 	const navigation = useNavigation()
+	const { data, loading, error } = useLocationData()
+	const [selectedCountry, setSelectedCountry] = useState("")
+	const [selectedCity, setSelectedCity] = useState("")
+	const [cityOptions, setCityOptions] = useState<string[]>([])
+
+	useEffect(() => {
+		if (data && selectedCountry) {
+			const newCityOptions = data.cities[selectedCountry] || []
+			setCityOptions(newCityOptions)
+		} else {
+			setCityOptions([])
+		}
+	}, [data, selectedCountry])
+
+	const handleCountrySelect = (country: string) => {
+		setSelectedCountry(country)
+		setSelectedCity("")
+	}
+
+	const handleCitySelect = (city: string) => {
+		setSelectedCity(city)
+	}
+
+	if (loading) {
+		return <Text>Loading...</Text>
+	}
+
+	if (error) {
+		return <Text>Error: {error.message}</Text>
+	}
 
 	return (
-		<SafeAreaView
-			className="flex-1"
-			style={{ backgroundColor: colors.background }}>
-			{/* Custom Header */}
-			<View className="flex-row items-center p-4 border-b border-gray-200">
-				<TouchableOpacity onPress={() => navigation.goBack()} className="mr-4">
-					<ArrowLeftIcon size={wp(7)} color={colors.text} />
-				</TouchableOpacity>
-				<Text className="text-xl font-bold" style={{ color: colors.text }}>
-					New Trip
-				</Text>
-			</View>
-
-			{/* Screen Content */}
-			<View className="flex-1 justify-center items-center">
-				<Text className="text-2xl" style={{ color: colors.text }}>
-					Create Your New Trip
-				</Text>
-				{/* Add your new trip form or content here */}
+		<SafeAreaView className="flex-1 bg-white">
+			<Header title="New Trip Screen" onBackPress={() => navigation.goBack()} />
+			<View className="p-4 flex-row space-x-4">
+				<SelectableField
+					label="Country"
+					value={selectedCountry}
+					options={data?.countries || []}
+					onSelect={handleCountrySelect}
+				/>
+				<SelectableField
+					label="City"
+					value={selectedCity}
+					options={cityOptions}
+					onSelect={handleCitySelect}
+				/>
 			</View>
 		</SafeAreaView>
 	)

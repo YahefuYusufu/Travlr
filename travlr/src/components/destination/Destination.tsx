@@ -1,7 +1,7 @@
 import React, { FC } from "react"
 import { View } from "react-native"
-import { destinationItem } from "../constants"
-import { HomeScreenProps } from "../types"
+import { destinationItem } from "../../constants"
+import { HomeScreenProps } from "../../types"
 import DestinationCard from "./DestinationCard"
 
 const Destination: FC<{ navigation: HomeScreenProps["navigation"] }> = ({
