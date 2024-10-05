@@ -40,7 +40,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 						className="font-bold">
 						Let's Discover
 					</Text>
-					<TouchableOpacity>
+					<TouchableOpacity onPress={() => navigation.navigate("NewTrip")}>
 						<PlusCircleIcon
 							size={32}
 							color={colors.textSecondary}

@@ -23,7 +23,7 @@ import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import { DestinationScreenProps } from "../types"
 
-const GalleryScreen: React.FC<DestinationScreenProps> = ({ route }) => {
+const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 	const { colors } = useTheme()
 	const item = route.params
 	const navigation = useNavigation()
@@ -122,4 +122,4 @@ const GalleryScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 	)
 }
 
-export default GalleryScreen
+export default DestinationScreen

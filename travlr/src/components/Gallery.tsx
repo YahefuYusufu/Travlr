@@ -7,6 +7,7 @@ import {
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
 import { GalleryProps } from "../types"
+import { TEXTS } from "../constants/strings"
 
 export default function Gallery() {
 	const { colors } = useTheme()
@@ -14,9 +15,13 @@ export default function Gallery() {
 	return (
 		<View className="space-y-5">
 			<View className="mx-5 flex-row justify-between items-center">
-				<Text style={{ color: colors.text }}>Gallery</Text>
+				<Text style={{ color: colors.text }} className="font-bold">
+					{TEXTS.GALLERY}
+				</Text>
 				<TouchableOpacity>
-					<Text style={{ color: colors.error }}>See All</Text>
+					<Text style={{ color: colors.error }} className="font-bold">
+						{TEXTS.SEE_ALL}
+					</Text>
 				</TouchableOpacity>
 			</View>
 
