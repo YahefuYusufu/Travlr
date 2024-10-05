@@ -23,7 +23,7 @@ import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import { DestinationScreenProps } from "../types"
 
-const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
+const GalleryScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 	const { colors } = useTheme()
 	const item = route.params
 	const navigation = useNavigation()
@@ -55,8 +55,12 @@ const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 
 			{/* title & description & booking button */}
 			<View
-				style={{ borderTopLeftRadius: 40, borderTopRightRadius: 40 }}
-				className="px-5 flex flex-1 justify-between bg-white pt-8 -mt-14">
+				style={{
+					borderTopLeftRadius: 40,
+					borderTopRightRadius: 40,
+					backgroundColor: colors.background,
+				}}
+				className="px-5 flex flex-1 justify-betwee pt-8 -mt-14">
 				<ScrollView showsVerticalScrollIndicator={false} className="space-y-5">
 					<View className="flex-row justify-between items-start">
 						<Text
@@ -70,7 +74,7 @@ const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 							$ {item?.price}
 						</Text>
 					</View>
-					<Text>{item?.longDescription}</Text>
+					<Text style={{ color: colors.text }}>{item?.longDescription}</Text>
 					<View className="flex-row justify-between mx-1">
 						<View className="flex-row space-x-2 items-start">
 							<ClockIcon size={wp(7)} color="skyblue" />
@@ -118,4 +122,4 @@ const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 	)
 }
 
-export default DestinationScreen
+export default GalleryScreen

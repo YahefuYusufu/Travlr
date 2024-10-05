@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack"
 export type RootStackParamList = {
 	Welcome: undefined
 	Home: undefined
-	Destination: DestinationItemType
+	Gallery: DestinationItemType
 }
 // Screen props
 export type WelcomeScreenProps = NativeStackScreenProps<
@@ -14,12 +14,12 @@ export type WelcomeScreenProps = NativeStackScreenProps<
 export type HomeScreenProps = NativeStackScreenProps<RootStackParamList, "Home">
 export type DestinationScreenProps = NativeStackScreenProps<
 	RootStackParamList,
-	"Destination"
+	"Gallery"
 >
 
 export type ImageSourceType = number | { uri: string }
 
-export interface CategoryProps {
+export interface GalleryProps {
 	title: string
 	image: ImageSourceType
 }

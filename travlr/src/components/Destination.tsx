@@ -13,7 +13,7 @@ const Destination: FC<{ navigation: HomeScreenProps["navigation"] }> = ({
 				<DestinationCard
 					key={index}
 					item={item}
-					onPress={() => navigation.navigate("Destination", item)}
+					onPress={() => navigation.navigate("Gallery", item)}
 				/>
 			))}
 		</View>

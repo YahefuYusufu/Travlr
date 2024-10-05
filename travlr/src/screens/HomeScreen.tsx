@@ -15,8 +15,9 @@ import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
-import { MagnifyingGlassIcon } from "react-native-heroicons/outline"
-import Categories from "../components/Categories"
+import { MagnifyingGlassIcon, PlusIcon } from "react-native-heroicons/outline"
+import { PlusCircleIcon } from "react-native-heroicons/solid"
+import Gallery from "../components/Gallery"
 import SortCategories from "../components/SortCategories"
 import Destination from "../components/Destination"
 
@@ -40,9 +41,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 						Let's Discover
 					</Text>
 					<TouchableOpacity>
-						<Image
-							source={require("../../assets/images/user/user-01.png")}
-							style={{ height: wp(12), width: wp(12) }}
+						<PlusCircleIcon
+							size={32}
+							color={colors.textSecondary}
+							strokeWidth={3}
 						/>
 					</TouchableOpacity>
 				</View>
@@ -66,7 +68,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
 				{/* categories */}
 				<View className="mb-4">
-					<Categories />
+					<Gallery />
 				</View>
 
 				{/* sort categories */}

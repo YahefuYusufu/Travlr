@@ -47,7 +47,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
 				{/* Content on top of the image */}
 				<View style={{ padding: 16, paddingBottom: 40, gap: 32 }}>
 					<LinearGradient
-						colors={["transparent", colors.warning]}
+						colors={["transparent", colors.bgNatural]}
 						style={{
 							position: "absolute",
 							bottom: 0,
@@ -61,7 +61,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
 						<Text
 							style={{
 								fontSize: wp(10),
-								color: colors.text,
+								color: colors.borderLight,
 								fontWeight: "bold",
 							}}>
 							Traveling Made Easy!
@@ -69,7 +69,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
 						<Text
 							style={{
 								fontSize: wp(4),
-								color: colors.text,
+								color: colors.borderLight,
 								fontWeight: "500",
 							}}>
 							Experience the world's best adventure with us
@@ -87,7 +87,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
 							console.log("Navigating to Home...")
 							navigation.navigate("Home")
 						}}>
-						<Text style={{ fontWeight: "bold", color: colors.text }}>
+						<Text style={{ fontWeight: "bold", color: colors.borderLight }}>
 							Let's Go!
 						</Text>
 					</TouchableOpacity>
@@ -102,7 +102,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
 					<Icon
 						name={isDarkTheme ? "moon" : "sunny"}
 						size={hp(3)}
-						color={isDarkTheme ? colors.success : colors.warning}
+						color={isDarkTheme ? colors.warning : colors.success}
 					/>
 				</TouchableOpacity>
 			</View>

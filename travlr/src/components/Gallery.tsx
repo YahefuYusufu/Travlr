@@ -6,15 +6,15 @@ import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
-import { CategoryProps } from "../types"
+import { GalleryProps } from "../types"
 
-export default function Categories() {
+export default function Gallery() {
 	const { colors } = useTheme()
 
 	return (
 		<View className="space-y-5">
 			<View className="mx-5 flex-row justify-between items-center">
-				<Text style={{ color: colors.text }}>Categories</Text>
+				<Text style={{ color: colors.text }}>Gallery</Text>
 				<TouchableOpacity>
 					<Text style={{ color: colors.error }}>See All</Text>
 				</TouchableOpacity>
@@ -25,7 +25,7 @@ export default function Categories() {
 				contentContainerStyle={{ paddingHorizontal: 15 }}
 				className="space-x-4"
 				showsHorizontalScrollIndicator={false}>
-				{categoriesData.map((cat: CategoryProps, index: number) => {
+				{categoriesData.map((cat: GalleryProps, index: number) => {
 					return (
 						<TouchableOpacity
 							key={index}
@@ -36,7 +36,7 @@ export default function Categories() {
 								style={{ width: wp(20), height: wp(20) }}
 							/>
 							<Text
-								style={{ color: colors.textSecondary, fontSize: wp(3) }}
+								style={{ color: colors.text, fontSize: wp(3) }}
 								className="font-medium">
 								{cat.title}
 							</Text>

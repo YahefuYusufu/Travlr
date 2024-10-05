@@ -25,7 +25,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 	const [isDarkTheme, setIsDarkTheme] = useState(false)
 
 	useEffect(() => {
-		const newTheme = systemTheme === "light"
+		const newTheme = systemTheme === "dark"
 
 		setIsDarkTheme(newTheme)
 	}, [systemTheme])
