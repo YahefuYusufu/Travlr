@@ -5,6 +5,7 @@ export const DarkColors = {
 	background: "#ffffff",
 	bgNatural: "#404040",
 	gray700: "#221c30",
+	bgSecondary: "#6b7280",
 
 	// Text colors
 	text: "#000000",
@@ -41,6 +42,7 @@ export const LightColors = {
 	background: "#121212",
 	bgNatural: "#f5f5f5",
 	gray700: "#dfe3f0", // Lighter shade opposite to light mode's dark gray
+	bgSecondary: "#0A5E69",
 
 	// Text colors
 	text: "#ffffff",

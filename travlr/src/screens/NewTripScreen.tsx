@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react"
-import { View, SafeAreaView, Text } from "react-native"
+import { View, SafeAreaView, Text, ScrollView } from "react-native"
 import { useNavigation } from "@react-navigation/native"
+import { CalendarDaysIcon } from "react-native-heroicons/outline"
 import Header from "../components/common/Header"
 import SelectableField from "../components/trip/SelectableField"
 import { useLocationData } from "../hooks"
+import DatePickerField from "../components/trip/DatePickerField"
+import CategorySelector from "../components/trip/CategorySelector"
+import CategoryDropdown from "../components/trip/CategoryDropdown"
 
 const NewTripScreen: React.FC = () => {
 	const navigation = useNavigation()
@@ -11,6 +15,7 @@ const NewTripScreen: React.FC = () => {
 	const [selectedCountry, setSelectedCountry] = useState("")
 	const [selectedCity, setSelectedCity] = useState("")
 	const [cityOptions, setCityOptions] = useState<string[]>([])
+	const [tripDate, setTripDate] = useState(new Date())
 
 	useEffect(() => {
 		if (data && selectedCountry) {
@@ -30,6 +35,10 @@ const NewTripScreen: React.FC = () => {
 		setSelectedCity(city)
 	}
 
+	const handleDateChange = (date: Date) => {
+		setTripDate(date)
+	}
+
 	if (loading) {
 		return <Text>Loading...</Text>
 	}
@@ -37,23 +46,39 @@ const NewTripScreen: React.FC = () => {
 	if (error) {
 		return <Text>Error: {error.message}</Text>
 	}
+	const categories = ["Favorites", "Best", "Popular", "New"] // Define categories here
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
-			<Header title="New Trip Screen" onBackPress={() => navigation.goBack()} />
-			<View className="p-4 flex-row space-x-4">
-				<SelectableField
-					label="Country"
-					value={selectedCountry}
-					options={data?.countries || []}
-					onSelect={handleCountrySelect}
+			<Header title="Add a New Trip" onBackPress={() => navigation.goBack()} />
+
+			<View className="p-4">
+				<View className="flex-row space-x-4 ">
+					<SelectableField
+						label="Country"
+						value={selectedCountry}
+						options={data?.countries || []}
+						onSelect={handleCountrySelect}
+					/>
+					<SelectableField
+						label="City"
+						value={selectedCity}
+						options={cityOptions}
+						onSelect={handleCitySelect}
+					/>
+				</View>
+				<DatePickerField
+					label="Trip Date"
+					date={tripDate}
+					onDateChange={handleDateChange}
 				/>
-				<SelectableField
-					label="City"
-					value={selectedCity}
-					options={cityOptions}
-					onSelect={handleCitySelect}
-				/>
+
+				{/* Container for Category Selector */}
+				<ScrollView
+					className="mt-4 p-1 bg-green-500  rounded-lg shadow-md"
+					style={{ height: 250 }}>
+					<CategoryDropdown />
+				</ScrollView>
 			</View>
 		</SafeAreaView>
 	)
