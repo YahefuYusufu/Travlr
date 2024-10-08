@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from "react"
-import { View, SafeAreaView, Text, ScrollView } from "react-native"
+import { View, SafeAreaView, Text, FlatList } from "react-native"
 import { useNavigation } from "@react-navigation/native"
-import { CalendarDaysIcon } from "react-native-heroicons/outline"
 import Header from "../components/common/Header"
 import SelectableField from "../components/trip/SelectableField"
 import { useLocationData } from "../hooks"
 import DatePickerField from "../components/trip/DatePickerField"
-import CategorySelector from "../components/trip/CategorySelector"
 import CategoryDropdown from "../components/trip/CategoryDropdown"
 
 const NewTripScreen: React.FC = () => {
 	const navigation = useNavigation()
 	const { data, loading, error } = useLocationData()
-	const [selectedCountry, setSelectedCountry] = useState("")
-	const [selectedCity, setSelectedCity] = useState("")
+	const [selectedCountry, setSelectedCountry] = useState<string>("")
+	const [selectedCity, setSelectedCity] = useState<string>("")
 	const [cityOptions, setCityOptions] = useState<string[]>([])
-	const [tripDate, setTripDate] = useState(new Date())
+	const [tripDate, setTripDate] = useState<Date>(new Date())
 
 	useEffect(() => {
 		if (data && selectedCountry) {
@@ -28,7 +26,7 @@ const NewTripScreen: React.FC = () => {
 
 	const handleCountrySelect = (country: string) => {
 		setSelectedCountry(country)
-		setSelectedCity("")
+		setSelectedCity("") // Reset city selection when country changes
 	}
 
 	const handleCitySelect = (city: string) => {
@@ -46,13 +44,14 @@ const NewTripScreen: React.FC = () => {
 	if (error) {
 		return <Text>Error: {error.message}</Text>
 	}
+
 	const categories = ["Favorites", "Best", "Popular", "New"] // Define categories here
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<Header title="Add a New Trip" onBackPress={() => navigation.goBack()} />
 
-			<View className="p-4">
+			<View className="p-4 flex-1">
 				<View className="flex-row space-x-4 ">
 					<SelectableField
 						label="Country"
@@ -73,12 +72,16 @@ const NewTripScreen: React.FC = () => {
 					onDateChange={handleDateChange}
 				/>
 
-				{/* Container for Category Selector */}
-				<ScrollView
-					className="mt-4 p-1 bg-green-500  rounded-lg shadow-md"
-					style={{ height: 250 }}>
-					<CategoryDropdown />
-				</ScrollView>
+				{/* FlatList instead of ScrollView for category selection */}
+				<View className="mt-4 p-1 bg-green-500 rounded-lg shadow-md">
+					<CategoryDropdown
+						placeholder="Select Category"
+						items={categories.map((category) => ({
+							label: category,
+							value: category,
+						}))} // Map categories for Dropdown
+					/>
+				</View>
 			</View>
 		</SafeAreaView>
 	)

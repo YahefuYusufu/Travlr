@@ -2,14 +2,17 @@ import React, { useState } from "react"
 import { View } from "react-native"
 import DropDownPicker from "react-native-dropdown-picker"
 
-const DropdownExample: React.FC = () => {
+interface DropdownExampleProps {
+	items: { label: string; value: string }[] // Accept items as props
+	placeholder?: string // Accept an optional placeholder text
+}
+
+const CategoryDropdown: React.FC<DropdownExampleProps> = ({
+	items,
+	placeholder = "Select an option",
+}) => {
 	const [open, setOpen] = useState<boolean>(false)
 	const [value, setValue] = useState<string | null>(null)
-	const [items, setItems] = useState<{ label: string; value: string }[]>([
-		{ label: "Favorite", value: "favorite" },
-		{ label: "Best", value: "best" },
-		{ label: "Trending", value: "trending" },
-	])
 
 	return (
 		<View className="flex-row justify-end p-2">
@@ -19,8 +22,7 @@ const DropdownExample: React.FC = () => {
 				items={items}
 				setOpen={setOpen}
 				setValue={setValue}
-				setItems={setItems}
-				placeholder="Category"
+				placeholder={placeholder} // Use the placeholder prop
 				containerStyle={{ width: 140 }} // Set the width smaller than default
 				dropDownContainerStyle={{ backgroundColor: "#fafafa" }} // Background color for the dropdown
 				textStyle={{ color: "#000" }} // Customize text color if needed
@@ -30,4 +32,4 @@ const DropdownExample: React.FC = () => {
 	)
 }
 
-export default DropdownExample
+export default CategoryDropdown
