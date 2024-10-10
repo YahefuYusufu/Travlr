@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { View, SafeAreaView, Text, FlatList } from "react-native"
+import { View, SafeAreaView, Text } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import Header from "../components/common/Header"
 import SelectableField from "../components/trip/SelectableField"
@@ -38,7 +38,7 @@ const NewTripScreen: React.FC = () => {
 	}
 
 	if (loading) {
-		return <Text>Loading...</Text>
+		return <Text className="flex ">Loading...</Text>
 	}
 
 	if (error) {
@@ -52,7 +52,7 @@ const NewTripScreen: React.FC = () => {
 			<Header title="Add a New Trip" onBackPress={() => navigation.goBack()} />
 
 			<View className="p-4 flex-1">
-				<View className="flex-row space-x-4 ">
+				<View className="flex-row space-x-4 z-10 ">
 					<SelectableField
 						label="Country"
 						value={selectedCountry}

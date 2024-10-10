@@ -1,11 +1,5 @@
 import React, { useState } from "react"
-import {
-	View,
-	Text,
-	TouchableOpacity,
-	Platform,
-	StyleSheet,
-} from "react-native"
+import { View, Text, TouchableOpacity, Platform } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { CalendarDaysIcon } from "react-native-heroicons/solid"
 
@@ -34,8 +28,8 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
 		}
 	}
 
-	const showDatepicker = () => {
-		setShowPicker(true)
+	const toggleDatepicker = () => {
+		setShowPicker(!showPicker)
 	}
 
 	const formatDate = (date: Date) => {
@@ -47,16 +41,21 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
 	}
 
 	return (
-		<View className="mt-4">
-			<Text className=" text-sm font-bold mb-2 text-gray-700">{label}</Text>
-			<View className="flex-row items-center justify-between bg-gray-100 rounded-lg p-3 border border-gray-300">
+		<View className="mt-4 mb-4">
+			<Text className="text-sm font-bold mb-2 text-gray-700">{label}</Text>
+			<TouchableOpacity
+				onPress={toggleDatepicker}
+				className="flex-row items-center justify-between bg-gray-100 rounded-lg p-3 border border-gray-300">
 				<View className="flex-row items-center">
-					{/* Only the CalendarDaysIcon is clickable to open the date picker */}
-					<TouchableOpacity
-						onPress={showDatepicker}
-						className="bg-gray-500 rounded-full border border-gray-500 p-2 mr-3">
-						<CalendarDaysIcon size={24} color={"white"} />
-					</TouchableOpacity>
+					{showPicker ? (
+						<View className="bg-blue-500 rounded-full border border-blue-500 p-2 mr-3">
+							<CalendarDaysIcon size={24} color={"white"} />
+						</View>
+					) : (
+						<View className="bg-gray-500 rounded-full border border-gray-500 p-2 mr-3">
+							<CalendarDaysIcon size={24} color={"white"} />
+						</View>
+					)}
 					<Text className="text-base font-medium text-gray-800">
 						{formatDate(date)}
 					</Text>
@@ -69,16 +68,11 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
 						is24Hour={true}
 						display="default"
 						onChange={onChange}
-						style={styles.dateTimePicker}
 					/>
 				)}
-			</View>
+			</TouchableOpacity>
 		</View>
 	)
 }
 
 export default DatePickerField
-
-const styles = StyleSheet.create({
-	dateTimePicker: {},
-})

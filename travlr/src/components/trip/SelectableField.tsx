@@ -77,7 +77,7 @@ const SelectableField: React.FC<SelectableFieldProps> = ({
 				closeDropdown()
 				Keyboard.dismiss() // Dismiss the keyboard if open
 			}}>
-			<View className="flex-1 mr-1">
+			<View className="flex-1 mr-1 mb-3" style={{ zIndex: 1000 }}>
 				<Text
 					className="mb-2 text-lg font-semibold"
 					style={{ color: colors.text }}>
@@ -107,7 +107,7 @@ const SelectableField: React.FC<SelectableFieldProps> = ({
 						width: boxWidth,
 						height: animatedHeight,
 						overflow: "hidden",
-						zIndex: 1000,
+						zIndex: 1001, // Increased zIndex here
 					}}>
 					<View className="flex justify-center items-center bg-white rounded-lg shadow-lg border border-gray-400">
 						{/* Search bar */}
