@@ -1,33 +1,115 @@
-import React, { useState } from "react"
-import { View } from "react-native"
-import DropDownPicker from "react-native-dropdown-picker"
+import React, { useState, useRef } from "react"
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	FlatList,
+	Modal,
+	Dimensions,
+} from "react-native"
+import { ChevronDown, Check } from "lucide-react-native"
 
-interface DropdownExampleProps {
-	items: { label: string; value: string }[] // Accept items as props
-	placeholder?: string // Accept an optional placeholder text
+interface CategoryItem {
+	label: string
+	value: string
 }
 
-const CategoryDropdown: React.FC<DropdownExampleProps> = ({
+interface CategoryDropdownProps {
+	items: CategoryItem[]
+	placeholder?: string
+	value: string
+	onValueChange: (value: string) => void
+}
+
+const CategoryDropdown: React.FC<CategoryDropdownProps> = ({
 	items,
 	placeholder = "Select an option",
+	value,
+	onValueChange,
 }) => {
-	const [open, setOpen] = useState<boolean>(false)
-	const [value, setValue] = useState<string | null>(null)
+	const [isOpen, setIsOpen] = useState(false)
+	const [dropdownLayout, setDropdownLayout] = useState({ top: 0, right: 0 })
+	const DropdownButton = useRef<TouchableOpacity>(null)
+	const { width: SCREEN_WIDTH } = Dimensions.get("window")
+
+	const selectedItem = items.find((item) => item.value === value)
+
+	const toggleDropdown = (): void => {
+		isOpen ? setIsOpen(false) : openDropdown()
+	}
+
+	const openDropdown = (): void => {
+		DropdownButton.current?.measure((_fx, _fy, _w, h, _px, py) => {
+			setDropdownLayout({
+				top: py + h,
+				right: SCREEN_WIDTH - (_px + _w),
+			})
+		})
+		setIsOpen(true)
+	}
+
+	const renderItem = ({ item }: { item: CategoryItem }) => (
+		<TouchableOpacity
+			onPress={() => {
+				onValueChange(item.value)
+				setIsOpen(false)
+			}}
+			className="p-3 border-b border-gray-200">
+			<View className="flex-row justify-between items-center">
+				<Text>{item.label}</Text>
+				{item.value === value && <Check size={16} color="#000" />}
+			</View>
+		</TouchableOpacity>
+	)
 
 	return (
-		<View className="flex-row justify-end p-2">
-			<DropDownPicker
-				open={open}
-				value={value}
-				items={items}
-				setOpen={setOpen}
-				setValue={setValue}
-				placeholder={placeholder} // Use the placeholder prop
-				containerStyle={{ width: 140 }} // Set the width smaller than default
-				dropDownContainerStyle={{ backgroundColor: "#fafafa" }} // Background color for the dropdown
-				textStyle={{ color: "#000" }} // Customize text color if needed
-				placeholderStyle={{ color: "#999" }} // Customize placeholder color
-			/>
+		<View>
+			<TouchableOpacity
+				ref={DropdownButton}
+				onPress={toggleDropdown}
+				className="flex-row justify-between items-center bg-white border border-gray-300 rounded-md p-2"
+				style={{ width: 120, height: 40 }}>
+				<Text numberOfLines={1} className="flex-1">
+					{selectedItem ? selectedItem.label : placeholder}
+				</Text>
+				<ChevronDown size={20} color="#000" />
+			</TouchableOpacity>
+
+			<Modal
+				visible={isOpen}
+				transparent
+				animationType="none"
+				onRequestClose={() => setIsOpen(false)}>
+				<TouchableOpacity
+					style={{ flex: 1 }}
+					activeOpacity={1}
+					onPress={() => setIsOpen(false)}>
+					<View
+						style={{
+							position: "absolute",
+							top: dropdownLayout.top,
+							right: dropdownLayout.right,
+							width: 120,
+							backgroundColor: "white",
+							borderRadius: 4,
+							shadowColor: "#000",
+							shadowOffset: {
+								width: 0,
+								height: 2,
+							},
+							shadowOpacity: 0.25,
+							shadowRadius: 3.84,
+							elevation: 5,
+						}}>
+						<FlatList
+							data={items}
+							renderItem={renderItem}
+							keyExtractor={(item: CategoryItem) => item.value}
+							style={{ maxHeight: 200 }}
+						/>
+					</View>
+				</TouchableOpacity>
+			</Modal>
 		</View>
 	)
 }

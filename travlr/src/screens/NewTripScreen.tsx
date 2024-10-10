@@ -1,87 +1,79 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { View, SafeAreaView, Text } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import Header from "../components/common/Header"
-import SelectableField from "../components/trip/SelectableField"
 import { useLocationData } from "../hooks"
-import DatePickerField from "../components/trip/DatePickerField"
-import CategoryDropdown from "../components/trip/CategoryDropdown"
+import TripLocationForm from "../components/trip/TripLocationForm"
+import TripDateForm from "../components/trip/TripDateForm"
+import TripDetailsForm from "../components/trip/TripDetailsForm"
+import ImageCaptureContainer from "../components/trip/ImageCaptureContainer"
 
 const NewTripScreen: React.FC = () => {
 	const navigation = useNavigation()
 	const { data, loading, error } = useLocationData()
-	const [selectedCountry, setSelectedCountry] = useState<string>("")
-	const [selectedCity, setSelectedCity] = useState<string>("")
-	const [cityOptions, setCityOptions] = useState<string[]>([])
-	const [tripDate, setTripDate] = useState<Date>(new Date())
-
-	useEffect(() => {
-		if (data && selectedCountry) {
-			const newCityOptions = data.cities[selectedCountry] || []
-			setCityOptions(newCityOptions)
-		} else {
-			setCityOptions([])
-		}
-	}, [data, selectedCountry])
-
-	const handleCountrySelect = (country: string) => {
-		setSelectedCountry(country)
-		setSelectedCity("") // Reset city selection when country changes
-	}
-
-	const handleCitySelect = (city: string) => {
-		setSelectedCity(city)
-	}
-
-	const handleDateChange = (date: Date) => {
-		setTripDate(date)
-	}
+	const [tripDetails, setTripDetails] = useState({
+		country: "",
+		city: "",
+		date: new Date(),
+		category: "",
+		summary: "",
+		rating: 0,
+	})
+	const [images, setImages] = useState<string[]>([])
 
 	if (loading) {
-		return <Text className="flex ">Loading...</Text>
+		return <Text className="flex">Loading...</Text>
 	}
 
 	if (error) {
 		return <Text>Error: {error.message}</Text>
 	}
 
-	const categories = ["Favorites", "Best", "Popular", "New"] // Define categories here
+	const updateTripDetails = (field: string, value: string | Date | number) => {
+		setTripDetails((prev) => ({ ...prev, [field]: value }))
+	}
 
+	const handleGalleryPick = () => {
+		// Implement gallery pick functionality
+		console.log("Pick from gallery")
+	}
+
+	const handleCameraCapture = () => {
+		// Implement camera capture functionality
+		console.log("Capture from camera")
+	}
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<Header title="Add a New Trip" onBackPress={() => navigation.goBack()} />
 
-			<View className="p-4 flex-1">
-				<View className="flex-row space-x-4 z-10 ">
-					<SelectableField
-						label="Country"
-						value={selectedCountry}
-						options={data?.countries || []}
-						onSelect={handleCountrySelect}
-					/>
-					<SelectableField
-						label="City"
-						value={selectedCity}
-						options={cityOptions}
-						onSelect={handleCitySelect}
-					/>
-				</View>
-				<DatePickerField
-					label="Trip Date"
-					date={tripDate}
-					onDateChange={handleDateChange}
+			<View className="flex-1 p-4" style={{ zIndex: 1 }}>
+				<TripLocationForm
+					locationData={data}
+					selectedCountry={tripDetails.country}
+					selectedCity={tripDetails.city}
+					onCountrySelect={(country) => updateTripDetails("country", country)}
+					onCitySelect={(city) => updateTripDetails("city", city)}
+				/>
+				<TripDateForm
+					date={tripDetails.date}
+					onDateChange={(date) => updateTripDetails("date", date)}
+				/>
+				<TripDetailsForm
+					category={tripDetails.category}
+					onCategorySelect={(category) =>
+						updateTripDetails("category", category)
+					}
+					summary={tripDetails.summary}
+					onSummaryChange={(summary) => updateTripDetails("summary", summary)}
+					rating={tripDetails.rating}
+					onRatingChange={(rating) => updateTripDetails("rating", rating)}
 				/>
 
-				{/* FlatList instead of ScrollView for category selection */}
-				<View className="mt-4 p-1 bg-green-500 rounded-lg shadow-md">
-					<CategoryDropdown
-						placeholder="Select Category"
-						items={categories.map((category) => ({
-							label: category,
-							value: category,
-						}))} // Map categories for Dropdown
-					/>
-				</View>
+				<ImageCaptureContainer
+					onGalleryPick={handleGalleryPick}
+					onCameraCapture={handleCameraCapture}
+					images={images}
+				/>
 			</View>
 		</SafeAreaView>
 	)
