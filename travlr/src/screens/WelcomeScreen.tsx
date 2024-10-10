@@ -98,7 +98,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
 					onPress={() => {
 						console.log("Toggling theme...")
 						toggleTheme()
-					}}>
+					}}
+					className="hidden">
 					<Icon
 						name={isDarkTheme ? "moon" : "sunny"}
 						size={hp(3)}
