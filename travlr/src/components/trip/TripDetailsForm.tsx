@@ -25,8 +25,8 @@ const TripDetailsForm: React.FC<TripDetailsFormProps> = ({
 	const renderItem = () => (
 		<View
 			className="p-6 bg-gray-600 rounded-lg shadow-md"
-			style={{ height: 350 }}>
-			<View className="flex-row justify-between mb-6">
+			style={{ height: 320 }}>
+			<View className="flex-row justify-between mb-2">
 				<Text className="mb-2 text-lg font-semibold text-gray-100">
 					Category
 				</Text>
@@ -40,7 +40,7 @@ const TripDetailsForm: React.FC<TripDetailsFormProps> = ({
 				</View>
 			</View>
 
-			<View className="mb-6">
+			<View className="mb-3">
 				<Text className="mb-2 text-lg font-semibold text-gray-100">
 					Trip Summary
 				</Text>

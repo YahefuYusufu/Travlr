@@ -6,6 +6,7 @@ import { useLocationData } from "../hooks"
 import TripLocationForm from "../components/trip/TripLocationForm"
 import TripDateForm from "../components/trip/TripDateForm"
 import TripDetailsForm from "../components/trip/TripDetailsForm"
+import ImageCaptureButtons from "../components/trip/ImageCaptureButtons"
 
 const NewTripScreen: React.FC = () => {
 	const navigation = useNavigation()
@@ -18,6 +19,7 @@ const NewTripScreen: React.FC = () => {
 		summary: "",
 		rating: 0,
 	})
+	const [images, setImages] = useState<string[]>([])
 
 	if (loading) {
 		return <Text className="flex">Loading...</Text>
@@ -31,6 +33,15 @@ const NewTripScreen: React.FC = () => {
 		setTripDetails((prev) => ({ ...prev, [field]: value }))
 	}
 
+	const handleGalleryPick = () => {
+		// Implement gallery pick functionality
+		console.log("Pick from gallery")
+	}
+
+	const handleCameraCapture = () => {
+		// Implement camera capture functionality
+		console.log("Capture from camera")
+	}
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<Header title="Add a New Trip" onBackPress={() => navigation.goBack()} />
@@ -56,6 +67,12 @@ const NewTripScreen: React.FC = () => {
 					onSummaryChange={(summary) => updateTripDetails("summary", summary)}
 					rating={tripDetails.rating}
 					onRatingChange={(rating) => updateTripDetails("rating", rating)}
+				/>
+
+				<ImageCaptureButtons
+					onGalleryPick={handleGalleryPick}
+					onCameraCapture={handleCameraCapture}
+					images={images}
 				/>
 			</View>
 		</SafeAreaView>

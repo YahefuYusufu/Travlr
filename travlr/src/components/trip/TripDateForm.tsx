@@ -9,7 +9,7 @@ interface TripDateFormProps {
 
 const TripDateForm: React.FC<TripDateFormProps> = ({ date, onDateChange }) => {
 	return (
-		<View className="mt-4">
+		<View className="mt-2">
 			<DatePickerField
 				label="Trip Date"
 				date={date}
