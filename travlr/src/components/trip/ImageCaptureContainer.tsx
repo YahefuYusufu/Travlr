@@ -116,8 +116,8 @@ const ImageCaptureContainer: React.FC<ImageCaptureButtonsProps> = ({
 						<TouchableWithoutFeedback>
 							<Animated.View
 								style={{ opacity: fadeAnim }}
-								className="bg-slate-100 rounded-xl p-6 w-4/5 max-w-sm shadow-lg">
-								<Text className="text-xl font-bold mb-4 text-center">
+								className="bg-slate-700 rounded-xl p-6 w-4/5 max-w-sm shadow-lg">
+								<Text className="text-xl font-bold mb-4 text-center text-white">
 									Choose an option
 								</Text>
 								<View className="flex-row justify-between mb-4">
