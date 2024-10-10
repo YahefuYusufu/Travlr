@@ -1,46 +1,36 @@
 import React, { useState, useEffect } from "react"
 import { View } from "react-native"
-import SelectableField from "./SelectableField"
+import SelectableField from "../common/SelectableField"
+import { useTripContext } from "../../context/TripContext"
+import { useLocationData } from "../../hooks"
 
-interface TripLocationFormProps {
-	locationData: any
-	selectedCountry: string
-	selectedCity: string
-	onCountrySelect: (country: string) => void
-	onCitySelect: (city: string) => void
-}
-
-const TripLocationForm: React.FC<TripLocationFormProps> = ({
-	locationData,
-	selectedCountry,
-	selectedCity,
-	onCountrySelect,
-	onCitySelect,
-}) => {
+const TripLocationForm: React.FC = () => {
+	const { data: locationData } = useLocationData()
+	const { tripDetails, updateCountry, updateCity } = useTripContext()
 	const [cityOptions, setCityOptions] = useState<string[]>([])
 
 	useEffect(() => {
-		if (locationData && selectedCountry) {
-			const newCityOptions = locationData.cities[selectedCountry] || []
+		if (locationData && tripDetails.country) {
+			const newCityOptions = locationData.cities[tripDetails.country] || []
 			setCityOptions(newCityOptions)
 		} else {
 			setCityOptions([])
 		}
-	}, [locationData, selectedCountry])
+	}, [locationData, tripDetails.country])
 
 	return (
 		<View className="flex-row space-x-4 z-10">
 			<SelectableField
 				label="Country"
-				value={selectedCountry}
+				value={tripDetails.country}
 				options={locationData?.countries || []}
-				onSelect={onCountrySelect}
+				onSelect={updateCountry}
 			/>
 			<SelectableField
 				label="City"
-				value={selectedCity}
+				value={tripDetails.city}
 				options={cityOptions}
-				onSelect={onCitySelect}
+				onSelect={updateCity}
 			/>
 		</View>
 	)

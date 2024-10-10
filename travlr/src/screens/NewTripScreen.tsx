@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { View, SafeAreaView, Text } from "react-native"
+import React, { useEffect } from "react"
+import { View, SafeAreaView, Text, ActivityIndicator } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import Header from "../components/common/Header"
 import { useLocationData } from "../hooks"
@@ -7,75 +7,59 @@ import TripLocationForm from "../components/trip/TripLocationForm"
 import TripDateForm from "../components/trip/TripDateForm"
 import TripDetailsForm from "../components/trip/TripDetailsForm"
 import ImageCaptureContainer from "../components/trip/ImageCaptureContainer"
+import { TripProvider, useTripContext } from "../context/TripContext"
+import SendTripButton from "../components/common/SendTripButton"
 
-const NewTripScreen: React.FC = () => {
+const TripContent: React.FC = () => {
 	const navigation = useNavigation()
-	const { data, loading, error } = useLocationData()
-	const [tripDetails, setTripDetails] = useState({
-		country: "",
-		city: "",
-		date: new Date(),
-		category: "",
-		summary: "",
-		rating: 0,
-	})
-	const [images, setImages] = useState<string[]>([])
+	const { loading, error } = useLocationData()
+	const { tripDetails, images } = useTripContext()
+
+	useEffect(() => {
+		console.log("Current tripDetails:", tripDetails)
+		console.log("Current images:", images)
+	}, [tripDetails, images])
 
 	if (loading) {
-		return <Text className="flex">Loading...</Text>
+		return (
+			<View className="flex-1 justify-center items-center bg-white">
+				<ActivityIndicator size="large" color="gray" />
+				<Text className="mt-4 text-lg text-gray-600">Loading trip data...</Text>
+			</View>
+		)
 	}
 
 	if (error) {
-		return <Text>Error: {error.message}</Text>
+		return (
+			<View className="flex-1 justify-center items-center bg-white">
+				<Text className="text-lg text-red-500">Error: {error.message}</Text>
+				<Text className="mt-2 text-gray-600">Please try again later.</Text>
+			</View>
+		)
 	}
 
-	const updateTripDetails = (field: string, value: string | Date | number) => {
-		setTripDetails((prev) => ({ ...prev, [field]: value }))
-	}
-
-	const handleGalleryPick = () => {
-		// Implement gallery pick functionality
-		console.log("Pick from gallery")
-	}
-
-	const handleCameraCapture = () => {
-		// Implement camera capture functionality
-		console.log("Capture from camera")
-	}
 	return (
 		<SafeAreaView className="flex-1 bg-white">
-			<Header title="Add a New Trip" onBackPress={() => navigation.goBack()} />
-
+			<Header
+				title="Where have you been?"
+				onBackPress={() => navigation.goBack()}
+			/>
 			<View className="flex-1 p-4" style={{ zIndex: 1 }}>
-				<TripLocationForm
-					locationData={data}
-					selectedCountry={tripDetails.country}
-					selectedCity={tripDetails.city}
-					onCountrySelect={(country) => updateTripDetails("country", country)}
-					onCitySelect={(city) => updateTripDetails("city", city)}
-				/>
-				<TripDateForm
-					date={tripDetails.date}
-					onDateChange={(date) => updateTripDetails("date", date)}
-				/>
-				<TripDetailsForm
-					category={tripDetails.category}
-					onCategorySelect={(category) =>
-						updateTripDetails("category", category)
-					}
-					summary={tripDetails.summary}
-					onSummaryChange={(summary) => updateTripDetails("summary", summary)}
-					rating={tripDetails.rating}
-					onRatingChange={(rating) => updateTripDetails("rating", rating)}
-				/>
-
-				<ImageCaptureContainer
-					onGalleryPick={handleGalleryPick}
-					onCameraCapture={handleCameraCapture}
-					images={images}
-				/>
+				<TripLocationForm />
+				<TripDateForm />
+				<TripDetailsForm />
+				<ImageCaptureContainer />
+				<SendTripButton />
 			</View>
 		</SafeAreaView>
+	)
+}
+
+const NewTripScreen: React.FC = () => {
+	return (
+		<TripProvider>
+			<TripContent />
+		</TripProvider>
 	)
 }
 

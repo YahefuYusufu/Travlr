@@ -1,20 +1,11 @@
 import React from "react"
 import { View } from "react-native"
-import DatePickerField from "./DatePickerField"
+import DatePickerField from "../common/DatePickerField"
 
-interface TripDateFormProps {
-	date: Date
-	onDateChange: (date: Date) => void
-}
-
-const TripDateForm: React.FC<TripDateFormProps> = ({ date, onDateChange }) => {
+const TripDateForm: React.FC = () => {
 	return (
 		<View>
-			<DatePickerField
-				label="Trip Date"
-				date={date}
-				onDateChange={onDateChange}
-			/>
+			<DatePickerField />
 		</View>
 	)
 }
