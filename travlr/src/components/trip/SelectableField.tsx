@@ -77,15 +77,14 @@ const SelectableField: React.FC<SelectableFieldProps> = ({
 				closeDropdown()
 				Keyboard.dismiss() // Dismiss the keyboard if open
 			}}>
-			<View className="flex-1 mr-1 mb-3" style={{ zIndex: 1000 }}>
+			<View className="flex-1 mr-1" style={{ zIndex: 1000 }}>
 				<Text
 					className="mb-2 text-lg font-semibold"
 					style={{ color: colors.text }}>
 					{label}
 				</Text>
 				<TouchableOpacity
-					className="flex-row items-center justify-between border border-gray-400 rounded-lg p-2"
-					style={{ backgroundColor: colors.bgNatural }}
+					className="flex-row items-center justify-between bg-slate-600 border border-gray-400 rounded-lg p-2"
 					onPress={toggleDropdown}
 					onLayout={(event) => {
 						const { x, y, width, height } = event.nativeEvent.layout
@@ -95,7 +94,7 @@ const SelectableField: React.FC<SelectableFieldProps> = ({
 						numberOfLines={1}
 						ellipsizeMode="tail"
 						className="mb-1 text-base font-sans text-gray-300">
-						{value || `Select ${label}`}
+						{value || `Select a ${label}`}
 					</Text>
 					<ChevronDownIcon size={wp(5)} color="white" />
 				</TouchableOpacity>
