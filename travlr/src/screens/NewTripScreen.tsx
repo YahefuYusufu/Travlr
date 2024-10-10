@@ -6,7 +6,7 @@ import { useLocationData } from "../hooks"
 import TripLocationForm from "../components/trip/TripLocationForm"
 import TripDateForm from "../components/trip/TripDateForm"
 import TripDetailsForm from "../components/trip/TripDetailsForm"
-import ImageCaptureButtons from "../components/trip/ImageCaptureButtons"
+import ImageCaptureContainer from "../components/trip/ImageCaptureContainer"
 
 const NewTripScreen: React.FC = () => {
 	const navigation = useNavigation()
@@ -69,7 +69,7 @@ const NewTripScreen: React.FC = () => {
 					onRatingChange={(rating) => updateTripDetails("rating", rating)}
 				/>
 
-				<ImageCaptureButtons
+				<ImageCaptureContainer
 					onGalleryPick={handleGalleryPick}
 					onCameraCapture={handleCameraCapture}
 					images={images}
