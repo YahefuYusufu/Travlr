@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useCallback } from "react"
 import { View, SafeAreaView, Text } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import Header from "../components/common/Header"
@@ -21,59 +21,58 @@ const NewTripScreen: React.FC = () => {
 	})
 	const [images, setImages] = useState<string[]>([])
 
-	if (loading) {
-		return <Text className="flex">Loading...</Text>
-	}
+	const updateCountry = useCallback((country: string) => {
+		setTripDetails((prev) => ({ ...prev, country }))
+	}, [])
 
-	if (error) {
-		return <Text>Error: {error.message}</Text>
-	}
+	const updateCity = useCallback((city: string) => {
+		setTripDetails((prev) => ({ ...prev, city }))
+	}, [])
 
-	const updateTripDetails = (field: string, value: string | Date | number) => {
-		setTripDetails((prev) => ({ ...prev, [field]: value }))
-	}
+	const updateDate = useCallback((date: Date) => {
+		setTripDetails((prev) => ({ ...prev, date }))
+	}, [])
 
-	const handleGalleryPick = () => {
-		// Implement gallery pick functionality
-		console.log("Pick from gallery")
-	}
+	const updateCategory = useCallback((category: string) => {
+		setTripDetails((prev) => ({ ...prev, category }))
+	}, [])
 
-	const handleCameraCapture = () => {
-		// Implement camera capture functionality
-		console.log("Capture from camera")
-	}
+	const updateSummary = useCallback((summary: string) => {
+		setTripDetails((prev) => ({ ...prev, summary }))
+	}, [])
+
+	const updateRating = useCallback((rating: number) => {
+		setTripDetails((prev) => ({ ...prev, rating }))
+	}, [])
+
+	const updateImages = useCallback((newImages: string[]) => {
+		setImages(newImages)
+	}, [])
+
+	if (loading) return <Text className="flex">Loading...</Text>
+	if (error) return <Text>Error: {error.message}</Text>
+
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<Header title="Add a New Trip" onBackPress={() => navigation.goBack()} />
-
 			<View className="flex-1 p-4" style={{ zIndex: 1 }}>
 				<TripLocationForm
 					locationData={data}
 					selectedCountry={tripDetails.country}
 					selectedCity={tripDetails.city}
-					onCountrySelect={(country) => updateTripDetails("country", country)}
-					onCitySelect={(city) => updateTripDetails("city", city)}
+					onCountrySelect={updateCountry}
+					onCitySelect={updateCity}
 				/>
-				<TripDateForm
-					date={tripDetails.date}
-					onDateChange={(date) => updateTripDetails("date", date)}
-				/>
+				<TripDateForm date={tripDetails.date} onDateChange={updateDate} />
 				<TripDetailsForm
 					category={tripDetails.category}
-					onCategorySelect={(category) =>
-						updateTripDetails("category", category)
-					}
+					onCategorySelect={updateCategory}
 					summary={tripDetails.summary}
-					onSummaryChange={(summary) => updateTripDetails("summary", summary)}
+					onSummaryChange={updateSummary}
 					rating={tripDetails.rating}
-					onRatingChange={(rating) => updateTripDetails("rating", rating)}
+					onRatingChange={updateRating}
 				/>
-
-				<ImageCaptureContainer
-					onGalleryPick={handleGalleryPick}
-					onCameraCapture={handleCameraCapture}
-					images={images}
-				/>
+				<ImageCaptureContainer images={images} onImagesUpdate={updateImages} />
 			</View>
 		</SafeAreaView>
 	)

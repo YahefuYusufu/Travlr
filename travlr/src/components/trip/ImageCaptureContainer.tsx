@@ -11,29 +11,19 @@ import {
 } from "react-native"
 import { BlurView } from "expo-blur"
 import { Entypo } from "@expo/vector-icons"
+import * as ImagePicker from "expo-image-picker"
 
-interface ImageCaptureButtonsProps {
-	onGalleryPick: () => void
-	onCameraCapture: () => void
-	images: string[] // Array of image URIs
+interface ImageCaptureContainerProps {
+	images: string[]
+	onImagesUpdate: (newImages: string[]) => void
 }
 
-const ImageCaptureContainer: React.FC<ImageCaptureButtonsProps> = ({
-	onGalleryPick,
-	onCameraCapture,
+const ImageCaptureContainer: React.FC<ImageCaptureContainerProps> = ({
 	images,
+	onImagesUpdate,
 }) => {
 	const [modalVisible, setModalVisible] = useState(false)
 	const fadeAnim = useRef(new Animated.Value(0)).current
-
-	// Dummy images
-	const dummyImages = [
-		"https://via.placeholder.com/150/FF5733/FFFFFF?text=1",
-		"https://via.placeholder.com/150/33FF57/000000?text=2",
-		"https://via.placeholder.com/150/5733FF/FFFFFF?text=3",
-		"https://via.placeholder.com/150/FFFF33/000000?text=4",
-		"https://via.placeholder.com/150/FFFF33/000000?text=5",
-	]
 
 	useEffect(() => {
 		if (modalVisible) {
@@ -63,13 +53,33 @@ const ImageCaptureContainer: React.FC<ImageCaptureButtonsProps> = ({
 		})
 	}
 
-	const handleGalleryPick = () => {
-		onGalleryPick()
+	const handleGalleryPick = async () => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		})
+
+		if (!result.canceled && result.assets && result.assets.length > 0) {
+			const newImage = result.assets[0].uri
+			onImagesUpdate([...images, newImage])
+		}
 		closeModal()
 	}
 
-	const handleCameraCapture = () => {
-		onCameraCapture()
+	const handleCameraCapture = async () => {
+		const result = await ImagePicker.launchCameraAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		})
+
+		if (!result.canceled && result.assets && result.assets.length > 0) {
+			const newImage = result.assets[0].uri
+			onImagesUpdate([...images, newImage])
+		}
 		closeModal()
 	}
 
@@ -86,21 +96,13 @@ const ImageCaptureContainer: React.FC<ImageCaptureButtonsProps> = ({
 					<Entypo name="plus" size={24} color="black" />
 				</TouchableOpacity>
 
-				{images.length > 0
-					? images.map((uri, index) => (
-							<Image
-								key={`actual-${index}`}
-								source={{ uri }}
-								className="w-20 h-20 rounded-lg mr-2"
-							/>
-					  ))
-					: dummyImages.map((uri, index) => (
-							<Image
-								key={`dummy-${index}`}
-								source={{ uri }}
-								className="w-20 h-20 rounded-lg mr-2"
-							/>
-					  ))}
+				{images.map((uri, index) => (
+					<Image
+						key={`image-${index}`}
+						source={{ uri }}
+						className="w-20 h-20 rounded-lg mr-2"
+					/>
+				))}
 			</ScrollView>
 
 			<Modal
@@ -116,8 +118,8 @@ const ImageCaptureContainer: React.FC<ImageCaptureButtonsProps> = ({
 						<TouchableWithoutFeedback>
 							<Animated.View
 								style={{ opacity: fadeAnim }}
-								className="bg-slate-700 rounded-xl p-6 w-4/5 max-w-sm shadow-lg">
-								<Text className="text-xl font-bold mb-4 text-center text-white">
+								className="bg-slate-100 rounded-xl p-6 w-4/5 max-w-sm shadow-lg">
+								<Text className="text-xl font-bold mb-4 text-center">
 									Choose an option
 								</Text>
 								<View className="flex-row justify-between mb-4">
