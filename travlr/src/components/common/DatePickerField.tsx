@@ -2,18 +2,10 @@ import React, { useState } from "react"
 import { View, Text, TouchableOpacity, Platform } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { CalendarDaysIcon } from "react-native-heroicons/solid"
+import { useTripContext } from "../../context/TripContext"
 
-interface DatePickerFieldProps {
-	label: string
-	date: Date
-	onDateChange: (date: Date) => void
-}
-
-const DatePickerField: React.FC<DatePickerFieldProps> = ({
-	label,
-	date,
-	onDateChange,
-}) => {
+const DatePickerField: React.FC = () => {
+	const { tripDetails, updateDate } = useTripContext()
 	const [showPicker, setShowPicker] = useState(false)
 
 	const onChange = (event: any, selectedDate?: Date) => {
@@ -21,7 +13,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
 			setShowPicker(false) // Close picker immediately on iOS
 		}
 		if (selectedDate) {
-			onDateChange(selectedDate)
+			updateDate(selectedDate)
 			if (Platform.OS === "android") {
 				setShowPicker(false) // Close picker after selecting date on Android
 			}
@@ -42,7 +34,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
 
 	return (
 		<View className="mt-4 mb-4">
-			<Text className="text-sm font-bold mb-2 text-gray-700">{label}</Text>
+			<Text className="text-sm font-bold mb-2 text-gray-700">Trip Date</Text>
 			<TouchableOpacity
 				onPress={toggleDatepicker}
 				className="flex-row items-center justify-between bg-gray-100 rounded-lg p-3 border border-gray-300">
@@ -57,13 +49,13 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
 						</View>
 					)}
 					<Text className="text-base font-medium text-gray-800">
-						{formatDate(date)}
+						{formatDate(tripDetails.date)}
 					</Text>
 				</View>
 				{showPicker && (
 					<DateTimePicker
 						testID="dateTimePicker"
-						value={date}
+						value={tripDetails.date}
 						mode="date"
 						is24Hour={true}
 						display="default"

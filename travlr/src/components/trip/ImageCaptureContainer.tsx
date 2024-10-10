@@ -12,16 +12,10 @@ import {
 import { BlurView } from "expo-blur"
 import { Entypo } from "@expo/vector-icons"
 import * as ImagePicker from "expo-image-picker"
+import { useTripContext } from "../../context/TripContext"
 
-interface ImageCaptureContainerProps {
-	images: string[]
-	onImagesUpdate: (newImages: string[]) => void
-}
-
-const ImageCaptureContainer: React.FC<ImageCaptureContainerProps> = ({
-	images,
-	onImagesUpdate,
-}) => {
+const ImageCaptureContainer: React.FC = () => {
+	const { images, updateImages } = useTripContext()
 	const [modalVisible, setModalVisible] = useState(false)
 	const fadeAnim = useRef(new Animated.Value(0)).current
 
@@ -63,7 +57,7 @@ const ImageCaptureContainer: React.FC<ImageCaptureContainerProps> = ({
 
 		if (!result.canceled && result.assets && result.assets.length > 0) {
 			const newImage = result.assets[0].uri
-			onImagesUpdate([...images, newImage])
+			updateImages([...images, newImage])
 		}
 		closeModal()
 	}
@@ -78,7 +72,7 @@ const ImageCaptureContainer: React.FC<ImageCaptureContainerProps> = ({
 
 		if (!result.canceled && result.assets && result.assets.length > 0) {
 			const newImage = result.assets[0].uri
-			onImagesUpdate([...images, newImage])
+			updateImages([...images, newImage])
 		}
 		closeModal()
 	}
