@@ -1,13 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from "react"
-
-interface TripDetails {
-	country: string
-	city: string
-	date: Date
-	category: string
-	summary: string
-	rating: number
-}
+import { TripDetails } from "../hooks/useTrips"
 
 interface TripContextType {
 	tripDetails: TripDetails
