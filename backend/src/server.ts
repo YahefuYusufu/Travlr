@@ -2,6 +2,7 @@ import express from "express"
 import mongoose from "mongoose"
 import cors from "cors"
 import dotenv from "dotenv"
+import tripRoutes from "./routes/trips"
 
 dotenv.config()
 
@@ -19,6 +20,7 @@ mongoose
 	.catch((err) => console.log(err))
 
 // Routes will be added here
+app.use("/api/trips", tripRoutes)
 
 const PORT = process.env.PORT || 5001
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
