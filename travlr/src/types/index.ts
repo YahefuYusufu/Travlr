@@ -1,46 +1,56 @@
-// types/navigation.ts
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { ROUTES } from "../constants/strings"
+import { Trip } from "../hooks/useTrips"
+
 export type RootStackParamList = {
 	[ROUTES.WELCOME]: undefined
 	[ROUTES.HOME]: undefined
-	[ROUTES.DESTINATION]: DestinationItemType
+	[ROUTES.DESTINATION]: Trip
 	[ROUTES.NEWTRIP]: undefined
+	[ROUTES.TRIPDETAILS]: { tripId: string }
 }
+
 // Screen props
 export type WelcomeScreenProps = NativeStackScreenProps<
 	RootStackParamList,
-	"Welcome"
+	typeof ROUTES.WELCOME
 >
-export type HomeScreenProps = NativeStackScreenProps<RootStackParamList, "Home">
+export type HomeScreenProps = NativeStackScreenProps<
+	RootStackParamList,
+	typeof ROUTES.HOME
+>
 export type DestinationScreenProps = NativeStackScreenProps<
 	RootStackParamList,
-	"Destination"
+	typeof ROUTES.DESTINATION
 >
 export type NewTripScreenProps = NativeStackScreenProps<
 	RootStackParamList,
-	"NewTrip"
+	typeof ROUTES.NEWTRIP
+>
+export type TripDetailsScreenProps = NativeStackScreenProps<
+	RootStackParamList,
+	typeof ROUTES.TRIPDETAILS
 >
 
 export type ImageSourceType = number | { uri: string }
 
 export interface GalleryProps {
-	title: string
-	image: ImageSourceType
+	trips: Trip[]
+	isLoading: boolean
 }
 
-export type DestinationItemType = {
-	title: string
-	duration: string
-	distance: string
-	weather: string
-	price: number
-	shortDescription: string
-	longDescription: string
-	image: ImageSourceType
+export interface SortCategoriesProps {
+	trips: Trip[]
+	isLoading: boolean
+}
+
+export interface DestinationProps {
+	trips: Trip[]
+	isLoading: boolean
+	navigation: DestinationScreenProps["navigation"]
 }
 
 export type DestinationCardProps = {
-	item: DestinationItemType
+	item: Trip
 	navigation: DestinationScreenProps["navigation"]
 }

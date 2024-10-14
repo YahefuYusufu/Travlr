@@ -11,12 +11,25 @@ export interface TripDetails {
 }
 
 export interface Trip extends TripDetails {
-	_id?: string
+	_id: string
 }
 
 const api = axios.create({
 	baseURL: process.env.TRIP_API_URL || "http://localhost:5001/api/trips",
 })
+
+const handleAxiosError = (error: unknown, defaultMessage: string): never => {
+	if (axios.isAxiosError(error)) {
+		console.error("Axios error:", error.message)
+		console.error(
+			"Error response:",
+			JSON.stringify(error.response?.data, null, 2)
+		)
+		throw new Error(error.response?.data?.message || defaultMessage)
+	}
+	console.error("Unexpected error:", error)
+	throw new Error("An unexpected error occurred")
+}
 
 export const sendTrip = async (tripData: TripDetails): Promise<Trip> => {
 	try {
@@ -28,33 +41,28 @@ export const sendTrip = async (tripData: TripDetails): Promise<Trip> => {
 		console.log("Response from backend:", JSON.stringify(data, null, 2))
 		return data.trip
 	} catch (error) {
-		if (axios.isAxiosError(error)) {
-			console.error("Axios error:", error.message)
-			console.error(
-				"Error response:",
-				JSON.stringify(error.response?.data, null, 2)
-			)
-			throw new Error(error.response?.data?.message || "Failed to send trip")
-		}
-		console.error("Unexpected error:", error)
-		throw new Error("An unexpected error occurred")
+		return handleAxiosError(error, "Failed to send trip")
 	}
 }
 
 export const getTrips = async (): Promise<Trip[]> => {
 	try {
+		console.log("Fetching all trips")
 		const { data } = await api.get<Trip[]>("")
+		console.log("Fetched trips:", JSON.stringify(data, null, 2))
 		return data
 	} catch (error) {
-		if (axios.isAxiosError(error)) {
-			console.error("Axios error:", error.message)
-			console.error(
-				"Error response:",
-				JSON.stringify(error.response?.data, null, 2)
-			)
-			throw new Error(error.response?.data?.message || "Failed to fetch trips")
-		}
-		console.error("Unexpected error:", error)
-		throw new Error("An unexpected error occurred")
+		return handleAxiosError(error, "Failed to fetch trips")
+	}
+}
+
+export const getTripById = async (id: string): Promise<Trip> => {
+	try {
+		console.log(`Fetching trip with id: ${id}`)
+		const { data } = await api.get<Trip>(`/${id}`)
+		console.log("Fetched trip:", JSON.stringify(data, null, 2))
+		return data
+	} catch (error) {
+		return handleAxiosError(error, `Failed to fetch trip with id ${id}`)
 	}
 }

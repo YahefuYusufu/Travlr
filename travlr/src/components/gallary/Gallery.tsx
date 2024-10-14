@@ -1,7 +1,13 @@
 import React from "react"
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native"
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	ScrollView,
+	Image,
+	ActivityIndicator,
+} from "react-native"
 import { useTheme } from "../../theme/ThemeProvider"
-import { categoriesData } from "../../constants"
 import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
@@ -9,8 +15,18 @@ import {
 import { GalleryProps } from "../../types"
 import { TEXTS } from "../../constants/strings"
 
-export default function Gallery() {
+const Gallery: React.FC<GalleryProps> = ({ trips, isLoading }) => {
 	const { colors } = useTheme()
+
+	if (isLoading) {
+		return (
+			<View
+				className="flex items-center justify-center"
+				style={{ height: wp(30) }}>
+				<ActivityIndicator size="large" color={colors.text} />
+			</View>
+		)
+	}
 
 	return (
 		<View className="space-y-5">
@@ -30,20 +46,30 @@ export default function Gallery() {
 				contentContainerStyle={{ paddingHorizontal: 15 }}
 				className="space-x-4"
 				showsHorizontalScrollIndicator={false}>
-				{categoriesData.map((cat: GalleryProps, index: number) => {
+				{trips.map((trip, index) => {
+					const imageUri =
+						trip.images && trip.images.length > 0 ? trip.images[0] : null
 					return (
 						<TouchableOpacity
-							key={index}
+							key={trip._id || index}
 							className="flex items-center space-y-2">
-							<Image
-								source={cat.image}
-								className="rounded-3xl"
-								style={{ width: wp(20), height: wp(20) }}
-							/>
+							{imageUri ? (
+								<Image
+									source={{ uri: imageUri }}
+									className="rounded-3xl"
+									style={{ width: wp(20), height: wp(20) }}
+								/>
+							) : (
+								<View
+									className="rounded-3xl bg-gray-300 justify-center items-center"
+									style={{ width: wp(20), height: wp(20) }}>
+									<Text style={{ color: colors.text }}>No Image</Text>
+								</View>
+							)}
 							<Text
 								style={{ color: colors.text, fontSize: wp(3) }}
 								className="font-medium">
-								{cat.title}
+								{trip.city}
 							</Text>
 						</TouchableOpacity>
 					)
@@ -52,3 +78,5 @@ export default function Gallery() {
 		</View>
 	)
 }
+
+export default Gallery

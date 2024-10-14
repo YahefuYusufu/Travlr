@@ -8,7 +8,7 @@ import {
 	Platform,
 	TextInput,
 } from "react-native"
-import React from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { HomeScreenProps } from "../types"
 import { useTheme } from "../theme/ThemeProvider"
 import {
@@ -20,10 +20,42 @@ import { PlusCircleIcon } from "react-native-heroicons/solid"
 import Gallery from "../components/gallary/Gallery"
 import SortCategories from "../components/category/SortCategories"
 import Destination from "../components/destination/Destination"
+import { getTrips, Trip } from "../hooks/useTrips"
+import { useFocusEffect } from "@react-navigation/native"
 
 const topMargin = Platform.OS === "ios" ? hp(1) : hp(6)
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 	const { colors } = useTheme()
+	const [trips, setTrips] = useState<Trip[]>([])
+	const [isLoading, setIsLoading] = useState(true)
+
+	const fetchTrips = useCallback(async () => {
+		setIsLoading(true)
+		try {
+			console.log("Fetching trips...")
+			const fetchedTrips = await getTrips()
+			console.log("Trips fetched successfully")
+			console.log("Number of trips:", fetchedTrips.length)
+			console.log("Fetched trips data:", JSON.stringify(fetchedTrips, null, 2))
+			setTrips(fetchedTrips)
+		} catch (error) {
+			console.error("Error fetching trips:", error)
+		} finally {
+			setIsLoading(false)
+		}
+	}, [])
+
+	useEffect(() => {
+		console.log("HomeScreen mounted, fetching trips...")
+		fetchTrips()
+	}, [fetchTrips])
+
+	useFocusEffect(
+		useCallback(() => {
+			console.log("HomeScreen focused, fetching trips...")
+			fetchTrips()
+		}, [fetchTrips])
+	)
 
 	return (
 		<SafeAreaView
@@ -68,7 +100,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
 				{/* categories */}
 				<View className="mb-4">
-					<Gallery />
+					<Gallery trips={trips} isLoading={isLoading} />
 				</View>
 
 				{/* sort categories */}
