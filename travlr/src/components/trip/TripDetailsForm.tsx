@@ -19,8 +19,8 @@ const TripDetailsForm: React.FC = () => {
 					<CategoryDropdown
 						placeholder="Select Category"
 						items={categories.map((cat) => ({ label: cat, value: cat }))}
-						onValueChange={updateCategory}
-						value={tripDetails.category}
+						onValueChange={(value: string) => updateCategory(value)}
+						value={tripDetails.category || ""}
 					/>
 				</View>
 			</View>
@@ -33,8 +33,8 @@ const TripDetailsForm: React.FC = () => {
 					className="border border-gray-300 rounded-md p-3 bg-gray-50 h-40"
 					multiline
 					numberOfLines={4}
-					onChangeText={updateSummary}
-					value={tripDetails.summary}
+					onChangeText={(text: string) => updateSummary(text)}
+					value={tripDetails.summary || ""}
 					placeholder="Enter a brief summary of your trip..."
 					placeholderTextColor="#A0AEC0"
 				/>
@@ -43,8 +43,8 @@ const TripDetailsForm: React.FC = () => {
 			<View className="flex-row justify-between">
 				<Text className="text-lg font-semibold text-gray-100">Rating</Text>
 				<StarRating
-					rating={tripDetails.rating}
-					onRatingChange={updateRating}
+					rating={tripDetails.rating || 0}
+					onRatingChange={(value: number) => updateRating(value)}
 					maxStars={5}
 				/>
 			</View>

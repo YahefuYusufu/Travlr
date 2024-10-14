@@ -1,9 +1,17 @@
 import React, { createContext, useState, useContext, ReactNode } from "react"
-import { TripDetails } from "../hooks/useTrips"
+
+export interface TripDetails {
+	country: string
+	city: string
+	date: Date
+	category: string
+	summary: string
+	rating: number
+	images: string[]
+}
 
 interface TripContextType {
 	tripDetails: TripDetails
-	images: string[]
 	updateCountry: (country: string) => void
 	updateCity: (city: string) => void
 	updateDate: (date: Date) => void
@@ -26,8 +34,8 @@ export const TripProvider: React.FC<{ children: ReactNode }> = ({
 		category: "",
 		summary: "",
 		rating: 0,
+		images: [],
 	})
-	const [images, setImages] = useState<string[]>([])
 
 	const updateCountry = (country: string) =>
 		setTripDetails((prev) => ({ ...prev, country }))
@@ -41,7 +49,8 @@ export const TripProvider: React.FC<{ children: ReactNode }> = ({
 		setTripDetails((prev) => ({ ...prev, summary }))
 	const updateRating = (rating: number) =>
 		setTripDetails((prev) => ({ ...prev, rating }))
-	const updateImages = (newImages: string[]) => setImages(newImages)
+	const updateImages = (newImages: string[]) =>
+		setTripDetails((prev) => ({ ...prev, images: newImages }))
 
 	const resetTripContext = () => {
 		setTripDetails({
@@ -51,15 +60,14 @@ export const TripProvider: React.FC<{ children: ReactNode }> = ({
 			category: "",
 			summary: "",
 			rating: 0,
+			images: [],
 		})
-		setImages([])
 	}
 
 	return (
 		<TripContext.Provider
 			value={{
 				tripDetails,
-				images,
 				updateCountry,
 				updateCity,
 				updateDate,

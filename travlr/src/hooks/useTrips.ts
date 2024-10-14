@@ -15,22 +15,28 @@ export interface Trip extends TripDetails {
 }
 
 const api = axios.create({
-	baseURL: process.env.REACT_APP_API_URL || "http://localhost:5001/api/trips",
+	baseURL: process.env.TRIP_API_URL || "http://localhost:5001/api/trips",
 })
 
-const sendTrip = async (tripData: TripDetails, id?: string): Promise<Trip> => {
+export const sendTrip = async (tripData: TripDetails): Promise<Trip> => {
 	try {
-		const url = id ? `/${id}` : ""
-		const method = id ? "put" : "post"
-		const { data } = await api[method]<{ message: string; trip: Trip }>(
-			url,
+		console.log("Sending data to backend:", JSON.stringify(tripData, null, 2))
+		const { data } = await api.post<{ message: string; trip: Trip }>(
+			"",
 			tripData
 		)
+		console.log("Response from backend:", JSON.stringify(data, null, 2))
 		return data.trip
 	} catch (error) {
-		if (axios.isAxiosError(error) && error.response) {
-			throw new Error(error.response.data.message || "Failed to send trip")
+		if (axios.isAxiosError(error)) {
+			console.error("Axios error:", error.message)
+			console.error(
+				"Error response:",
+				JSON.stringify(error.response?.data, null, 2)
+			)
+			throw new Error(error.response?.data?.message || "Failed to send trip")
 		}
+		console.error("Unexpected error:", error)
 		throw new Error("An unexpected error occurred")
 	}
 }
@@ -40,10 +46,15 @@ export const getTrips = async (): Promise<Trip[]> => {
 		const { data } = await api.get<Trip[]>("")
 		return data
 	} catch (error) {
-		if (axios.isAxiosError(error) && error.response) {
-			throw new Error(error.response.data.message || "Failed to fetch trips")
+		if (axios.isAxiosError(error)) {
+			console.error("Axios error:", error.message)
+			console.error(
+				"Error response:",
+				JSON.stringify(error.response?.data, null, 2)
+			)
+			throw new Error(error.response?.data?.message || "Failed to fetch trips")
 		}
+		console.error("Unexpected error:", error)
 		throw new Error("An unexpected error occurred")
 	}
 }
-export default sendTrip
