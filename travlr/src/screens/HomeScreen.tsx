@@ -68,7 +68,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 				className="space-y-6"
 				style={{ marginTop: topMargin }}>
 				{/* avatar */}
-				<View className="mx-5 flex-row justify-between items-center mb-10">
+				<View className="mx-5 flex-row justify-between items-center mb-2">
 					<Text
 						style={{ fontSize: wp(7), color: colors.text }}
 						className="font-bold">
@@ -84,7 +84,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 				</View>
 
 				{/* search bar */}
-				<View className="mx-5 mb-4">
+				<View className="mx-5 mb-2">
 					<View
 						className="flex-row items-center rounded-full p-4 space-x-2 pl-6"
 						style={{ backgroundColor: colors.text }}>
@@ -101,17 +101,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 				</View>
 
 				{/* categories */}
-				<View className="mb-4">
+				<View className="mb-2">
 					<Gallery trips={trips} isLoading={isLoading} />
 				</View>
 
 				{/* sort categories */}
-				<View className="mb-4">
+				<View className="mb-2">
 					<SortCategories />
 				</View>
 
 				{/* destination */}
-				<View className="mb-4">
+				<View className="mb-2">
 					<Destination navigation={navigation} />
 				</View>
 			</ScrollView>
