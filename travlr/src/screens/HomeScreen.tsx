@@ -15,7 +15,7 @@ import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
-import { MagnifyingGlassIcon, PlusIcon } from "react-native-heroicons/outline"
+import { MagnifyingGlassIcon } from "react-native-heroicons/outline"
 import { PlusCircleIcon } from "react-native-heroicons/solid"
 import Gallery from "../components/gallary/Gallery"
 import SortCategories from "../components/category/SortCategories"
@@ -32,11 +32,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 	const fetchTrips = useCallback(async () => {
 		setIsLoading(true)
 		try {
-			console.log("Fetching trips...")
 			const fetchedTrips = await getTrips()
-			console.log("Trips fetched successfully")
+
+			// Log total number of trips
 			console.log("Number of trips:", fetchedTrips.length)
-			console.log("Fetched trips data:", JSON.stringify(fetchedTrips, null, 2))
+
+			// Log each country name (ensure 'country' exists in trip data)
+			const countries = fetchedTrips.map((trip) => trip.country)
+			console.log("Countries:", countries.join(", "))
+
 			setTrips(fetchedTrips)
 		} catch (error) {
 			console.error("Error fetching trips:", error)
@@ -46,13 +50,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 	}, [])
 
 	useEffect(() => {
-		console.log("HomeScreen mounted, fetching trips...")
 		fetchTrips()
 	}, [fetchTrips])
 
 	useFocusEffect(
 		useCallback(() => {
-			console.log("HomeScreen focused, fetching trips...")
 			fetchTrips()
 		}, [fetchTrips])
 	)

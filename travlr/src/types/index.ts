@@ -8,6 +8,7 @@ export type RootStackParamList = {
 	[ROUTES.DESTINATION]: Trip
 	[ROUTES.NEWTRIP]: undefined
 	[ROUTES.TRIPDETAILS]: { tripId: string }
+	[ROUTES.ALLIMAGES]: undefined
 }
 
 // Screen props
@@ -30,6 +31,11 @@ export type NewTripScreenProps = NativeStackScreenProps<
 export type TripDetailsScreenProps = NativeStackScreenProps<
 	RootStackParamList,
 	typeof ROUTES.TRIPDETAILS
+>
+
+export type AllImagesScreenProps = NativeStackScreenProps<
+	RootStackParamList,
+	typeof ROUTES.ALLIMAGES
 >
 
 export type ImageSourceType = number | { uri: string }

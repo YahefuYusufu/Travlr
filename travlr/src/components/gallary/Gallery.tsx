@@ -12,11 +12,23 @@ import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
-import { GalleryProps } from "../../types"
-import { TEXTS } from "../../constants/strings"
+import { GalleryProps, RootStackParamList } from "../../types"
+import { TEXTS, ROUTES } from "../../constants/strings"
+import { useNavigation } from "@react-navigation/native"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+
+type GalleryNavigationProp = NativeStackNavigationProp<
+	RootStackParamList,
+	typeof ROUTES.HOME
+>
 
 const Gallery: React.FC<GalleryProps> = ({ trips, isLoading }) => {
 	const { colors } = useTheme()
+	const navigation = useNavigation<GalleryNavigationProp>()
+
+	const handleSeeAll = () => {
+		navigation.navigate(ROUTES.ALLIMAGES)
+	}
 
 	if (isLoading) {
 		return (
@@ -34,7 +46,7 @@ const Gallery: React.FC<GalleryProps> = ({ trips, isLoading }) => {
 				<Text style={{ color: colors.text }} className="font-bold">
 					{TEXTS.GALLERY}
 				</Text>
-				<TouchableOpacity>
+				<TouchableOpacity onPress={handleSeeAll}>
 					<Text style={{ color: colors.error }} className="font-bold">
 						{TEXTS.SEE_ALL}
 					</Text>
