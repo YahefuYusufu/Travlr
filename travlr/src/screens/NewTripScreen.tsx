@@ -13,12 +13,11 @@ import SendTripButton from "../components/common/SendTripButton"
 const TripContent: React.FC = () => {
 	const navigation = useNavigation()
 	const { loading, error } = useLocationData()
-	const { tripDetails, images } = useTripContext()
+	const { tripDetails } = useTripContext()
 
 	useEffect(() => {
-		console.log("Current tripDetails:", tripDetails)
-		console.log("Current images:", images)
-	}, [tripDetails, images])
+		console.log("Current tripDetails:", JSON.stringify(tripDetails, null, 2))
+	}, [tripDetails])
 
 	if (loading) {
 		return (

@@ -5,12 +5,13 @@ import { useNavigation } from "@react-navigation/native"
 import { ROUTES } from "../../constants/strings"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { RootStackParamList } from "../../types"
+import { sendTrip } from "../../hooks/useTrips"
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "NewTrip">
 
 const SendTripButton: React.FC = () => {
 	const navigation = useNavigation<NavigationProp>()
-	const { tripDetails, images, resetTripContext } = useTripContext()
+	const { tripDetails, resetTripContext } = useTripContext()
 	const [isLoading, setIsLoading] = useState(false)
 
 	const handleSendTrip = async () => {
@@ -26,18 +27,10 @@ const SendTripButton: React.FC = () => {
 			return
 		}
 
-		// Prepare data to send
-		const tripData = {
-			...tripDetails,
-			images,
-		}
-
 		try {
-			// Simulating an API call
-			await new Promise((resolve) => setTimeout(resolve, 2000))
-
-			// Log the data that would be sent
-			console.log("Sending trip data:", tripData)
+			console.log("Sending trip data:", JSON.stringify(tripDetails, null, 2))
+			const response = await sendTrip(tripDetails)
+			console.log("Response from server:", JSON.stringify(response, null, 2))
 
 			// Show success message
 			Alert.alert("Success", "Your trip has been successfully sent!", [
@@ -51,12 +44,6 @@ const SendTripButton: React.FC = () => {
 					},
 				},
 			])
-
-			// Here you would typically reset the form or navigate to a new screen
-			// For now, we'll just log a message
-			console.log(
-				"Trip sent successfully. Form should be reset or navigate away."
-			)
 		} catch (error) {
 			console.error("Error sending trip:", error)
 			Alert.alert("Error", "Failed to send trip. Please try again later.")

@@ -6,9 +6,11 @@ import {
 	WelcomeScreen,
 	DestinationScreen,
 	NewTripScreen,
+	AllImageScreen,
 } from "../screens"
 import { RootStackParamList } from "../types"
 import { ThemeProvider, useTheme } from "../theme/ThemeProvider"
+import { ROUTES } from "../constants/strings"
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -30,15 +32,22 @@ const Navigation = () => {
 				},
 			}}>
 			<Stack.Navigator
-				initialRouteName="Welcome"
+				initialRouteName={ROUTES.WELCOME}
 				screenOptions={{ headerShown: false }}>
-				<Stack.Screen name="Home" component={HomeScreen} />
-				<Stack.Screen name="Welcome" component={WelcomeScreen} />
-				<Stack.Screen name="Destination" component={DestinationScreen} />
+				<Stack.Screen name={ROUTES.HOME} component={HomeScreen} />
+				<Stack.Screen name={ROUTES.WELCOME} component={WelcomeScreen} />
+				<Stack.Screen name={ROUTES.DESTINATION} component={DestinationScreen} />
 				<Stack.Screen
-					name="NewTrip"
+					name={ROUTES.NEWTRIP}
 					component={NewTripScreen}
 					options={{ headerShown: false }}
+				/>
+				<Stack.Screen
+					name={ROUTES.ALLIMAGES}
+					component={AllImageScreen}
+					options={{
+						headerShown: false,
+					}}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>

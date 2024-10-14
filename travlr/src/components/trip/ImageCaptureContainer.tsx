@@ -15,7 +15,7 @@ import * as ImagePicker from "expo-image-picker"
 import { useTripContext } from "../../context/TripContext"
 
 const ImageCaptureContainer: React.FC = () => {
-	const { images, updateImages } = useTripContext()
+	const { tripDetails, updateImages } = useTripContext()
 	const [modalVisible, setModalVisible] = useState(false)
 	const fadeAnim = useRef(new Animated.Value(0)).current
 
@@ -47,8 +47,13 @@ const ImageCaptureContainer: React.FC = () => {
 		})
 	}
 
-	const handleGalleryPick = async () => {
-		const result = await ImagePicker.launchImageLibraryAsync({
+	const handleImagePick = async (source: "gallery" | "camera") => {
+		const pickerFunction =
+			source === "gallery"
+				? ImagePicker.launchImageLibraryAsync
+				: ImagePicker.launchCameraAsync
+
+		const result = await pickerFunction({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [4, 3],
@@ -57,22 +62,7 @@ const ImageCaptureContainer: React.FC = () => {
 
 		if (!result.canceled && result.assets && result.assets.length > 0) {
 			const newImage = result.assets[0].uri
-			updateImages([...images, newImage])
-		}
-		closeModal()
-	}
-
-	const handleCameraCapture = async () => {
-		const result = await ImagePicker.launchCameraAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.Images,
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
-		})
-
-		if (!result.canceled && result.assets && result.assets.length > 0) {
-			const newImage = result.assets[0].uri
-			updateImages([...images, newImage])
+			updateImages([...tripDetails.images, newImage])
 		}
 		closeModal()
 	}
@@ -90,7 +80,7 @@ const ImageCaptureContainer: React.FC = () => {
 					<Entypo name="plus" size={24} color="black" />
 				</TouchableOpacity>
 
-				{images.map((uri, index) => (
+				{tripDetails.images.map((uri, index) => (
 					<Image
 						key={`image-${index}`}
 						source={{ uri }}
@@ -118,14 +108,14 @@ const ImageCaptureContainer: React.FC = () => {
 								</Text>
 								<View className="flex-row justify-between mb-4">
 									<TouchableOpacity
-										onPress={handleGalleryPick}
+										onPress={() => handleImagePick("gallery")}
 										className="bg-blue-500 px-4 py-3 rounded-lg flex-1 mr-2">
 										<Text className="text-white text-center text-base">
 											Gallery
 										</Text>
 									</TouchableOpacity>
 									<TouchableOpacity
-										onPress={handleCameraCapture}
+										onPress={() => handleImagePick("camera")}
 										className="bg-green-500 px-4 py-3 rounded-lg flex-1 ml-2">
 										<Text className="text-white text-center text-base">
 											Camera

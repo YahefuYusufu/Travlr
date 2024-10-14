@@ -3,6 +3,8 @@ export const ROUTES = {
 	HOME: "Home",
 	DESTINATION: "Destination",
 	NEWTRIP: "NewTrip",
+	TRIPDETAILS: "TripDetails",
+	ALLIMAGES: "AllImages",
 } as const
 export type Routes = (typeof ROUTES)[keyof typeof ROUTES]
 
