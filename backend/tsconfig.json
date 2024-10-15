@@ -11,6 +11,6 @@
 		"esModuleInterop": true,
 		"resolveJsonModule": true
 	},
-	"include": ["src/**/*", "server.ts"],
+	"include": ["src/**/*", "src/server.ts"],
 	"exclude": ["node_modules", "**/*.spec.ts"]
 }
