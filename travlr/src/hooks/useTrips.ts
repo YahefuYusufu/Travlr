@@ -15,7 +15,7 @@ export interface Trip extends TripDetails {
 }
 
 const api = axios.create({
-	baseURL: process.env.TRIP_API_URL || "http://localhost:5001/api/trips",
+	baseURL: "http://192.168.0.126:5001/api/trips",
 })
 
 const handleAxiosError = (error: unknown, defaultMessage: string): never => {
@@ -47,6 +47,8 @@ export const sendTrip = async (tripData: TripDetails): Promise<Trip> => {
 
 export const getTrips = async (): Promise<Trip[]> => {
 	try {
+		console.log("Fetching all trips from:", api.defaults.baseURL)
+
 		// console.log("Fetching all trips")
 		const { data } = await api.get<Trip[]>("")
 		// console.log("Fetched trips:", JSON.stringify(data, null, 2))
@@ -58,6 +60,8 @@ export const getTrips = async (): Promise<Trip[]> => {
 
 export const getTripById = async (id: string): Promise<Trip> => {
 	try {
+		// Log the trip ID being fetched
+		console.log(`Fetching trip with id: ${id}`)
 		// console.log(`Fetching trip with id: ${id}`)
 		const { data } = await api.get<Trip>(`/${id}`)
 		// console.log("Fetched trip:", JSON.stringify(data, null, 2))
