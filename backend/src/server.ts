@@ -8,7 +8,11 @@ dotenv.config()
 
 const app = express()
 
-app.use(cors())
+app.use(
+	cors({
+		origin: ["http://localhost:3000", "http://192.168.0.126"],
+	})
+)
 app.use(express.json())
 
 const MONGODB_URI =
