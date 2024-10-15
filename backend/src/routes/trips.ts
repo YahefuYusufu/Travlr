@@ -1,7 +1,21 @@
 import express, { Request, Response, NextFunction } from "express"
+import multer from "multer"
+import path from "path"
 import Trip, { ITrip } from "../models/Trip"
+import ImageService from "../services/ImageService"
 
 const router = express.Router()
+
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, path.join(__dirname, "../../uploads/")) // Adjust the path as needed
+	},
+	filename: function (req, file, cb) {
+		cb(null, Date.now() + path.extname(file.originalname))
+	},
+})
+
+const upload = multer({ storage: storage })
 
 // Define a type for our route handlers
 type AsyncRequestHandler = (
@@ -117,10 +131,38 @@ const deleteTrip: AsyncRequestHandler = async (req, res, next) => {
 	}
 }
 
+const addImageToTrip: AsyncRequestHandler = async (req, res, next) => {
+	try {
+		const { id } = req.params
+
+		if (!req.file) {
+			res.status(400).json({ message: "No file was uploaded." })
+			return
+		}
+
+		console.log("File received:", req.file) // Log file details
+
+		const imageUrl = await ImageService.uploadAndSaveImage(id, req.file)
+
+		res.status(200).json({ message: "Image added successfully", imageUrl })
+	} catch (error) {
+		if (error instanceof Error) {
+			res
+				.status(400)
+				.json({ message: "Failed to add image", error: error.message })
+		} else {
+			res
+				.status(400)
+				.json({ message: "Failed to add image", error: "Unknown error" })
+		}
+	}
+}
+
 router.post("/", createTrip)
 router.get("/", getAllTrips)
 router.get("/:id", getSingleTrip)
 router.put("/:id", updateTrip)
 router.delete("/:id", deleteTrip)
+router.post("/:id/images", upload.single("image"), addImageToTrip)
 
 export default router

@@ -1,4 +1,5 @@
-// File: src/models/Trip.ts
+// src/models/Trip.ts
+
 import mongoose, { Document, Schema } from "mongoose"
 
 export interface ITrip extends Document {
