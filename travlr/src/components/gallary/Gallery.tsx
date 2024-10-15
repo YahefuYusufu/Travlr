@@ -6,6 +6,7 @@ import {
 	ScrollView,
 	Image,
 	ActivityIndicator,
+	Platform,
 } from "react-native"
 import { useTheme } from "../../theme/ThemeProvider"
 import {
@@ -28,6 +29,16 @@ const Gallery: React.FC<GalleryProps> = ({ trips, isLoading }) => {
 
 	const handleSeeAll = () => {
 		navigation.navigate(ROUTES.ALLIMAGES)
+	}
+
+	const getImageSource = (uri: string) => {
+		if (uri.startsWith("http://") || uri.startsWith("https://")) {
+			return { uri }
+		} else if (Platform.OS === "ios") {
+			return { uri: `file://${uri}` }
+		} else {
+			return { uri }
+		}
 	}
 
 	if (isLoading) {
@@ -59,6 +70,7 @@ const Gallery: React.FC<GalleryProps> = ({ trips, isLoading }) => {
 				className="space-x-4"
 				showsHorizontalScrollIndicator={false}>
 				{trips.map((trip, index) => {
+					console.log("Trip images:", trip.images)
 					const imageUri =
 						trip.images && trip.images.length > 0 ? trip.images[0] : null
 					return (
@@ -67,9 +79,13 @@ const Gallery: React.FC<GalleryProps> = ({ trips, isLoading }) => {
 							className="flex items-center space-y-2">
 							{imageUri ? (
 								<Image
-									source={{ uri: imageUri }}
+									source={getImageSource(imageUri)}
 									className="rounded-3xl"
 									style={{ width: wp(20), height: wp(20) }}
+									onError={(e) => {
+										console.error("Image load error:", e.nativeEvent.error)
+										console.error("Failed image URI:", imageUri)
+									}}
 								/>
 							) : (
 								<View

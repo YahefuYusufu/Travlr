@@ -6,13 +6,28 @@ import { ROUTES } from "../../constants/strings"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { RootStackParamList } from "../../types"
 import { sendTrip } from "../../hooks/useTrips"
+import { uploadImage } from "../../utils/uploadImage" // You'll need to create this
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "NewTrip">
 
 const SendTripButton: React.FC = () => {
 	const navigation = useNavigation<NavigationProp>()
-	const { tripDetails, resetTripContext } = useTripContext()
+	const { tripDetails, resetTripContext, updateImages } = useTripContext()
 	const [isLoading, setIsLoading] = useState(false)
+
+	const uploadImages = async (images: string[]): Promise<string[]> => {
+		const uploadedUrls = await Promise.all(
+			images.map(async (imageUri) => {
+				try {
+					return await uploadImage(imageUri)
+				} catch (error) {
+					console.error("Error uploading image:", error)
+					return null
+				}
+			})
+		)
+		return uploadedUrls.filter((url): url is string => url !== null)
+	}
 
 	const handleSendTrip = async () => {
 		setIsLoading(true)
@@ -28,8 +43,20 @@ const SendTripButton: React.FC = () => {
 		}
 
 		try {
-			console.log("Sending trip data:", JSON.stringify(tripDetails, null, 2))
-			const response = await sendTrip(tripDetails)
+			// Upload images first
+			const uploadedImageUrls = await uploadImages(tripDetails.images)
+
+			// Update trip details with uploaded image URLs
+			const updatedTripDetails = {
+				...tripDetails,
+				images: uploadedImageUrls,
+			}
+
+			console.log(
+				"Sending trip data:",
+				JSON.stringify(updatedTripDetails, null, 2)
+			)
+			const response = await sendTrip(updatedTripDetails)
 			console.log("Response from server:", JSON.stringify(response, null, 2))
 
 			// Show success message

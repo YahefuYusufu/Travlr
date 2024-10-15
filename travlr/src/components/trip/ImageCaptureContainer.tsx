@@ -6,7 +6,6 @@ import {
 	Modal,
 	TouchableWithoutFeedback,
 	Animated,
-	Alert,
 	Text,
 	TouchableOpacity,
 } from "react-native"
@@ -93,7 +92,7 @@ const ImageCaptureContainer: React.FC = () => {
 								<ImagePicker onTakeImage={handleImagePick} />
 								<TouchableOpacity
 									onPress={closeModal}
-									className="bg-gray-300 px-4 py-3 rounded-lg">
+									className="bg-gray-300 px-4 py-3 rounded-lg mt-4">
 									<Text className="text-gray-700 text-center text-lg">
 										Cancel
 									</Text>

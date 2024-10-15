@@ -1,4 +1,5 @@
 import axios from "axios"
+import { Platform } from "react-native"
 
 export interface TripDetails {
 	country: string
@@ -14,8 +15,17 @@ export interface Trip extends TripDetails {
 	_id: string
 }
 
+const getApiUrl = () => {
+	if (Platform.OS === "android") {
+		return "http://10.0.2.2:5001/api/trips" // Android emulator uses 10.0.2.2 to access host machine
+	} else if (Platform.OS === "ios") {
+		return "http://localhost:5001/api/trips" // iOS simulator uses localhost
+	} else {
+		return "http://192.168.0.126:5001/api/trips" // Use your local IP for physical devices
+	}
+}
 const api = axios.create({
-	baseURL: "http://192.168.0.126:5001/api/trips",
+	baseURL: getApiUrl(),
 })
 
 const handleAxiosError = (error: unknown, defaultMessage: string): never => {
