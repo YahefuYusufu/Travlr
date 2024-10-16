@@ -17,9 +17,6 @@ app.use(
 )
 app.use(express.json())
 
-// Serve static files from the 'uploads' directory
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")))
-
 const MONGODB_URI =
 	process.env.MONGODB_URI || "mongodb://localhost:27017/trip-app"
 
@@ -33,6 +30,8 @@ mongoose
 	.catch((err) => console.log(err))
 
 app.use("/api/trips", tripRoutes)
+// Serve static files from the 'uploads' directory
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")))
 
 const PORT = process.env.PORT || 5001
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

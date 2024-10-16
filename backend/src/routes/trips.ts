@@ -6,16 +6,7 @@ import ImageService from "../services/ImageService"
 
 const router = express.Router()
 
-const storage = multer.diskStorage({
-	destination: function (req, file, cb) {
-		cb(null, path.join(__dirname, "../../uploads/")) // Adjust the path as needed
-	},
-	filename: function (req, file, cb) {
-		cb(null, Date.now() + path.extname(file.originalname))
-	},
-})
-
-const upload = multer({ storage: storage })
+const upload = multer({ storage: multer.memoryStorage() })
 
 // Define a type for our route handlers
 type AsyncRequestHandler = (
@@ -131,7 +122,11 @@ const deleteTrip: AsyncRequestHandler = async (req, res, next) => {
 	}
 }
 
-const addImageToTrip: AsyncRequestHandler = async (req, res, next) => {
+const addImageToTrip = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
 	try {
 		const { id } = req.params
 
@@ -140,21 +135,42 @@ const addImageToTrip: AsyncRequestHandler = async (req, res, next) => {
 			return
 		}
 
-		console.log("File received:", req.file) // Log file details
+		console.log("File received:", req.file.originalname, req.file.mimetype)
 
-		const imageUrl = await ImageService.uploadAndSaveImage(id, req.file)
+		// The base64 data is now in req.file.buffer
+		const imageBase64 = req.file.buffer.toString("base64")
 
-		res.status(200).json({ message: "Image added successfully", imageUrl })
-	} catch (error) {
-		if (error instanceof Error) {
-			res
-				.status(400)
-				.json({ message: "Failed to add image", error: error.message })
-		} else {
-			res
-				.status(400)
-				.json({ message: "Failed to add image", error: "Unknown error" })
+		// Find the trip and update it with the new image
+		const updatedTrip = await Trip.findByIdAndUpdate(
+			id,
+			{
+				$push: {
+					images: {
+						data: imageBase64,
+						contentType: req.file.mimetype,
+					},
+				},
+			},
+			{ new: true, runValidators: true }
+		)
+
+		if (!updatedTrip) {
+			res.status(404).json({ message: "Trip not found" })
+			return
 		}
+
+		console.log("Updated trip:", updatedTrip)
+
+		res.status(200).json({
+			message: "Image added successfully",
+			trip: updatedTrip,
+		})
+	} catch (error) {
+		console.error("Error adding image to trip:", error)
+		res.status(400).json({
+			message: "Failed to add image",
+			error: error instanceof Error ? error.message : "Unknown error",
+		})
 	}
 }
 
