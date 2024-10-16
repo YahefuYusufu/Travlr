@@ -7,6 +7,7 @@ import {
 	ActivityIndicator,
 	SectionList,
 	SectionListData,
+	Platform,
 } from "react-native"
 import { getTrips, Trip } from "../hooks/useTrips"
 import {
@@ -63,14 +64,50 @@ const AllImagesScreen: React.FC = () => {
 		}
 	}
 
+	const getImageSource = (uri: string) => {
+		// console.log(`getImageSource called with:`, uri)
+		if (!uri) {
+			// console.warn("Empty or undefined URI provided to getImageSource")
+			return require("../../assets/images/user/user-01.png") // Make sure to have a placeholder image in your assets
+		}
+
+		if (uri.startsWith("data:")) {
+			return { uri }
+		} else if (uri.startsWith("http://") || uri.startsWith("https://")) {
+			return { uri }
+		} else if (uri.startsWith("/uploads/")) {
+			const baseUrl =
+				Platform.OS === "android"
+					? "http://10.0.2.2:5001"
+					: "http://192.168.0.126:5001"
+			return { uri: `${baseUrl}${uri}` }
+		} else if (Platform.OS === "ios" && !uri.startsWith("file://")) {
+			return { uri: `file://${uri}` }
+		} else {
+			return { uri }
+		}
+	}
+
 	const extractImages = (trips: Trip[]): ImageItem[] => {
 		return trips.flatMap((trip) =>
-			(trip.images || []).map((uri, index) => ({
-				id: `${trip._id}-${index}`,
-				uri,
-				city: trip.city,
-				date: new Date(trip.date),
-			}))
+			(trip.images || []).map((image, index) => {
+				// console.log(`Processing image for trip ${trip._id}:`, image)
+				let imageUri = ""
+				if (typeof image === "string") {
+					imageUri = image
+				} else if (image && typeof image === "object") {
+					imageUri = image.data
+						? `data:${image.contentType};base64,${image.data}`
+						: ""
+				}
+				// console.log(`Extracted URI:`, imageUri)
+				return {
+					id: `${trip._id}-${index}`,
+					uri: imageUri,
+					city: trip.city,
+					date: new Date(trip.date),
+				}
+			})
 		)
 	}
 
@@ -80,7 +117,10 @@ const AllImagesScreen: React.FC = () => {
 		const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
 		const lastWeek = images.filter((img) => img.date >= sevenDaysAgo)
-		const lastMonth = images.filter((img) => img.date < thirtyDaysAgo)
+		const lastMonth = images.filter(
+			(img) => img.date < sevenDaysAgo && img.date >= thirtyDaysAgo
+		)
+		const older = images.filter((img) => img.date < thirtyDaysAgo)
 
 		const chunkArray = (arr: ImageItem[], size: number) =>
 			Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
@@ -89,61 +129,64 @@ const AllImagesScreen: React.FC = () => {
 
 		return [
 			{ title: "Last 7 Days", data: chunkArray(lastWeek, numColumns) },
-
-			{ title: "Older", data: chunkArray(lastMonth, numColumns) },
+			{ title: "Last 30 Days", data: chunkArray(lastMonth, numColumns) },
+			{ title: "Older", data: chunkArray(older, numColumns) },
 		]
 	}
 
 	const renderItem = ({ item }: { item: ImageItem[] }) => (
 		<View style={{ flexDirection: "row" }}>
-			{item.map((image) => (
-				<View
-					key={image.id}
-					style={{ width: imageSize, height: imageSize }}
-					className="justify-center items-center">
-					<Image
-						source={{ uri: image.uri }}
-						style={{ width: imageSize - wp(2), height: imageSize - wp(1) }}
-						className="rounded-lg"
-					/>
-
-					{/* Gradient Overlay */}
-					<LinearGradient
-						colors={["transparent", "rgba(68, 68, 68, 0.4)"]} // dark overlay color at the bottom
-						style={{
-							width: imageSize - wp(2),
-							height: hp(10), // Adjust height of the gradient based on your design
-							position: "absolute",
-							bottom: 0,
-							borderBottomLeftRadius: 8,
-							borderBottomRightRadius: 8,
-						}}
-						start={{ x: 0.5, y: 0 }}
-						end={{ x: 0.5, y: 1 }}
-					/>
-
-					{/* Text on the Image */}
+			{item.map((image) => {
+				const source = getImageSource(image.uri)
+				return (
 					<View
-						style={{
-							position: "absolute",
-							bottom: hp(1), // Adjust to position the text inside the image
-							left: wp(1),
-							right: wp(1),
-							padding: wp(1),
-							backgroundColor: "rgb(248, 254, 252)", // Light background with opacity
-							borderRadius: 4,
-						}}>
-						<Text
+						key={image.id}
+						style={{ width: imageSize, height: imageSize }}
+						className="justify-center items-center p-2">
+						<Image
+							source={source}
+							style={{ width: imageSize - wp(2), height: imageSize - wp(1) }}
+							className="rounded-lg"
+						/>
+
+						{/* Gradient Overlay */}
+						<LinearGradient
+							colors={["transparent", "rgba(68, 68, 68, 0.4)"]}
 							style={{
-								fontSize: wp(3),
-								color: "#000", // Black text color
-								textAlign: "center",
+								width: imageSize - wp(2),
+								height: hp(10),
+								position: "absolute",
+								bottom: 0,
+								borderBottomLeftRadius: 8,
+								borderBottomRightRadius: 8,
+							}}
+							start={{ x: 0.5, y: 0 }}
+							end={{ x: 0.5, y: 1 }}
+						/>
+
+						{/* Text on the Image */}
+						<View
+							style={{
+								position: "absolute",
+								bottom: hp(1),
+								left: wp(1),
+								right: wp(1),
+								padding: wp(1),
+								backgroundColor: "rgba(248, 254, 252, 0.7)",
+								borderRadius: 4,
 							}}>
-							{image.city}
-						</Text>
+							<Text
+								style={{
+									fontSize: wp(3),
+									color: "#000",
+									textAlign: "center",
+								}}>
+								{image.city}
+							</Text>
+						</View>
 					</View>
-				</View>
-			))}
+				)
+			})}
 		</View>
 	)
 

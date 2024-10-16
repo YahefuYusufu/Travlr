@@ -8,7 +8,7 @@ export interface TripDetails {
 	category?: string
 	summary?: string
 	rating?: number
-	images?: string[]
+	images?: Array<string | { data: string; contentType: string }>
 }
 
 export interface Trip extends TripDetails {
@@ -16,13 +16,23 @@ export interface Trip extends TripDetails {
 }
 
 const getApiUrl = () => {
-	if (Platform.OS === "android") {
-		return "http://10.0.2.2:5001/api/trips" // Android emulator uses 10.0.2.2 to access host machine
-	} else if (Platform.OS === "ios") {
-		return "http://localhost:5001/api/trips" // iOS simulator uses localhost
-	} else {
-		return "http://192.168.0.126:5001/api/trips" // Use your local IP for physical devices
+	// Use your computer's local IP address here
+	const localIpAddress = "192.168.0.126" // Replace with your actual local IP
+	const port = "5001"
+
+	if (__DEV__) {
+		// For development
+		if (Platform.OS === "android") {
+			// Android emulator
+			return `http://10.0.2.2:${port}/api/trips`
+		} else if (Platform.OS === "ios") {
+			// iOS
+			return `http://${localIpAddress}:${port}/api/trips`
+		}
 	}
+
+	// For production or fallback
+	return "http://localhost:5001/api/trips"
 }
 const api = axios.create({
 	baseURL: getApiUrl(),
