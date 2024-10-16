@@ -1,18 +1,18 @@
 import React, { useState, useRef, useEffect } from "react"
 import {
 	View,
-	TouchableOpacity,
-	Text,
 	ScrollView,
 	Image,
 	Modal,
 	TouchableWithoutFeedback,
 	Animated,
+	Text,
+	TouchableOpacity,
 } from "react-native"
 import { BlurView } from "expo-blur"
 import { Entypo } from "@expo/vector-icons"
-import * as ImagePicker from "expo-image-picker"
 import { useTripContext } from "../../context/TripContext"
+import ImagePicker from "../gallary/ImagePicker"
 
 const ImageCaptureContainer: React.FC = () => {
 	const { tripDetails, updateImages } = useTripContext()
@@ -47,23 +47,9 @@ const ImageCaptureContainer: React.FC = () => {
 		})
 	}
 
-	const handleImagePick = async (source: "gallery" | "camera") => {
-		const pickerFunction =
-			source === "gallery"
-				? ImagePicker.launchImageLibraryAsync
-				: ImagePicker.launchCameraAsync
-
-		const result = await pickerFunction({
-			mediaTypes: ImagePicker.MediaTypeOptions.Images,
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
-		})
-
-		if (!result.canceled && result.assets && result.assets.length > 0) {
-			const newImage = result.assets[0].uri
-			updateImages([...tripDetails.images, newImage])
-		}
+	const handleImagePick = (imageUri: string) => {
+		// Update images in context
+		updateImages([...tripDetails.images, imageUri])
 		closeModal()
 	}
 
@@ -103,28 +89,10 @@ const ImageCaptureContainer: React.FC = () => {
 							<Animated.View
 								style={{ opacity: fadeAnim }}
 								className="bg-slate-100 rounded-xl p-6 w-4/5 max-w-sm shadow-lg">
-								<Text className="text-xl font-bold mb-4 text-center">
-									Choose an option
-								</Text>
-								<View className="flex-row justify-between mb-4">
-									<TouchableOpacity
-										onPress={() => handleImagePick("gallery")}
-										className="bg-blue-500 px-4 py-3 rounded-lg flex-1 mr-2">
-										<Text className="text-white text-center text-base">
-											Gallery
-										</Text>
-									</TouchableOpacity>
-									<TouchableOpacity
-										onPress={() => handleImagePick("camera")}
-										className="bg-green-500 px-4 py-3 rounded-lg flex-1 ml-2">
-										<Text className="text-white text-center text-base">
-											Camera
-										</Text>
-									</TouchableOpacity>
-								</View>
+								<ImagePicker onTakeImage={handleImagePick} />
 								<TouchableOpacity
 									onPress={closeModal}
-									className="bg-gray-300 px-4 py-3 rounded-lg">
+									className="bg-gray-300 px-4 py-3 rounded-lg mt-4">
 									<Text className="text-gray-700 text-center text-lg">
 										Cancel
 									</Text>

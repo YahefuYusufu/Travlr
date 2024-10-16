@@ -6,6 +6,7 @@ import { ROUTES } from "../../constants/strings"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { RootStackParamList } from "../../types"
 import { sendTrip } from "../../hooks/useTrips"
+import { uploadImage } from "../../utils/uploadImage"
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "NewTrip">
 
@@ -17,7 +18,6 @@ const SendTripButton: React.FC = () => {
 	const handleSendTrip = async () => {
 		setIsLoading(true)
 
-		// Validate trip details
 		if (!tripDetails.country || !tripDetails.city || !tripDetails.date) {
 			Alert.alert(
 				"Incomplete Details",
@@ -28,18 +28,30 @@ const SendTripButton: React.FC = () => {
 		}
 
 		try {
-			console.log("Sending trip data:", JSON.stringify(tripDetails, null, 2))
-			const response = await sendTrip(tripDetails)
+			// First, send the trip without images
+			const tripWithoutImages = { ...tripDetails, images: [] }
+			console.log(
+				"Sending trip data:",
+				JSON.stringify(tripWithoutImages, null, 2)
+			)
+			const response = await sendTrip(tripWithoutImages)
 			console.log("Response from server:", JSON.stringify(response, null, 2))
 
-			// Show success message
+			// Now that we have the trip ID, upload images
+			if (response._id && tripDetails.images && tripDetails.images.length > 0) {
+				const uploadedImageUrls = await Promise.all(
+					tripDetails.images.map((imageUri) =>
+						uploadImage(imageUri, response._id)
+					)
+				)
+				console.log("Uploaded image URLs:", uploadedImageUrls)
+			}
+
 			Alert.alert("Success", "Your trip has been successfully sent!", [
 				{
 					text: "OK",
 					onPress: () => {
-						// Reset the trip context
 						resetTripContext()
-						// Navigate back to the home screen
 						navigation.navigate(ROUTES.HOME)
 					},
 				},

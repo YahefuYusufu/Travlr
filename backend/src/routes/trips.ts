@@ -1,7 +1,12 @@
 import express, { Request, Response, NextFunction } from "express"
+import multer from "multer"
+import path from "path"
 import Trip, { ITrip } from "../models/Trip"
+import ImageService from "../services/ImageService"
 
 const router = express.Router()
+
+const upload = multer({ storage: multer.memoryStorage() })
 
 // Define a type for our route handlers
 type AsyncRequestHandler = (
@@ -117,10 +122,63 @@ const deleteTrip: AsyncRequestHandler = async (req, res, next) => {
 	}
 }
 
+const addImageToTrip = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { id } = req.params
+
+		if (!req.file) {
+			res.status(400).json({ message: "No file was uploaded." })
+			return
+		}
+
+		console.log("File received:", req.file.originalname, req.file.mimetype)
+
+		// The base64 data is now in req.file.buffer
+		const imageBase64 = req.file.buffer.toString("base64")
+
+		// Find the trip and update it with the new image
+		const updatedTrip = await Trip.findByIdAndUpdate(
+			id,
+			{
+				$push: {
+					images: {
+						data: imageBase64,
+						contentType: req.file.mimetype,
+					},
+				},
+			},
+			{ new: true, runValidators: true }
+		)
+
+		if (!updatedTrip) {
+			res.status(404).json({ message: "Trip not found" })
+			return
+		}
+
+		console.log("Updated trip:", updatedTrip)
+
+		res.status(200).json({
+			message: "Image added successfully",
+			trip: updatedTrip,
+		})
+	} catch (error) {
+		console.error("Error adding image to trip:", error)
+		res.status(400).json({
+			message: "Failed to add image",
+			error: error instanceof Error ? error.message : "Unknown error",
+		})
+	}
+}
+
 router.post("/", createTrip)
 router.get("/", getAllTrips)
 router.get("/:id", getSingleTrip)
 router.put("/:id", updateTrip)
 router.delete("/:id", deleteTrip)
+router.post("/:id/images", upload.single("image"), addImageToTrip)
 
 export default router

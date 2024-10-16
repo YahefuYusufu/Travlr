@@ -1,4 +1,5 @@
 import axios from "axios"
+import { Platform } from "react-native"
 
 export interface TripDetails {
 	country: string
@@ -7,15 +8,34 @@ export interface TripDetails {
 	category?: string
 	summary?: string
 	rating?: number
-	images?: string[]
+	images?: Array<string | { data: string; contentType: string }>
 }
 
 export interface Trip extends TripDetails {
 	_id: string
 }
 
+const getApiUrl = () => {
+	// Use your computer's local IP address here
+	const localIpAddress = "192.168.0.126" // Replace with your actual local IP
+	const port = "5001"
+
+	if (__DEV__) {
+		// For development
+		if (Platform.OS === "android") {
+			// Android emulator
+			return `http://10.0.2.2:${port}/api/trips`
+		} else if (Platform.OS === "ios") {
+			// iOS
+			return `http://${localIpAddress}:${port}/api/trips`
+		}
+	}
+
+	// For production or fallback
+	return "http://localhost:5001/api/trips"
+}
 const api = axios.create({
-	baseURL: process.env.TRIP_API_URL || "http://localhost:5001/api/trips",
+	baseURL: getApiUrl(),
 })
 
 const handleAxiosError = (error: unknown, defaultMessage: string): never => {
@@ -47,6 +67,8 @@ export const sendTrip = async (tripData: TripDetails): Promise<Trip> => {
 
 export const getTrips = async (): Promise<Trip[]> => {
 	try {
+		console.log("Fetching all trips from:", api.defaults.baseURL)
+
 		// console.log("Fetching all trips")
 		const { data } = await api.get<Trip[]>("")
 		// console.log("Fetched trips:", JSON.stringify(data, null, 2))
@@ -58,6 +80,8 @@ export const getTrips = async (): Promise<Trip[]> => {
 
 export const getTripById = async (id: string): Promise<Trip> => {
 	try {
+		// Log the trip ID being fetched
+		console.log(`Fetching trip with id: ${id}`)
 		// console.log(`Fetching trip with id: ${id}`)
 		const { data } = await api.get<Trip>(`/${id}`)
 		// console.log("Fetched trip:", JSON.stringify(data, null, 2))

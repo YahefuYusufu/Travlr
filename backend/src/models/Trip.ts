@@ -1,5 +1,4 @@
-// File: src/models/Trip.ts
-import mongoose, { Document, Schema } from "mongoose"
+import mongoose, { Schema, Document } from "mongoose"
 
 export interface ITrip extends Document {
 	country: string
@@ -8,20 +7,25 @@ export interface ITrip extends Document {
 	category?: string
 	summary?: string
 	rating?: number
-	images?: string[]
+	images: Array<{
+		data: string
+		contentType: string
+	}>
 }
 
-const TripSchema: Schema = new Schema(
-	{
-		country: { type: String, required: true },
-		city: { type: String, required: true },
-		date: { type: Date, required: true },
-		category: { type: String },
-		summary: { type: String },
-		rating: { type: Number },
-		images: [{ type: String }],
-	},
-	{ timestamps: true }
-)
+const TripSchema: Schema = new Schema({
+	country: { type: String, required: true },
+	city: { type: String, required: true },
+	date: { type: Date, required: true },
+	category: { type: String },
+	summary: { type: String },
+	rating: { type: Number },
+	images: [
+		{
+			data: String,
+			contentType: String,
+		},
+	],
+})
 
 export default mongoose.model<ITrip>("Trip", TripSchema)
