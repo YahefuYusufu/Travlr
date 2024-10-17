@@ -203,7 +203,7 @@ const AllImagesScreen: React.FC = () => {
 	if (isLoading) {
 		return (
 			<SafeAreaView className="flex-1 justify-center items-center bg-white">
-				<ActivityIndicator size="large" color="#0000ff" />
+				<ActivityIndicator size="large" />
 			</SafeAreaView>
 		)
 	}

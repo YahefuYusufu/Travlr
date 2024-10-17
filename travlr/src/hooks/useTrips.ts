@@ -18,6 +18,7 @@ export interface Trip extends TripDetails {
 const getApiUrl = () => {
 	// Use your computer's local IP address here
 	const localIpAddress = "192.168.0.126" // Replace with your actual local IP
+	const localIpAddress1 = "172.24.11.200" // Replace with your actual local IP
 	const port = "5001"
 
 	if (__DEV__) {
@@ -27,7 +28,7 @@ const getApiUrl = () => {
 			return `http://10.0.2.2:${port}/api/trips`
 		} else if (Platform.OS === "ios") {
 			// iOS
-			return `http://${localIpAddress}:${port}/api/trips`
+			return `http://${localIpAddress1}:${port}/api/trips`
 		}
 	}
 
