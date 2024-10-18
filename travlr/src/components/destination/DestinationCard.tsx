@@ -7,10 +7,10 @@ import {
 import { LinearGradient } from "expo-linear-gradient"
 import { useTheme } from "../../theme/ThemeProvider"
 import { HeartIcon } from "react-native-heroicons/solid"
-import { DestinationItemType } from "../../types"
+import { Trip } from "../../hooks/useTrips"
 
 interface DestinationCardProps {
-	item: DestinationItemType
+	item: Trip
 	onPress: () => void
 }
 
@@ -18,13 +18,28 @@ const DestinationCard: FC<DestinationCardProps> = ({ item, onPress }) => {
 	const [isFavourite, toggleFavourite] = useState(false)
 	const { colors } = useTheme()
 
+	// Helper function to get the first image URL or a default image
+	const getImageSource = () => {
+		if (item.images && item.images.length > 0) {
+			const firstImage = item.images[0]
+			if (typeof firstImage === "string") {
+				return { uri: firstImage }
+			} else if (typeof firstImage === "object" && firstImage.data) {
+				return {
+					uri: `data:${firstImage.contentType};base64,${firstImage.data}`,
+				}
+			}
+		}
+		return require("../../../assets/images/task/task-01.jpg")
+	}
+
 	return (
 		<TouchableOpacity
 			onPress={onPress}
 			style={{ width: wp(44), height: wp(65) }}
 			className="flex justify-end relative p-4 py-6 space-y-2 mb-5">
 			<Image
-				source={item.image}
+				source={getImageSource()}
 				style={{ width: wp(44), height: wp(65), borderRadius: 35 }}
 				className="absolute"
 			/>
@@ -54,12 +69,12 @@ const DestinationCard: FC<DestinationCardProps> = ({ item, onPress }) => {
 			<Text
 				style={{ fontSize: wp(4), color: colors.textHeader }}
 				className="font-semibold">
-				{item.title}
+				{item.city}, {item.country}
 			</Text>
 			<Text
 				style={{ fontSize: wp(2.2), color: colors.textHeader }}
 				className="font-semibold">
-				{item.shortDescription}
+				{item.summary || `Visit ${item.city}`}
 			</Text>
 		</TouchableOpacity>
 	)
