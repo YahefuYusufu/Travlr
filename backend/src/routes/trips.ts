@@ -17,24 +17,40 @@ type AsyncRequestHandler = (
 
 // POST - Create a new trip
 const createTrip: AsyncRequestHandler = async (req, res, next) => {
+	console.time("Trip Creation")
 	try {
+		console.log("Received trip data:", JSON.stringify(req.body, null, 2))
+
+		console.time("Trip Model Creation")
 		const tripData: ITrip = req.body
 		const newTrip = new Trip(tripData)
+		console.timeEnd("Trip Model Creation")
+
+		console.time("Trip Save")
 		const savedTrip = await newTrip.save()
+		console.timeEnd("Trip Save")
+
+		console.log("Saved trip:", JSON.stringify(savedTrip, null, 2))
 		res.status(201).json({
 			message: "Trip created successfully",
 			trip: savedTrip,
 		})
 	} catch (error) {
+		console.error("Error in createTrip:", error)
 		if (error instanceof Error) {
-			res
-				.status(400)
-				.json({ message: "Failed to create trip", error: error.message })
+			res.status(400).json({
+				message: "Failed to create trip",
+				error: error.message,
+				stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+			})
 		} else {
-			res
-				.status(400)
-				.json({ message: "Failed to create trip", error: "Unknown error" })
+			res.status(400).json({
+				message: "Failed to create trip",
+				error: "Unknown error",
+			})
 		}
+	} finally {
+		console.timeEnd("Trip Creation")
 	}
 }
 
