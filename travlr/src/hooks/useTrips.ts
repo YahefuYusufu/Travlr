@@ -20,7 +20,7 @@ const getApiUrl = () => {
 	const office = "192.168.0.126" // Replace with your actual local IP
 	const home = "172.24.11.200" // Replace with your actual local IP
 	const prgPhone = "172.20.10.7" // Replace with your actual local IP
-	const port = "5001"
+	const port = "8001"
 
 	if (__DEV__) {
 		// For development
@@ -34,10 +34,11 @@ const getApiUrl = () => {
 	}
 
 	// For production or fallback
-	return "http://localhost:5001/api/trips"
+	return "http://localhost:8001/api/trips"
 }
 const api = axios.create({
 	baseURL: getApiUrl(),
+	timeout: 30000,
 })
 
 const handleAxiosError = (error: unknown, defaultMessage: string): never => {
@@ -53,18 +54,58 @@ const handleAxiosError = (error: unknown, defaultMessage: string): never => {
 	throw new Error("An unexpected error occurred")
 }
 
+const MAX_RETRIES = 3
+const RETRY_DELAY = 2000 // 2 seconds
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 export const sendTrip = async (tripData: TripDetails): Promise<Trip> => {
-	try {
-		// console.log("Sending data to backend:", JSON.stringify(tripData, null, 2))
-		const { data } = await api.post<{ message: string; trip: Trip }>(
-			"",
-			tripData
-		)
-		// console.log("Response from backend:", JSON.stringify(data, null, 2))
-		return data.trip
-	} catch (error) {
-		return handleAxiosError(error, "Failed to send trip")
+	let retries = 0
+	while (retries < MAX_RETRIES) {
+		try {
+			console.log(`Attempt ${retries + 1} to send trip data`)
+			console.log("Sending data to backend:", JSON.stringify(tripData, null, 2))
+			const { data } = await api.post<{ message: string; trip: Trip }>(
+				"",
+				tripData,
+				{
+					timeout: 30000, // 30 seconds timeout
+				}
+			)
+			console.log("Response from backend:", JSON.stringify(data, null, 2))
+			return data.trip
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.error(
+					`Attempt ${retries + 1} failed. Axios error:`,
+					error.message
+				)
+				if (
+					error.code === "ECONNABORTED" ||
+					error.message.includes("timeout")
+				) {
+					if (retries < MAX_RETRIES - 1) {
+						console.log(`Retrying in ${RETRY_DELAY / 1000} seconds...`)
+						retries++
+						await wait(RETRY_DELAY)
+					} else {
+						throw new Error(
+							`Failed to send trip after ${MAX_RETRIES} attempts: ${error.message}`
+						)
+					}
+				} else {
+					console.error("Error response:", error.response?.data)
+					throw new Error(
+						error.response?.data?.message || "Failed to send trip"
+					)
+				}
+			} else {
+				console.error("Unexpected error:", error)
+				throw new Error("An unexpected error occurred")
+			}
+		}
 	}
+	throw new Error(`Failed to send trip after ${MAX_RETRIES} attempts`)
 }
 
 export const getTrips = async (): Promise<Trip[]> => {

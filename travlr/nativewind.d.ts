@@ -96,3 +96,11 @@ declare module "react-native-heroicons/*" {
 	const Icon: React.FC<SvgProps>
 	export default Icon
 }
+import mongoose from "mongoose"
+
+declare module "mongoose" {
+	interface ValidatorProps {
+		value: any
+		path: string
+	}
+}
