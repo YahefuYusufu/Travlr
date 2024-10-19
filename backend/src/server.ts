@@ -12,7 +12,7 @@ const app = express()
 
 app.use(
 	cors({
-		origin: ["http://localhost:3000", "http://192.168.0.126"],
+		origin: ["http://localhost:3000", "http://172.20.10.7"],
 	})
 )
 app.use(express.json())
@@ -33,5 +33,5 @@ app.use("/api/trips", tripRoutes)
 // Serve static files from the 'uploads' directory
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")))
 
-const PORT = process.env.PORT || 5001
+const PORT = process.env.PORT || 8001
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

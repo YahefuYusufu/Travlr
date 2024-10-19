@@ -7,8 +7,15 @@ import {
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
 
-export default function SortCategories() {
-	const [activeSort, setActiveSort] = useState("Popular")
+interface SortCategoriesProps {
+	activeSort: string
+	setActiveSort: (category: string) => void
+}
+
+const SortCategories: React.FC<SortCategoriesProps> = ({
+	activeSort,
+	setActiveSort,
+}) => {
 	const { colors } = useTheme()
 
 	return (
@@ -39,3 +46,5 @@ export default function SortCategories() {
 		</View>
 	)
 }
+
+export default SortCategories

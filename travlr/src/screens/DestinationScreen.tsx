@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react"
+import React, { FC, useState, useEffect, useRef, useMemo } from "react"
 import {
 	View,
 	Text,
@@ -7,6 +7,9 @@ import {
 	TouchableOpacity,
 	ScrollView,
 	ActivityIndicator,
+	FlatList,
+	Dimensions,
+	ListRenderItem,
 } from "react-native"
 import { StatusBar } from "expo-status-bar"
 import {
@@ -26,13 +29,18 @@ import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import { DestinationScreenProps } from "../types"
 import { getTripById, Trip } from "../hooks/useTrips"
+import { ChevronRightIcon } from "lucide-react-native"
+
+const { width } = Dimensions.get("window")
+type ImageSource = string | { data: string; contentType: string }
 
 const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 	const { colors } = useTheme()
 	const navigation = useNavigation()
-	const [isFavourite, toggleFavourite] = useState(false)
 	const [trip, setTrip] = useState<Trip | null>(null)
-	const [loading, setLoading] = useState(true)
+	const [loading, setLoading] = useState<boolean>(true)
+	const [currentImageIndex, setCurrentImageIndex] = useState<number>(0)
+	const flatListRef = useRef<FlatList<ImageSource> | null>(null)
 
 	useEffect(() => {
 		const fetchTrip = async () => {
@@ -48,19 +56,44 @@ const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 		fetchTrip()
 	}, [route.params._id])
 
-	const getImageSource = () => {
-		if (trip?.images && trip.images.length > 0) {
-			const firstImage = trip.images[0]
-			if (typeof firstImage === "string") {
-				return { uri: firstImage }
-			} else if (typeof firstImage === "object" && firstImage.data) {
-				return {
-					uri: `data:${firstImage.contentType};base64,${firstImage.data}`,
-				}
+	const getImageSource = (image: ImageSource): { uri: string } => {
+		if (typeof image === "string") {
+			return { uri: image }
+		} else if (typeof image === "object" && image.data) {
+			return {
+				uri: `data:${image.contentType};base64,${image.data}`,
 			}
 		}
-		return require("../../assets/images/task/task-01.jpg")
+		return {
+			uri: Image.resolveAssetSource(
+				require("../../assets/images/task/task-01.jpg")
+			).uri,
+		}
 	}
+
+	const handlePrevImage = () => {
+		if (currentImageIndex > 0) {
+			setCurrentImageIndex(currentImageIndex - 1)
+			flatListRef.current?.scrollToIndex({
+				index: currentImageIndex - 1,
+				animated: true,
+			})
+		}
+	}
+
+	const handleNextImage = () => {
+		if (trip?.images && currentImageIndex < trip.images.length - 1) {
+			setCurrentImageIndex(currentImageIndex + 1)
+			flatListRef.current?.scrollToIndex({
+				index: currentImageIndex + 1,
+				animated: true,
+			})
+		}
+	}
+
+	const renderImage: ListRenderItem<ImageSource> = ({ item }) => (
+		<Image source={getImageSource(item)} style={{ width, height: hp(55) }} />
+	)
 
 	if (loading) {
 		return (
@@ -81,10 +114,35 @@ const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 	return (
 		<View className="bg-white flex-1">
 			<StatusBar style={"auto"} />
-			<Image
-				source={getImageSource()}
-				style={{ width: wp(100), height: hp(55) }}
-			/>
+			<View style={{ height: hp(55) }}>
+				<FlatList
+					ref={flatListRef}
+					data={trip.images}
+					horizontal
+					pagingEnabled
+					showsHorizontalScrollIndicator={false}
+					keyExtractor={(_: any, index: { toString: () => any }) =>
+						index.toString()
+					}
+					renderItem={renderImage}
+				/>
+				{trip.images && trip.images.length > 1 && (
+					<>
+						<TouchableOpacity
+							onPress={handlePrevImage}
+							className="absolute left-4 top-1/2 p-2 rounded-full bg-white/50"
+							style={{ transform: [{ translateY: -20 }] }}>
+							<ChevronLeftIcon size={wp(6)} color="black" />
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={handleNextImage}
+							className="absolute right-4 top-1/2 p-2 rounded-full bg-white/50"
+							style={{ transform: [{ translateY: -20 }] }}>
+							<ChevronRightIcon size={wp(6)} color="black" />
+						</TouchableOpacity>
+					</>
+				)}
+			</View>
 
 			{/* back button */}
 			<SafeAreaView className="flex-row justify-between items-center w-full absolute">
@@ -94,16 +152,6 @@ const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 					style={{ backgroundColor: "rgba(107, 105, 105, 0.5)" }}>
 					<ChevronLeftIcon size={wp(7)} strokeWidth={4} color="white" />
 				</TouchableOpacity>
-				{/* <TouchableOpacity
-					onPress={() => toggleFavourite(!isFavourite)}
-					className="p-2 rounded-full mr-4"
-					style={{ backgroundColor: "rgba(107, 105, 105, 0.5)" }}>
-					<HeartIcon
-						size={wp(7)}
-						strokeWidth={4}
-						color={isFavourite ? "red" : "white"}
-					/>
-				</TouchableOpacity> */}
 			</SafeAreaView>
 
 			{/* title & description & booking button */}

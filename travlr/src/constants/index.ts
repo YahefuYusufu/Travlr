@@ -29,7 +29,7 @@ export const categoriesData = [
 	},
 ]
 
-export const sortCategories = ["All", "Favorites", "Best", "Popular"]
+export const sortCategories = ["All", "Favorites", "Best", "Popular", "New"]
 
 export const destinationItem = [
 	{
