@@ -94,7 +94,7 @@ const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 					style={{ backgroundColor: "rgba(107, 105, 105, 0.5)" }}>
 					<ChevronLeftIcon size={wp(7)} strokeWidth={4} color="white" />
 				</TouchableOpacity>
-				<TouchableOpacity
+				{/* <TouchableOpacity
 					onPress={() => toggleFavourite(!isFavourite)}
 					className="p-2 rounded-full mr-4"
 					style={{ backgroundColor: "rgba(107, 105, 105, 0.5)" }}>
@@ -103,7 +103,7 @@ const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 						strokeWidth={4}
 						color={isFavourite ? "red" : "white"}
 					/>
-				</TouchableOpacity>
+				</TouchableOpacity> */}
 			</SafeAreaView>
 
 			{/* title & description & booking button */}
@@ -190,7 +190,7 @@ const DestinationScreen: React.FC<DestinationScreenProps> = ({ route }) => {
 						)}
 					</View>
 					<View
-						style={{ height: hp(30) }}
+						style={{ height: hp(20) }}
 						className="bg-gray-400 p-4 rounded-xl my-4">
 						<Text
 							style={{ fontSize: wp(4) }}
