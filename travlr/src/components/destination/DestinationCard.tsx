@@ -1,21 +1,27 @@
 import React, { FC, useState } from "react"
-import { View, TouchableOpacity, Image, Text } from "react-native"
+import { View, TouchableOpacity, Image, Text, Alert } from "react-native"
 import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
 } from "react-native-responsive-screen"
 import { LinearGradient } from "expo-linear-gradient"
 import { useTheme } from "../../theme/ThemeProvider"
-import { HeartIcon } from "react-native-heroicons/solid"
-import { Trip } from "../../hooks/useTrips"
+import { TrashIcon } from "react-native-heroicons/solid"
+import { deleteTrip, Trip } from "../../hooks/useTrips"
 
 interface DestinationCardProps {
 	item: Trip
 	onPress: () => void
+	onDelete: (id: string) => void
+	isDeleting: boolean
 }
 
-const DestinationCard: FC<DestinationCardProps> = ({ item, onPress }) => {
-	const [isFavourite, toggleFavourite] = useState(false)
+const DestinationCard: FC<DestinationCardProps> = ({
+	item,
+	onPress,
+	onDelete,
+	isDeleting,
+}) => {
 	const { colors } = useTheme()
 
 	// Helper function to get the first image URL or a default image
@@ -33,6 +39,21 @@ const DestinationCard: FC<DestinationCardProps> = ({ item, onPress }) => {
 		return require("../../../assets/images/task/task-01.jpg")
 	}
 
+	const handleDelete = () => {
+		if (isDeleting) return
+
+		Alert.alert("Delete Trip", "Are you sure you want to delete this trip?", [
+			{
+				text: "Cancel",
+				style: "cancel",
+			},
+			{
+				text: "Delete",
+				onPress: () => onDelete(item._id),
+				style: "destructive",
+			},
+		])
+	}
 	return (
 		<TouchableOpacity
 			onPress={onPress}
@@ -57,13 +78,10 @@ const DestinationCard: FC<DestinationCardProps> = ({ item, onPress }) => {
 			/>
 
 			<TouchableOpacity
-				onPress={() => toggleFavourite(!isFavourite)}
+				onPress={handleDelete}
 				style={{ backgroundColor: "rgba(68, 68, 68, 0.4)" }}
 				className="absolute top-1 right-3 rounded-full p-2">
-				<HeartIcon
-					size={wp(5)}
-					color={isFavourite ? colors.textHeader : colors.error}
-				/>
+				<TrashIcon size={wp(5)} color={colors.accent} />
 			</TouchableOpacity>
 
 			<Text

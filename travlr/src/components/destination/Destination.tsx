@@ -1,14 +1,15 @@
-import React, { FC, useEffect, useState } from "react"
-import { View, ActivityIndicator } from "react-native"
+import React, { FC, useCallback, useEffect, useState } from "react"
+import { View, ActivityIndicator, Alert } from "react-native"
 import { HomeScreenProps } from "../../types"
 import DestinationCard from "./DestinationCard"
-import { getTrips, Trip } from "../../hooks/useTrips"
+import { getTrips, Trip, deleteTrip } from "../../hooks/useTrips"
 
 const Destination: FC<{ navigation: HomeScreenProps["navigation"] }> = ({
 	navigation,
 }) => {
 	const [trips, setTrips] = useState<Trip[]>([])
 	const [loading, setLoading] = useState(true)
+	const [deletingTripId, setDeletingTripId] = useState<string | null>(null)
 
 	useEffect(() => {
 		fetchTrips()
@@ -25,6 +26,30 @@ const Destination: FC<{ navigation: HomeScreenProps["navigation"] }> = ({
 		}
 	}
 
+	const handleDeleteTrip = useCallback(
+		async (id: string) => {
+			if (deletingTripId === id) {
+				console.log(
+					`Already deleting trip ${id}. Ignoring repeated delete attempt.`
+				)
+				return
+			}
+
+			setDeletingTripId(id)
+			try {
+				await deleteTrip(id)
+				setTrips((prevTrips) => prevTrips.filter((trip) => trip._id !== id))
+				console.log(`Trip ${id} deleted successfully and removed from state`)
+			} catch (error) {
+				console.error("Failed to delete trip:", error)
+				Alert.alert("Error", "Failed to delete trip. Please try again.")
+			} finally {
+				setDeletingTripId(null)
+			}
+		},
+		[deletingTripId]
+	)
+
 	if (loading) {
 		return (
 			<View className="flex-1 justify-center items-center">
@@ -40,6 +65,8 @@ const Destination: FC<{ navigation: HomeScreenProps["navigation"] }> = ({
 					key={trip._id}
 					item={trip}
 					onPress={() => navigation.navigate("Destination", trip)}
+					onDelete={handleDeleteTrip}
+					isDeleting={deletingTripId === trip._id}
 				/>
 			))}
 		</View>

@@ -91,3 +91,13 @@ export const getTripById = async (id: string): Promise<Trip> => {
 		return handleAxiosError(error, `Failed to fetch trip with id ${id}`)
 	}
 }
+
+export const deleteTrip = async (id: string): Promise<void> => {
+	try {
+		console.log(`Deleting trip with id: ${id}`)
+		await api.delete(`/${id}`)
+		console.log(`Trip with id ${id} deleted successfully`)
+	} catch (error) {
+		return handleAxiosError(error, `Failed to delete trip with id ${id}`)
+	}
+}
