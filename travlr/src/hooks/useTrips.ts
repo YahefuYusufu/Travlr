@@ -17,8 +17,9 @@ export interface Trip extends TripDetails {
 
 const getApiUrl = () => {
 	// Use your computer's local IP address here
-	const localIpAddress = "192.168.0.126" // Replace with your actual local IP
-	const localIpAddress1 = "172.24.11.200" // Replace with your actual local IP
+	const office = "192.168.0.126" // Replace with your actual local IP
+	const home = "172.24.11.200" // Replace with your actual local IP
+	const prgPhone = "172.20.10.7" // Replace with your actual local IP
 	const port = "5001"
 
 	if (__DEV__) {
@@ -28,7 +29,7 @@ const getApiUrl = () => {
 			return `http://10.0.2.2:${port}/api/trips`
 		} else if (Platform.OS === "ios") {
 			// iOS
-			return `http://${localIpAddress}:${port}/api/trips`
+			return `http://${prgPhone}:${port}/api/trips`
 		}
 	}
 
@@ -77,6 +78,16 @@ export const getTrips = async (): Promise<Trip[]> => {
 	} catch (error) {
 		return handleAxiosError(error, "Failed to fetch trips")
 	}
+}
+
+export const filterTripsByCategory = (
+	trips: Trip[],
+	category: string
+): Trip[] => {
+	if (category === "All") {
+		return trips
+	}
+	return trips.filter((trip) => trip.category === category)
 }
 
 export const getTripById = async (id: string): Promise<Trip> => {

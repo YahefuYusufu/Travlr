@@ -1,19 +1,31 @@
 import React, { FC, useCallback, useEffect, useState } from "react"
-import { View, ActivityIndicator, Alert } from "react-native"
+import { View, ActivityIndicator, Alert, Text } from "react-native"
 import { HomeScreenProps } from "../../types"
 import DestinationCard from "./DestinationCard"
-import { getTrips, Trip, deleteTrip } from "../../hooks/useTrips"
+import {
+	getTrips,
+	Trip,
+	deleteTrip,
+	filterTripsByCategory,
+} from "../../hooks/useTrips"
+import SortCategories from "../category/SortCategories"
 
 const Destination: FC<{ navigation: HomeScreenProps["navigation"] }> = ({
 	navigation,
 }) => {
 	const [trips, setTrips] = useState<Trip[]>([])
+	const [filteredTrips, setFilteredTrips] = useState<Trip[]>([])
+
 	const [loading, setLoading] = useState(true)
 	const [deletingTripId, setDeletingTripId] = useState<string | null>(null)
+	const [activeSort, setActiveSort] = useState("All")
 
 	useEffect(() => {
 		fetchTrips()
 	}, [])
+	useEffect(() => {
+		setFilteredTrips(filterTripsByCategory(trips, activeSort))
+	}, [activeSort, trips])
 
 	const fetchTrips = async () => {
 		try {
@@ -59,16 +71,25 @@ const Destination: FC<{ navigation: HomeScreenProps["navigation"] }> = ({
 	}
 
 	return (
-		<View className="mx-4 flex-row justify-between flex-wrap">
-			{trips.map((trip) => (
-				<DestinationCard
-					key={trip._id}
-					item={trip}
-					onPress={() => navigation.navigate("Destination", trip)}
-					onDelete={handleDeleteTrip}
-					isDeleting={deletingTripId === trip._id}
-				/>
-			))}
+		<View className="flex-1">
+			<SortCategories activeSort={activeSort} setActiveSort={setActiveSort} />
+			<View className="mx-4 mt-5 flex-row justify-between flex-wrap">
+				{filteredTrips.length > 0 ? (
+					filteredTrips.map((trip) => (
+						<DestinationCard
+							key={trip._id}
+							item={trip}
+							onPress={() => navigation.navigate("Destination", trip)}
+							onDelete={handleDeleteTrip}
+							isDeleting={deletingTripId === trip._id}
+						/>
+					))
+				) : (
+					<View className="flex-1 justify-center items-center mt-10">
+						<Text>No trips found for this category.</Text>
+					</View>
+				)}
+			</View>
 		</View>
 	)
 }

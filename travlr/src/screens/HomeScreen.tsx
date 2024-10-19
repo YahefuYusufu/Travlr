@@ -105,11 +105,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 					<Gallery trips={trips} isLoading={isLoading} />
 				</View>
 
-				{/* sort categories */}
-				<View className="mb-2">
-					<SortCategories />
-				</View>
-
 				{/* destination */}
 				<View className="mb-2">
 					<Destination navigation={navigation} />
