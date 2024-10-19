@@ -7,10 +7,18 @@ export interface ITrip extends Document {
 	category?: string
 	summary?: string
 	rating?: number
-	images: Array<{
-		data: string
-		contentType: string
-	}>
+	images: Array<
+		| string
+		| {
+				data: string
+				contentType: string
+		  }
+	>
+}
+
+type ValidatorProps = {
+	value: any
+	path: string
 }
 
 const TripSchema: Schema = new Schema({
@@ -22,8 +30,17 @@ const TripSchema: Schema = new Schema({
 	rating: { type: Number },
 	images: [
 		{
-			data: String,
-			contentType: String,
+			type: Schema.Types.Mixed,
+			validate: [
+				{
+					validator: function (this: any, v: any): boolean {
+						return typeof v === "string" || (v && v.data && v.contentType)
+					},
+					message: function (this: any, props: ValidatorProps): string {
+						return `${props.value} is not a valid image format!`
+					},
+				},
+			],
 		},
 	],
 })

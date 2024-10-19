@@ -1,5 +1,3 @@
-// src/services/imageService.ts
-
 import Trip from "../models/Trip"
 import { uploadToCloudStorage } from "../utils/cloudStorageService"
 
@@ -12,14 +10,15 @@ class ImageService {
 		const remoteUri = await uploadToCloudStorage(file)
 
 		// Save the remote URI to MongoDB
-		await this.saveImageUrlToMongoDB(tripId, remoteUri)
+		await this.saveImageUrlToMongoDB(tripId, remoteUri, file.mimetype)
 
 		return remoteUri
 	}
 
 	private async saveImageUrlToMongoDB(
 		tripId: string,
-		imageUrl: string
+		imageUrl: string,
+		contentType: string
 	): Promise<void> {
 		const trip = await Trip.findById(tripId)
 		if (!trip) {
@@ -27,7 +26,10 @@ class ImageService {
 		}
 
 		trip.images = trip.images || []
-		trip.images.push(imageUrl)
+		trip.images.push({
+			data: imageUrl,
+			contentType: contentType,
+		})
 		await trip.save()
 	}
 }

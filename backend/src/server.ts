@@ -12,7 +12,7 @@ const app = express()
 
 app.use(
 	cors({
-		origin: ["http://localhost:3000", "http://192.168.0.126"],
+		origin: ["http://localhost:3000", "http://172.20.10.7"],
 	})
 )
 app.use(express.json())
