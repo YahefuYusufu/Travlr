@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons"
 // Define prop types
 type OutlineButtonProps = {
 	onPress: (event: GestureResponderEvent) => void
-	icon: keyof typeof Ionicons.glyphMap // Correct type for the Ionicons name
+	icon: keyof typeof Ionicons.glyphMap
 	children: ReactNode
 }
 

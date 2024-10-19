@@ -27,7 +27,7 @@ export default function SortCategories() {
 							style={{
 								color: isActive
 									? colors.textSecondary
-									: "rgba(113, 110, 110, 0.6)",
+									: "rgba(171, 168, 168, 0.6)",
 								fontSize: wp(3.5),
 							}}
 							className="font-semibold">

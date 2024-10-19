@@ -107,15 +107,8 @@ const ImagePicker: React.FC<ImagePickerProps> = ({ onTakeImage }) => {
 		}
 	}
 
-	// Render the image preview or a placeholder text
-	let imagePreview = <Text style={styles.text}>No image selected yet.</Text>
-	if (pickedImage) {
-		imagePreview = <Image style={styles.image} source={{ uri: pickedImage }} />
-	}
-
 	return (
 		<View style={styles.container}>
-			<View style={styles.imagePreview}>{imagePreview}</View>
 			<View style={styles.buttons}>
 				<OutlineButton icon="camera" onPress={takeImageHandler}>
 					Take Image
