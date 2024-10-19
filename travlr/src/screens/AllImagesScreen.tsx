@@ -8,6 +8,9 @@ import {
 	SectionList,
 	SectionListData,
 	Platform,
+	TouchableOpacity,
+	Dimensions,
+	Modal,
 } from "react-native"
 import { getTrips, Trip } from "../hooks/useTrips"
 import {
@@ -20,6 +23,7 @@ import { useNavigation } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { RootStackParamList } from "../types"
 import { ROUTES } from "../constants/strings"
+import ImageZoom, { ImageZoomProps } from "react-native-image-pan-zoom"
 
 interface ImageItem {
 	id: string
@@ -27,7 +31,9 @@ interface ImageItem {
 	city: string
 	date: Date
 }
-
+type CustomImageZoomProps = ImageZoomProps & {
+	children: React.ReactNode
+}
 interface Section {
 	title: string
 	data: ImageItem[][]
@@ -42,13 +48,20 @@ type AllImagesScreenNavigationProp = NativeStackNavigationProp<
 >
 
 const AllImagesScreen: React.FC = () => {
-	const [isLoading, setIsLoading] = useState(true)
+	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [sections, setSections] = useState<Section[]>([])
+	const [modalVisible, setModalVisible] = useState<boolean>(false)
+	const [selectedImage, setSelectedImage] = useState<string | null>(null)
 	const navigation = useNavigation<AllImagesScreenNavigationProp>()
 
 	useEffect(() => {
 		fetchTrips()
 	}, [])
+
+	const handleImagePress = (imageUri: string) => {
+		setSelectedImage(imageUri)
+		setModalVisible(true)
+	}
 
 	const fetchTrips = async () => {
 		setIsLoading(true)
@@ -139,10 +152,11 @@ const AllImagesScreen: React.FC = () => {
 			{item.map((image) => {
 				const source = getImageSource(image.uri)
 				return (
-					<View
+					<TouchableOpacity
 						key={image.id}
 						style={{ width: imageSize, height: imageSize }}
-						className="justify-center items-center p-2">
+						className="justify-center items-center p-2"
+						onPress={() => handleImagePress(image.uri)}>
 						<Image
 							source={source}
 							style={{ width: imageSize - wp(2), height: imageSize - wp(1) }}
@@ -184,7 +198,7 @@ const AllImagesScreen: React.FC = () => {
 								{image.city}
 							</Text>
 						</View>
-					</View>
+					</TouchableOpacity>
 				)
 			})}
 		</View>
@@ -221,6 +235,37 @@ const AllImagesScreen: React.FC = () => {
 				keyExtractor={(item, index) => index.toString()}
 				stickySectionHeadersEnabled={true}
 			/>
+			<Modal
+				visible={modalVisible}
+				transparent={true}
+				onRequestClose={() => setModalVisible(false)}>
+				<View style={{ flex: 1, backgroundColor: "black" }}>
+					<TouchableOpacity
+						style={{ position: "absolute", top: 40, right: 20, zIndex: 1 }}
+						onPress={() => setModalVisible(false)}>
+						<Text style={{ color: "white", fontSize: 30 }}>×</Text>
+					</TouchableOpacity>
+					{selectedImage && (
+						<ImageZoom
+							{...({} as CustomImageZoomProps)} // This cast allows us to pass children
+							cropWidth={Dimensions.get("window").width}
+							cropHeight={Dimensions.get("window").height}
+							imageWidth={Dimensions.get("window").width}
+							imageHeight={Dimensions.get("window").height}
+							minScale={1}
+							maxScale={3}>
+							<Image
+								source={getImageSource(selectedImage)}
+								style={{
+									width: Dimensions.get("window").width,
+									height: Dimensions.get("window").height,
+								}}
+								resizeMode="contain"
+							/>
+						</ImageZoom>
+					)}
+				</View>
+			</Modal>
 		</SafeAreaView>
 	)
 }
