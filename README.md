@@ -24,13 +24,9 @@ This Node.js backend API provides core user management functionalities for this 
 - bcrypt (for password hashing)
 - Nodemailer (for email sending, optional)
 
-
 **Features:**
 
-- User authentication
-- Location creation and storage
 - Photo and media management
-- Map integration
 - Calendar integration
 
 **Technologies:**
