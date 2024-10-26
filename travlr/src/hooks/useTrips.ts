@@ -1,5 +1,6 @@
 import axios from "axios"
 import { Platform } from "react-native"
+import { sortTripsByDate } from "../utils/helpers"
 
 export interface TripDetails {
 	country: string
@@ -13,12 +14,13 @@ export interface TripDetails {
 
 export interface Trip extends TripDetails {
 	_id: string
+	createdAt: string | Date
 }
 
 const getApiUrl = () => {
 	// Use your computer's local IP address here
-	const office = "192.168.0.126" // Replace with your actual local IP
-	const home = "172.24.11.200" // Replace with your actual local IP
+	const home = "192.168.0.126" // Replace with your actual local IP
+	const office = "172.24.11.200" // Replace with your actual local IP
 	const prgPhone = "172.20.10.7" // Replace with your actual local IP
 	const port = "8001"
 
@@ -29,7 +31,7 @@ const getApiUrl = () => {
 			return `http://10.0.2.2:${port}/api/trips`
 		} else if (Platform.OS === "ios") {
 			// iOS
-			return `http://${office}:${port}/api/trips`
+			return `http://${home}:${port}/api/trips`
 		}
 	}
 
@@ -125,10 +127,15 @@ export const filterTripsByCategory = (
 	trips: Trip[],
 	category: string
 ): Trip[] => {
+	// First sort by date (newest first)
+	const sortedTrips = sortTripsByDate(trips)
+
+	// Then filter by category if needed
 	if (category === "All") {
-		return trips
+		return sortedTrips
 	}
-	return trips.filter((trip) => trip.category === category)
+
+	return sortedTrips.filter((trip) => trip.category?.includes(category))
 }
 
 export const getTripById = async (id: string): Promise<Trip> => {

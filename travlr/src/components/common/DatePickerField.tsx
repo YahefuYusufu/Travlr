@@ -3,8 +3,10 @@ import { View, Text, TouchableOpacity, Platform } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { CalendarDaysIcon } from "react-native-heroicons/solid"
 import { useTripContext } from "../../context/TripContext"
+import { useTheme } from "../../theme/ThemeProvider"
 
 const DatePickerField: React.FC = () => {
+	const { colors } = useTheme()
 	const { tripDetails, updateDate } = useTripContext()
 	const [showPicker, setShowPicker] = useState(false)
 
@@ -44,7 +46,9 @@ const DatePickerField: React.FC = () => {
 							<CalendarDaysIcon size={24} color={"white"} />
 						</View>
 					) : (
-						<View className="bg-gray-500 rounded-full border border-gray-500 p-2 mr-3">
+						<View
+							className=" rounded-full border border-gray-500 p-2 mr-3"
+							style={{ backgroundColor: colors.bgNatural }}>
 							<CalendarDaysIcon size={24} color={"white"} />
 						</View>
 					)}

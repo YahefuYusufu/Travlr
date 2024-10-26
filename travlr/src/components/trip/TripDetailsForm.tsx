@@ -3,16 +3,19 @@ import { View, Text, TextInput, FlatList } from "react-native"
 import CategoryDropdown from "../common/CategoryDropdown"
 import StarRating from "../common/StarRating"
 import { useTripContext } from "../../context/TripContext"
+import { useTheme } from "../../theme/ThemeProvider"
 
 const TripDetailsForm: React.FC = () => {
+	const { colors } = useTheme()
+
 	const { tripDetails, updateCategory, updateSummary, updateRating } =
 		useTripContext()
 	const categories = ["Favorites", "Best", "Popular", "New"]
 
 	const renderItem = () => (
 		<View
-			className="p-3 bg-gray-500 rounded-lg shadow-md"
-			style={{ height: 300 }}>
+			className="p-3   rounded-lg shadow-md"
+			style={{ height: 300, backgroundColor: colors.bgNatural }}>
 			<View className="flex-row justify-between">
 				<Text className="text-lg font-semibold text-gray-100">Category</Text>
 				<View className="flex-row justify-end">

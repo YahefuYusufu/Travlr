@@ -33,11 +33,11 @@ export async function uploadImage(
 		} as any)
 
 		console.log(
-			`Uploading image to: http://172.20.10.7:8001/api/trips/${tripId}/images`
+			`Uploading image to: http://192.168.0.126:8001/api/trips/${tripId}/images`
 		)
 
 		const response = await axios.post(
-			`http://172.20.10.7:8001/api/trips/${tripId}/images`,
+			`http://192.168.0.126:8001/api/trips/${tripId}/images`,
 			formData,
 			{
 				headers: {

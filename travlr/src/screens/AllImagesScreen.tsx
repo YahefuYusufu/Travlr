@@ -92,7 +92,7 @@ const AllImagesScreen: React.FC = () => {
 			const baseUrl =
 				Platform.OS === "android"
 					? "http://10.0.2.2:5001"
-					: "http://192.168.0.126:5001"
+					: "http://192.168.0.126:8001"
 			return { uri: `${baseUrl}${uri}` }
 		} else if (Platform.OS === "ios" && !uri.startsWith("file://")) {
 			return { uri: `file://${uri}` }

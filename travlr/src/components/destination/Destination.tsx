@@ -1,57 +1,42 @@
-import React, { FC, useCallback, useEffect, useState } from "react"
+import React, { FC, useCallback, useState, useEffect } from "react"
 import { View, ActivityIndicator, Alert, Text } from "react-native"
 import { HomeScreenProps } from "../../types"
 import DestinationCard from "./DestinationCard"
-import {
-	getTrips,
-	Trip,
-	deleteTrip,
-	filterTripsByCategory,
-} from "../../hooks/useTrips"
+import { deleteTrip, filterTripsByCategory, Trip } from "../../hooks/useTrips"
 import SortCategories from "../category/SortCategories"
 
-const Destination: FC<{ navigation: HomeScreenProps["navigation"] }> = ({
+interface DestinationProps {
+	navigation: HomeScreenProps["navigation"]
+	trips: Trip[]
+	isLoading: boolean
+	onDeleteTrip: (id: string) => Promise<void>
+}
+
+const Destination: FC<DestinationProps> = ({
 	navigation,
+	trips,
+	isLoading,
+	onDeleteTrip,
 }) => {
-	const [trips, setTrips] = useState<Trip[]>([])
 	const [filteredTrips, setFilteredTrips] = useState<Trip[]>([])
-
-	const [loading, setLoading] = useState(true)
 	const [deletingTripId, setDeletingTripId] = useState<string | null>(null)
-	const [activeSort, setActiveSort] = useState("All")
+	const [activeSort, setActiveSort] = useState<string>("All")
 
 	useEffect(() => {
-		fetchTrips()
-	}, [])
-	useEffect(() => {
-		setFilteredTrips(filterTripsByCategory(trips, activeSort))
+		const sortedTrips = filterTripsByCategory(trips, activeSort)
+		setFilteredTrips(sortedTrips)
 	}, [activeSort, trips])
-
-	const fetchTrips = async () => {
-		try {
-			const fetchedTrips = await getTrips()
-			setTrips(fetchedTrips)
-		} catch (error) {
-			console.error("Failed to fetch trips:", error)
-		} finally {
-			setLoading(false)
-		}
-	}
 
 	const handleDeleteTrip = useCallback(
 		async (id: string) => {
 			if (deletingTripId === id) {
-				console.log(
-					`Already deleting trip ${id}. Ignoring repeated delete attempt.`
-				)
 				return
 			}
 
 			setDeletingTripId(id)
 			try {
-				await deleteTrip(id)
-				setTrips((prevTrips) => prevTrips.filter((trip) => trip._id !== id))
-				console.log(`Trip ${id} deleted successfully and removed from state`)
+				await onDeleteTrip(id)
+				console.log(`Trip ${id} deleted successfully`)
 			} catch (error) {
 				console.error("Failed to delete trip:", error)
 				Alert.alert("Error", "Failed to delete trip. Please try again.")
@@ -59,10 +44,10 @@ const Destination: FC<{ navigation: HomeScreenProps["navigation"] }> = ({
 				setDeletingTripId(null)
 			}
 		},
-		[deletingTripId]
+		[deletingTripId, onDeleteTrip]
 	)
 
-	if (loading) {
+	if (isLoading) {
 		return (
 			<View className="flex-1 justify-center items-center">
 				<ActivityIndicator size="large" />

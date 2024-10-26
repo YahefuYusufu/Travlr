@@ -84,7 +84,8 @@ const SelectableField: React.FC<SelectableFieldProps> = ({
 					{label}
 				</Text>
 				<TouchableOpacity
-					className="flex-row items-center justify-between bg-slate-500 border border-gray-400 rounded-lg p-2"
+					className="flex-row items-center justify-between  border border-gray-400 rounded-lg p-2"
+					style={{ backgroundColor: colors.bgNatural }}
 					onPress={toggleDropdown}
 					onLayout={(event) => {
 						const { x, y, width, height } = event.nativeEvent.layout
@@ -112,7 +113,11 @@ const SelectableField: React.FC<SelectableFieldProps> = ({
 						{/* Search bar */}
 						<View
 							className="flex-row items-center justify-between mt-1 border-b border-gray-500 p-1 rounded-md space-x-5"
-							style={{ backgroundColor: "gray", width: "90%", height: 40 }}>
+							style={{
+								backgroundColor: colors.bgNatural,
+								width: "90%",
+								height: 40,
+							}}>
 							<View className="flex-row items-center flex-1">
 								<MagnifyingGlassIcon size={wp(5)} color="white" />
 								<TextInput

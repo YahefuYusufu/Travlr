@@ -1,3 +1,5 @@
+import { Trip } from "../hooks/useTrips"
+
 /**
  * Extracts the date (YYYY-MM-DD) from a Date object.
  * @param {Date} dateObj - The Date object to extract the date from.
@@ -65,4 +67,12 @@ export const formatTimeForDisplay = (time: Date | null): string => {
 	if (!time) return "Select time"
 	// Format time as HH:mm (24-hour format)
 	return time.toISOString().substr(11, 5)
+}
+
+export const sortTripsByDate = (trips: Trip[]): Trip[] => {
+	return [...trips].sort((a, b) => {
+		const dateA = new Date(a.createdAt).getTime()
+		const dateB = new Date(b.createdAt).getTime()
+		return dateB - dateA // This ensures newest first
+	})
 }

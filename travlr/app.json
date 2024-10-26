@@ -7,7 +7,7 @@
 		"icon": "./assets/icons/icon.png",
 		"userInterfaceStyle": "light",
 		"splash": {
-			"image": "./assets/images/welcomeBG02.jpg",
+			"image": "./assets/images/welcomeBG.jpg",
 			"resizeMode": "cover",
 			"backgroundColor": "#ffffff",
 			"duration": 0

@@ -81,7 +81,7 @@ const DestinationCard: FC<DestinationCardProps> = ({
 				onPress={handleDelete}
 				style={{ backgroundColor: "rgba(68, 68, 68, 0.4)" }}
 				className="absolute top-1 right-3 rounded-full p-2">
-				<TrashIcon size={wp(5)} color={colors.accent} />
+				<TrashIcon size={wp(5)} color={colors.textHeader} />
 			</TouchableOpacity>
 
 			<Text
