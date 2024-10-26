@@ -64,7 +64,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
 								color: colors.borderLight,
 								fontWeight: "bold",
 							}}>
-							Traveling Made Easy!
+							Travel. Capture. Remember.{" "}
 						</Text>
 						<Text
 							style={{
@@ -72,7 +72,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
 								color: colors.borderLight,
 								fontWeight: "500",
 							}}>
-							Experience the world's best adventure with us
+							Your travel diary reimagined - Capture every adventure{" "}
 						</Text>
 					</View>
 					<TouchableOpacity
