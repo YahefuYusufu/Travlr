@@ -29,7 +29,7 @@ const getApiUrl = () => {
 			return `http://10.0.2.2:${port}/api/trips`
 		} else if (Platform.OS === "ios") {
 			// iOS
-			return `http://${prgPhone}:${port}/api/trips`
+			return `http://${office}:${port}/api/trips`
 		}
 	}
 

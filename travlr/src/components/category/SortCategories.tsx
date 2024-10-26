@@ -1,7 +1,8 @@
 import { View, Text, TouchableOpacity } from "react-native"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { sortCategories } from "../../constants"
 import { useTheme } from "../../theme/ThemeProvider"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
@@ -12,11 +13,39 @@ interface SortCategoriesProps {
 	setActiveSort: (category: string) => void
 }
 
+const STORAGE_KEY = "@sort_preference"
+
 const SortCategories: React.FC<SortCategoriesProps> = ({
 	activeSort,
 	setActiveSort,
 }) => {
 	const { colors } = useTheme()
+
+	// Load saved preference when component mounts
+	useEffect(() => {
+		const loadSortPreference = async () => {
+			try {
+				const savedSort = await AsyncStorage.getItem(STORAGE_KEY)
+				if (savedSort && sortCategories.includes(savedSort)) {
+					setActiveSort(savedSort)
+				}
+			} catch (error) {
+				console.error("Error loading sort preference:", error)
+			}
+		}
+
+		loadSortPreference()
+	}, [])
+
+	// Save preference when it changes
+	const handleSortChange = async (sort: string) => {
+		try {
+			await AsyncStorage.setItem(STORAGE_KEY, sort)
+			setActiveSort(sort)
+		} catch (error) {
+			console.error("Error saving sort preference:", error)
+		}
+	}
 
 	return (
 		<View
@@ -27,7 +56,7 @@ const SortCategories: React.FC<SortCategoriesProps> = ({
 				let activeButtonClass = isActive ? "bg-white shadow" : ""
 				return (
 					<TouchableOpacity
-						onPress={() => setActiveSort(sort)}
+						onPress={() => handleSortChange(sort)}
 						key={index}
 						className={`p-3 px-4 rounded-full flex ${activeButtonClass}`}>
 						<Text

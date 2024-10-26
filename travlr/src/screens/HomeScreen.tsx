@@ -64,7 +64,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 					<Text
 						style={{ fontSize: wp(7), color: colors.text }}
 						className="font-bold">
-						Let's Discover
+						Your Trips
 					</Text>
 					<TouchableOpacity onPress={() => navigation.navigate("NewTrip")}>
 						<PlusCircleIcon
@@ -78,7 +78,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 				{/* Trip count */}
 				<View className="mx-5 flex-row justify-end">
 					<Text
-						style={{ fontSize: wp(4), color: colors.textSecondary }}
+						style={{ fontSize: wp(4), color: colors.success }}
 						className="font-semibold">
 						Total Trips: {trips.length}
 					</Text>
