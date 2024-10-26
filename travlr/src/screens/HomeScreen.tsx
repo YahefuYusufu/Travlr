@@ -92,7 +92,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 					<Text
 						style={{ fontSize: wp(7), color: colors.text }}
 						className="font-bold">
-						Your Trips
+						Travel Memories!🚂🚂
 					</Text>
 					<TouchableOpacity onPress={() => navigation.navigate("NewTrip")}>
 						<PlusCircleIcon
@@ -103,12 +103,71 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 					</TouchableOpacity>
 				</View>
 
-				<View className="mx-5 flex-row justify-end">
-					<Text
-						style={{ fontSize: wp(4), color: colors.text }}
-						className="font-semibold">
-						Total Trips: {trips.length}
-					</Text>
+				<View className="mx-5 flex-row justify-center items-center">
+					<View
+						className="py-4 px-6 flex-row items-center space-x-4"
+						style={{
+							backgroundColor: `${colors.bgNatural}40`, // 40 is opacity
+							borderRadius: 25,
+							shadowColor: colors.textSecondary,
+							shadowOffset: {
+								width: 0,
+								height: 8,
+							},
+							shadowOpacity: 0.2,
+							shadowRadius: 6,
+							elevation: 8,
+							borderWidth: 2,
+							borderColor: `${colors.textSecondary}50`,
+						}}>
+						{/* Decorative element */}
+						<Text style={{ fontSize: wp(5) }}>🌟</Text>
+
+						{/* Title */}
+						<Text
+							style={{
+								fontSize: wp(4.5),
+								color: colors.text,
+								fontFamily: "Helvetica",
+								textShadowColor: `${colors.textSecondary}50`,
+								textShadowOffset: { width: 1, height: 1 },
+								textShadowRadius: 4,
+								letterSpacing: 1,
+							}}
+							className="font-black tracking-wider">
+							TRAVEL SCORE
+						</Text>
+
+						{/* Score Badge */}
+						<View
+							className="px-5 py-2"
+							style={{
+								backgroundColor: colors.textSecondary,
+								borderRadius: 18,
+								transform: [{ rotate: "2deg" }],
+								shadowColor: "#000",
+								shadowOffset: {
+									width: 2,
+									height: 2,
+								},
+								shadowOpacity: 0.2,
+								shadowRadius: 3,
+								elevation: 5,
+							}}>
+							<Text
+								style={{
+									fontSize: wp(5),
+									color: colors.background,
+									fontWeight: "900",
+									fontFamily: "Helvetica",
+								}}>
+								{trips.length}
+							</Text>
+						</View>
+
+						{/* Decorative element */}
+						<Text style={{ fontSize: wp(5) }}>✈️</Text>
+					</View>
 				</View>
 
 				<View className="mb-2">

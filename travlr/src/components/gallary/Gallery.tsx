@@ -63,11 +63,54 @@ const Gallery: React.FC<GalleryProps> = ({ trips, isLoading }) => {
 	return (
 		<View className="space-y-5">
 			<View className="mx-5 flex-row justify-between items-center">
-				<Text style={{ color: colors.text }} className="font-bold">
-					{TEXTS.GALLERY}
-				</Text>
-				<TouchableOpacity onPress={handleSeeAll}>
-					<Text style={{ color: colors.error }} className="font-bold">
+				{/* Gallery Text with styled container */}
+				<View className="flex-row items-center space-x-2">
+					<View
+						style={{
+							backgroundColor: colors.text,
+							width: 3,
+							height: 20,
+							borderRadius: 2,
+							marginRight: 8,
+						}}
+					/>
+					<Text
+						style={{
+							color: colors.text,
+							fontSize: wp(5),
+							textShadowColor: "rgba(0, 0, 0, 0.1)",
+							textShadowOffset: { width: 1, height: 1 },
+							textShadowRadius: 2,
+						}}
+						className="font-bold tracking-wide">
+						{TEXTS.GALLERY}
+					</Text>
+				</View>
+
+				{/* Your existing See All button */}
+				<TouchableOpacity
+					onPress={handleSeeAll}
+					className="px-4 py-2 rounded-lg flex-row items-center space-x-2"
+					style={{
+						backgroundColor: `${colors.error}20`,
+						borderWidth: 1,
+						borderColor: colors.error,
+						shadowColor: colors.error,
+						shadowOffset: {
+							width: 0,
+							height: 2,
+						},
+						shadowOpacity: 0.15,
+						shadowRadius: 3,
+						elevation: 3,
+					}}>
+					<Text style={{ fontSize: 16 }}>🖼️</Text>
+					<Text
+						style={{
+							color: colors.error,
+							fontSize: wp(3.8),
+						}}
+						className="font-bold">
 						{TEXTS.SEE_ALL}
 					</Text>
 				</TouchableOpacity>

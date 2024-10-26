@@ -4,6 +4,7 @@ import { HomeScreenProps } from "../../types"
 import DestinationCard from "./DestinationCard"
 import { deleteTrip, filterTripsByCategory, Trip } from "../../hooks/useTrips"
 import SortCategories from "../category/SortCategories"
+import { useTheme } from "../../theme/ThemeProvider"
 
 interface DestinationProps {
 	navigation: HomeScreenProps["navigation"]
@@ -18,6 +19,7 @@ const Destination: FC<DestinationProps> = ({
 	isLoading,
 	onDeleteTrip,
 }) => {
+	const { colors } = useTheme()
 	const [filteredTrips, setFilteredTrips] = useState<Trip[]>([])
 	const [deletingTripId, setDeletingTripId] = useState<string | null>(null)
 	const [activeSort, setActiveSort] = useState<string>("All")
@@ -50,7 +52,7 @@ const Destination: FC<DestinationProps> = ({
 	if (isLoading) {
 		return (
 			<View className="flex-1 justify-center items-center">
-				<ActivityIndicator size="large" />
+				<ActivityIndicator size="large" color={colors.text} />
 			</View>
 		)
 	}
