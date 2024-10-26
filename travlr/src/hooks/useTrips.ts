@@ -1,6 +1,5 @@
 import axios from "axios"
 import { Platform } from "react-native"
-import { sortTripsByDate } from "../utils/helpers"
 
 export interface TripDetails {
 	country: string
@@ -123,19 +122,23 @@ export const getTrips = async (): Promise<Trip[]> => {
 	}
 }
 
+export const sortTripsByDate = (trips: Trip[]): Trip[] => {
+	return [...trips].sort((a, b) => {
+		const dateA = new Date(a.createdAt).getTime()
+		const dateB = new Date(b.createdAt).getTime()
+		return dateB - dateA
+	})
+}
+
 export const filterTripsByCategory = (
 	trips: Trip[],
 	category: string
 ): Trip[] => {
-	// First sort by date (newest first)
 	const sortedTrips = sortTripsByDate(trips)
-
-	// Then filter by category if needed
 	if (category === "All") {
 		return sortedTrips
 	}
-
-	return sortedTrips.filter((trip) => trip.category?.includes(category))
+	return sortedTrips.filter((trip) => trip.category === category)
 }
 
 export const getTripById = async (id: string): Promise<Trip> => {

@@ -1,3 +1,4 @@
+// NewTripScreen.tsx
 import React, { useEffect } from "react"
 import { View, SafeAreaView, Text, ActivityIndicator } from "react-native"
 import { useNavigation } from "@react-navigation/native"
@@ -7,10 +8,10 @@ import TripLocationForm from "../components/trip/TripLocationForm"
 import TripDateForm from "../components/trip/TripDateForm"
 import TripDetailsForm from "../components/trip/TripDetailsForm"
 import ImageCaptureContainer from "../components/trip/ImageCaptureContainer"
-import { TripProvider, useTripContext } from "../context/TripContext"
+import { useTripContext } from "../context/TripContext"
 import SendTripButton from "../components/common/SendTripButton"
 
-const TripContent: React.FC = () => {
+const NewTripScreen: React.FC = () => {
 	const navigation = useNavigation()
 	const { loading, error } = useLocationData()
 	const { tripDetails } = useTripContext()
@@ -51,14 +52,6 @@ const TripContent: React.FC = () => {
 				<SendTripButton />
 			</View>
 		</SafeAreaView>
-	)
-}
-
-const NewTripScreen: React.FC = () => {
-	return (
-		<TripProvider>
-			<TripContent />
-		</TripProvider>
 	)
 }
 

@@ -1,3 +1,4 @@
+// navigation/Navigation.tsx
 import React from "react"
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
@@ -15,7 +16,6 @@ import { ROUTES } from "../constants/strings"
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
 const Navigation = () => {
-	// Get the theme and colors from the ThemeProvider
 	const { colors, isDarkTheme } = useTheme()
 
 	return (

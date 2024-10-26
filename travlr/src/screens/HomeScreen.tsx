@@ -16,9 +16,8 @@ import {
 import { PlusCircleIcon } from "react-native-heroicons/solid"
 import Gallery from "../components/gallary/Gallery"
 import Destination from "../components/destination/Destination"
-import { getTrips, Trip, deleteTrip } from "../hooks/useTrips"
+import { getTrips, Trip, deleteTrip, sortTripsByDate } from "../hooks/useTrips"
 import { useFocusEffect } from "@react-navigation/native"
-import { sortTripsByDate } from "../utils/helpers"
 
 const topMargin = Platform.OS === "ios" ? hp(1) : hp(6)
 

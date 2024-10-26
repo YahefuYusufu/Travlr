@@ -68,11 +68,3 @@ export const formatTimeForDisplay = (time: Date | null): string => {
 	// Format time as HH:mm (24-hour format)
 	return time.toISOString().substr(11, 5)
 }
-
-export const sortTripsByDate = (trips: Trip[]): Trip[] => {
-	return [...trips].sort((a, b) => {
-		const dateA = new Date(a.createdAt).getTime()
-		const dateB = new Date(b.createdAt).getTime()
-		return dateB - dateA // This ensures newest first
-	})
-}

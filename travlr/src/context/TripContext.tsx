@@ -1,4 +1,6 @@
+// context/TripContext.tsx
 import React, { createContext, useState, useContext, ReactNode } from "react"
+import { sortTripsByDate } from "../hooks/useTrips"
 
 export interface TripDetails {
 	country: string
@@ -10,7 +12,13 @@ export interface TripDetails {
 	images: string[]
 }
 
+export interface Trip extends TripDetails {
+	_id: string
+	createdAt: string | Date
+}
+
 interface TripContextType {
+	// Trip Details Management
 	tripDetails: TripDetails
 	updateCountry: (country: string) => void
 	updateCity: (city: string) => void
@@ -20,6 +28,11 @@ interface TripContextType {
 	updateRating: (rating: number) => void
 	updateImages: (newImages: string[]) => void
 	resetTripContext: () => void
+
+	// Trips List Management
+	trips: Trip[]
+	setTrips: React.Dispatch<React.SetStateAction<Trip[]>>
+	addNewTrip: (trip: Trip) => void
 }
 
 const TripContext = createContext<TripContextType | undefined>(undefined)
@@ -27,6 +40,7 @@ const TripContext = createContext<TripContextType | undefined>(undefined)
 export const TripProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
+	// Trip Details State
 	const [tripDetails, setTripDetails] = useState<TripDetails>({
 		country: "",
 		city: "",
@@ -37,6 +51,10 @@ export const TripProvider: React.FC<{ children: ReactNode }> = ({
 		images: [],
 	})
 
+	// Trips List State
+	const [trips, setTrips] = useState<Trip[]>([])
+
+	// Trip Details Methods
 	const updateCountry = (country: string) =>
 		setTripDetails((prev) => ({ ...prev, country }))
 	const updateCity = (city: string) =>
@@ -64,6 +82,14 @@ export const TripProvider: React.FC<{ children: ReactNode }> = ({
 		})
 	}
 
+	// Trips List Methods
+	const addNewTrip = (trip: Trip) => {
+		setTrips((currentTrips: Trip[]) => {
+			const newTrips = [trip, ...currentTrips]
+			return sortTripsByDate(newTrips) as Trip[]
+		})
+	}
+
 	return (
 		<TripContext.Provider
 			value={{
@@ -76,6 +102,9 @@ export const TripProvider: React.FC<{ children: ReactNode }> = ({
 				updateRating,
 				updateImages,
 				resetTripContext,
+				trips,
+				setTrips,
+				addNewTrip,
 			}}>
 			{children}
 		</TripContext.Provider>
