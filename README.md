@@ -5,7 +5,7 @@ https://github.com/[your-username]/travlr/assets/demo.mp4
 
 [Note: Replace with your actual video URL after uploading to your GitHub repository]
 
-[![Watch the demo](path-to-thumbnail-image)](video-url)
+[![Watch the demo]()
 
 A modern mobile application for documenting and preserving your travel memories. Capture your journeys with photos, locations, and detailed information about your trips.
 
