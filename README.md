@@ -1,38 +1,52 @@
-# Travlr
+# Travlr - Travel Journal Mobile App
 
-A full-stack mobile application for storing and managing travel memories. Users can add locations, save photos, and view their travel history.
+## App Demo
+https://github.com/[your-username]/travlr/assets/demo.mp4
 
-**Backend Summary:**
+[Note: Replace with your actual video URL after uploading to your GitHub repository]
 
-This Node.js backend API provides core user management functionalities for this application. It leverages Express.js for routing and Mongoose for interacting with a MongoDB database.
+[![Watch the demo](path-to-thumbnail-image)](video-url)
 
-**Key Features:**
+A modern mobile application for documenting and preserving your travel memories. Capture your journeys with photos, locations, and detailed information about your trips.
 
-- User Registration: Handles user sign-up with email and password authentication.
-- User Login: Authenticates users based on provided credentials.
-- User Profile Management: Creates, retrieves, updates, and deletes user profiles.
-- Password Reset: Enables users to reset their passwords through a token-based system.
-- Data Validation: Implements basic input validation to ensure data integrity.
-- Error Handling: Provides robust error handling with custom error messages.
+A modern mobile application for documenting and preserving your travel memories. Capture your journeys with photos, locations, and detailed information about your trips.
 
-**Technologies Used:**
+## Features
 
-- Node.js
-- Express.js
-- Mongoose
-- MongoDB (for data storage)
-- bcrypt (for password hashing)
-- Nodemailer (for email sending, optional)
+- 📸 Photo capture and gallery integration
+- 📍 Location tracking for trips
+- 🗂️ Trip categorization
+- ⭐ Trip rating system
+- 📱 User-friendly interface
+- 🖼️ Image gallery with multiple photo support
 
-**Features:**
+## Tech Stack
 
-- Photo and media management
-- Calendar integration
+### Frontend
+- React Native with Expo
+- TypeScript
+- React Navigation
+- NativeWind (TailwindCSS)
+- Context API for state management
+- Expo Image Picker
 
-**Technologies:**
-
-- React Native
-- Expo
+### Backend
 - Node.js
 - Express
 - MongoDB
+- TypeScript
+- Multer for file handling
+
+## Getting Started
+
+### Prerequisites
+- Node.js (v18 or higher)
+- npm/yarn
+- MongoDB
+- Expo CLI
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone [your-repo-url]
