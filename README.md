@@ -1,11 +1,5 @@
 # Travlr - Travel Journal Mobile App
 
-## App Demo
-
-[Watch the demo]
-
-
-
 A modern mobile application for documenting and preserving your travel memories. Capture your journeys with photos, locations, and detailed information about your trips.
 
 A modern mobile application for documenting and preserving your travel memories. Capture your journeys with photos, locations, and detailed information about your trips.
@@ -22,6 +16,7 @@ A modern mobile application for documenting and preserving your travel memories.
 ## Tech Stack
 
 ### Frontend
+
 - React Native with Expo
 - TypeScript
 - React Navigation
@@ -30,6 +25,7 @@ A modern mobile application for documenting and preserving your travel memories.
 - Expo Image Picker
 
 ### Backend
+
 - Node.js
 - Express
 - MongoDB
@@ -39,13 +35,8 @@ A modern mobile application for documenting and preserving your travel memories.
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js (v18 or higher)
 - npm/yarn
 - MongoDB
 - Expo CLI
-
-### Installation
-
-1. Clone the repository
-```bash
-git clone [your-repo-url]
