@@ -2,7 +2,6 @@
 
 A modern mobile application for documenting and preserving your travel memories. Capture your journeys with photos, locations, and detailed information about your trips.
 
-A modern mobile application for documenting and preserving your travel memories. Capture your journeys with photos, locations, and detailed information about your trips.
 
 ## Features
 
