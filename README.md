@@ -18,7 +18,7 @@ A modern mobile application for documenting and preserving your travel memories.
 
 - React Native with Expo
 - TypeScript
-- React Navigationsadasdasdasd
+- React Navigationsa 
 - NativeWind (TailwindCSS)
 - Context API for state management
 - Expo Image Picker
