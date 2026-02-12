@@ -10,7 +10,7 @@ A modern mobile application for documenting and preserving your travel memories.
 - 🗂️ Trip categorization
 - ⭐ Trip rating system
 - 📱 User-friendly interface
-- 🖼️ Image gallery with multiple photo supportasdasdas
+- 🖼️ Image gallery with multiple photo supp 
 
 ## Tech Stack
 
