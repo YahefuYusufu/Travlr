@@ -41,3 +41,4 @@ A modern mobile application for documenting and preserving your travel memories.
 - Expo CLI
 
 - This app is a IOS app that showing my Mobile app skills.
+- WIll add new future for this app soon.
