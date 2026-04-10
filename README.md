@@ -42,3 +42,4 @@ A modern mobile application for documenting and preserving your travel memories.
 
 - This app is a IOS app that showing my Mobile app skills.
 - WIll add new future for this app soon.
+- What is the most important future for this app ?
