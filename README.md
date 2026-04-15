@@ -44,3 +44,4 @@ A modern mobile application for documenting and preserving your travel memories.
 - WIll add new future for this app soon.
 - What is the most important future for this app ?
 - This app will be on APP stpre soon.
+- This is a project which I worked alone.
