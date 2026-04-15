@@ -5,7 +5,7 @@ A modern mobile application for documenting and preserving your travel memories.
 
 ## Features
 
-- 📸 Photo capture and gallery integration
+- 📸 Photo capture and gallery integration with widgets
 - 📍 Location tracking for trips
 - 🗂️ Trip categorization
 - ⭐ Trip rating system
