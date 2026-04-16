@@ -43,6 +43,7 @@ A modern mobile application for documenting and preserving your travel memories.
 - npm/yarn
 - MongoDB
 - Expo CLI
+- VScode
 
 - This app is a IOS app that showing my Mobile app skills.
 - WIll add new future for this app soon.
